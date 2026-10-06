@@ -31,7 +31,41 @@ export function saveSubmission(data) {
     const tx = db.transaction([STORE_NAME], "readwrite");
     const store = tx.objectStore(STORE_NAME);
     const req = store.put(data);
-    req.onsuccess = () => resolve();
+    req.onsuccess = () => {
+      try {
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+        const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+        const sEmail = localStorage.getItem('ielts_student_email') || '';
+
+        const attemptSnapshot = {
+          id: "attempt_pr_" + Date.now(),
+          timestamp: timeStr,
+          testTitle: `Pre-Reading: ${data.title || data.id}`,
+          studentName: sName,
+          studentEmail: sEmail,
+          score: `${data.correct || 0}/${data.total || 0}`,
+          timeSpent: "N/A",
+          details: `Đã nộp bài mức độ ${data.level || ''}. Điểm đạt: ${data.correct || 0}/${data.total || 0}`,
+          pageUrl: "pre-reading/index-pr.html"
+        };
+
+        // 1. Lưu LocalStorage
+        const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+        localHist.unshift(attemptSnapshot);
+        localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+
+        // 2. Bắn lên Google Drive
+        fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
+        }).catch(() => {});
+      } catch (err) {}
+
+      resolve();
+    };
     req.onerror = (e) => reject(e);
   });
 }
