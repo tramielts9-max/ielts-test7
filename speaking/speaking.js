@@ -465,6 +465,36 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
     });
 
     statusBar.innerHTML = "✅ Thầy đã chấm xong bài nói cho em rồi nhé! Em xem kỹ từng câu bên dưới nha.";
+    // --- LƯU VÀO LỊCH SỬ LÀM BÀI ---
+    try {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+      const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+      const sEmail = localStorage.getItem('ielts_student_email') || '';
+      
+      // Trích xuất Band điểm nếu có trong kết quả
+      const bandMatch = fullMarkdown.match(/BAND HIỆN TẠI:\s*([0-9.]+)/i) || fullMarkdown.match(/Band\s*([0-9.]+)/i);
+      const bandScore = bandMatch ? `Band ${bandMatch[1]}` : "Đã hoàn thành";
+
+      const attemptSnapshot = {
+        id: "attempt_spk_" + Date.now(),
+        timestamp: timeStr,
+        testTitle: `Speaking Part ${currentPart}: ${selectedPromptItem ? selectedPromptItem.topic : 'Tự luyện'}`,
+        studentName: sName,
+        studentEmail: sEmail,
+        score: bandScore,
+        timeSpent: "N/A",
+        details: `ĐỀ BÀI:\n${taskPrompt}\n\nBÀI NÓI (TRANSCRIPT):\n${transcript}\n\nNHẬN XÉT AI:\n${fullMarkdown}`,
+        pageUrl: `speaking/index-s.html?prompt=${selectedPromptItem ? selectedPromptItem.id : 'custom'}`
+      };
+
+      const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+      localHist.unshift(attemptSnapshot);
+      localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+    } catch(errHist) {
+      console.warn("Lỗi lưu lịch sử Speaking:", errHist);
+    }
+    // --------------------------------
     submitBtn.disabled = false;
     submitBtn.innerText = "CHẤM LẠI BÀI KHÁC";
     printBtn.style.display = "inline-block";
