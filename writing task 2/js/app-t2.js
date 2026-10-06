@@ -355,6 +355,44 @@ ${essay}
     });
 
     statusBar.innerHTML = `✅ Thầy đã chấm xong bằng model [<b>${usedModel}</b>]! (Thời gian viết: <b>${timeSpentFormatted}</b> | Chế độ: <b>${modeStatus}</b>)`;
+    // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
+    try {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+      const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+      const sEmail = localStorage.getItem('ielts_student_email') || '';
+      
+      const bandMatch = fullOutput.match(/OVERALL BAND SCORE:\s*([0-9.]+)/i) || fullOutput.match(/Band\s*([0-9.]+)/i);
+      const bandScore = bandMatch ? `Band ${bandMatch[1]}` : "Đã hoàn thành";
+
+      const attemptSnapshot = {
+        id: "attempt_wt2_" + Date.now(),
+        timestamp: timeStr,
+        testTitle: `Writing Task 2: ${currentItemJson?.title || currentCategory || 'Tự luận'}`,
+        studentName: sName,
+        studentEmail: sEmail,
+        score: bandScore,
+        timeSpent: timeSpentFormatted,
+        details: `ĐỀ BÀI:\n${prompt}\n\nBÀI VIẾT:\n${essay}\n\nNHẬN XÉT AI:\n${fullOutput}`,
+        pageUrl: "writing task 2/index-t2.html"
+      };
+
+      // 1. Lưu LocalStorage
+      const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+      localHist.unshift(attemptSnapshot);
+      localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+
+      // 2. Bắn lên Google Drive
+      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
+      }).catch(() => {});
+    } catch(errHist) {
+      console.warn("Lỗi lưu Writing Task 2:", errHist);
+    }
+    // ------------------------------------------------
     submitBtn.disabled = false;
   } catch (err) {
     console.error(err);
