@@ -465,14 +465,13 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
     });
 
     statusBar.innerHTML = "✅ Thầy đã chấm xong bài nói cho em rồi nhé! Em xem kỹ từng câu bên dưới nha.";
-    // --- LƯU VÀO LỊCH SỬ LÀM BÀI ---
+// --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
       const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
       const sEmail = localStorage.getItem('ielts_student_email') || '';
       
-      // Trích xuất Band điểm nếu có trong kết quả
       const bandMatch = fullMarkdown.match(/BAND HIỆN TẠI:\s*([0-9.]+)/i) || fullMarkdown.match(/Band\s*([0-9.]+)/i);
       const bandScore = bandMatch ? `Band ${bandMatch[1]}` : "Đã hoàn thành";
 
@@ -488,13 +487,22 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
         pageUrl: `speaking/index-s.html?prompt=${selectedPromptItem ? selectedPromptItem.id : 'custom'}`
       };
 
+      // 1. Lưu LocalStorage
       const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
       localHist.unshift(attemptSnapshot);
       localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+
+      // 2. Bắn lên Google Drive
+      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
+      }).catch(() => {});
     } catch(errHist) {
-      console.warn("Lỗi lưu lịch sử Speaking:", errHist);
+      console.warn("Lỗi lưu Speaking:", errHist);
     }
-    // --------------------------------
+    // ------------------------------------------------
     submitBtn.disabled = false;
     submitBtn.innerText = "CHẤM LẠI BÀI KHÁC";
     printBtn.style.display = "inline-block";
