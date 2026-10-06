@@ -3,144 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IELTS Writing Task 2 Master - Phòng Luyện Viết & Sửa Bài 2 Tầng</title>
+  <title>IELTS Writing Task 2 Master - Kho Đề Thi Thật & Sửa Bài 2 Tầng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style-t2.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-<div class="container-t2">
-  <!-- HEADER -->
-  <header class="header-t2">
-    <div class="header-left">
-      <a href="../index.html" class="btn-back">⬅️ Trang chủ</a>
-      <div>
-        <h1>📝 8B. IELTS WRITING TASK 2 COACH</h1>
-        <p>Kho đề thi thật • Hướng dẫn viết từng câu (Trạm IELTS) • AI Sửa bài 2 tầng</p>
-      </div>
-    </div>
-  </header>
-
-  <!-- THANH ĐIỀU KHIỂN CHỌN DẠNG BÀI & ĐỀ BÀI -->
-  <div class="control-panel-t2">
-    <div class="source-toggle">
-      <label><input type="radio" name="promptSource" value="catalog" checked> 📚 Chọn từ kho đề</label>
-      <label><input type="radio" name="promptSource" value="custom"> ✍️ Tự dán đề riêng</label>
-    </div>
-
-    <!-- Dropdown: Dạng bài -> Đề bài -->
-    <div class="dropdown-row" id="catalogDropdowns">
-      <div class="control-group flex-1">
-        <label for="categorySelect">📂 1. Chọn Dạng bài Task 2:</label>
-        <select id="categorySelect">
-          <option value="Opinion (Agree/Disagree)">1. Opinion (Agree or Disagree)</option>
-          <option value="Discuss Both Views">2. Discuss Both Views</option>
-          <option value="Advantage & Disadvantage">3. Advantages vs Disadvantages / Positive or Negative</option>
-          <option value="Cause & Effect / Solution">4. Causes, Effects & Solutions</option>
-          <option value="Two-part Questions">5. Two-part / Direct Questions</option>
-        </select>
-      </div>
-
-      <div class="control-group flex-2">
-        <label for="exerciseSelect">📁 2. Chọn Đề bài thuộc dạng này:</label>
-        <select id="exerciseSelect"></select>
-      </div>
-    </div>
-
-    <!-- Tự nhập đề bài -->
-    <div class="control-group" id="customPromptBox" style="display: none;">
-      <label for="customPromptInput">📝 Nhập đề bài Task 2 của em:</label>
-      <input type="text" id="customPromptInput" placeholder="Ví dụ: Some people think that universities should provide free education...">
-    </div>
-  </div>
-
-  <!-- WORKSPACE 2 CỘT (TASK 2 KHÔNG CÓ ẢNH) -->
-  <div class="workspace-t2">
-    
-    <!-- CỘT TRÁI: ĐỀ BÀI & HƯỚNG DẪN VIẾT TỪNG BƯỚC -->
-    <div class="card-t2 left-column">
-      <div class="card-header">
-        <span class="card-title">📌 Đề bài & Hướng dẫn viết chi tiết</span>
-        <span id="essayTypeBadge" class="badge">Opinion</span>
-      </div>
-
-      <!-- Khung hiển thị đề bài Task 2 -->
-      <div class="prompt-box" id="promptDisplayBox">
-        <span class="prompt-label">📋 WRITING TASK 2 PROMPT:</span>
-        <div id="promptDisplayText" class="prompt-text">Đang tải đề bài...</div>
-      </div>
-
-      <!-- Thanh điều khiển hướng dẫn & đo thời gian tham khảo -->
-      <div class="guide-control-bar">
-        <button type="button" id="btnToggleGuide" class="btn-guide-toggle">
-          <span id="guideIcon">📖</span> <span id="guideToggleText">MỞ HƯỚNG DẪN CHI TIẾT (TRẠM IELTS)</span>
-        </button>
-        <span id="guideTimerBadge" class="timer-tag independent">🛡️ Tự lực (0s)</span>
-      </div>
-
-      <!-- Khung hướng dẫn viết chi tiết từng câu -->
-      <div id="guideCollapsibleBox" class="guide-collapsible" style="display: none;">
-        <div id="guideContentBox" class="guide-content">
-          Đang tải hướng dẫn...
+  <!-- ==================== MÀN HÌNH 1: PORTAL CHỌN ĐỀ BÀI ==================== -->
+  <div id="portalScreen">
+    <header class="bg-gradient-to-r from-indigo-900 to-indigo-800 text-white shadow-lg sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <a href="../index.html" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-chevron-left"></i> Trang Chủ
+          </a>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+              <i class="fa-solid fa-book-open text-indigo-200"></i> IELTS Writing Task 2 Portal
+            </h1>
+            <p class="text-indigo-100 text-xs">Kho 116 Đề Thi Thật • Lập Dàn Ý PEEL • Sửa Bài AI 2 Tầng</p>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- CỘT PHẢI: KHU VỰC VIẾT BÀI CỦA HỌC SINH + ĐỒNG HỒ BẤM GIỜ -->
-    <div class="card-t2 right-column">
-      <div class="card-header">
-        <span class="card-title">🇬🇧 Bài viết Task 2 của em</span>
-        
-        <!-- ĐỒNG HỒ ĐO THỜI GIAN VIẾT BÀI -->
-        <div class="stopwatch-container">
-          <span class="stopwatch-icon">⏱️</span>
-          <span id="stopwatchDisplay" class="stopwatch-display">00:00:00</span>
-          <div class="stopwatch-buttons">
-            <button type="button" id="btnStartStopwatch" class="btn-sw start" title="Bắt đầu tính giờ">▶️ Bắt đầu</button>
-            <button type="button" id="btnPauseStopwatch" class="btn-sw pause" style="display:none;" title="Tạm dừng">⏸️ Tạm dừng</button>
-            <button type="button" id="btnResetStopwatch" class="btn-sw reset" title="Đặt lại từ đầu">🔄</button>
+    <main class="max-w-7xl mx-auto px-4 py-6">
+      <!-- Tabs Lọc Thể Loại -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1" id="categoryTabsContainer"></div>
+      </div>
+
+      <!-- Thanh Tìm Kiếm & Tiến Độ -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div class="text-sm font-medium text-slate-600 flex items-center gap-2">
+          <span>Tiến độ hoàn thành:</span>
+          <span id="portalProgressBadge" class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-bold">0/0 Đã viết</span>
+        </div>
+        <input type="text" id="portalSearchInput" oninput="window.filterTask2Cards()" placeholder="🔍 Tìm kiếm đề luận..." class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none w-full sm:w-72">
+      </div>
+
+      <!-- Lưới Card Bài Tập -->
+      <div id="portalCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </main>
+  </div>
+
+  <!-- ==================== MÀN HÌNH 2: WORKSPACE PHÒNG LUYỆN VIẾT ==================== -->
+  <div id="workspaceScreen" class="hidden">
+    <div class="container-t2">
+      <header class="header-t2 flex justify-between items-center">
+        <div class="header-left">
+          <button type="button" onclick="window.backToPortalTask2()" class="btn-back">⬅️ Quay lại kho đề</button>
+          <div>
+            <h1>📝 IELTS WRITING TASK 2 WORKSPACE</h1>
+            <p>Kho đề thi thật • Hướng dẫn viết từng câu • AI Sửa bài 2 tầng</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="workspace-t2">
+        <!-- CỘT TRÁI: ĐỀ BÀI & HƯỚNG DẪN -->
+        <div class="card-t2 left-column">
+          <div class="card-header">
+            <span class="card-title">📌 Đề bài & Hướng dẫn chi tiết</span>
+            <span id="essayTypeBadge" class="badge">Opinion</span>
+          </div>
+
+          <div class="prompt-box" id="promptDisplayBox">
+            <span class="prompt-label">📋 WRITING TASK 2 PROMPT:</span>
+            <div id="promptDisplayText" class="prompt-text">Đang tải đề bài...</div>
+          </div>
+
+          <div class="guide-control-bar">
+            <button type="button" id="btnToggleGuide" class="btn-guide-toggle">
+              <span id="guideIcon">📖</span> <span id="guideToggleText">MỞ HƯỚNG DẪN CHI TIẾT (TRẠM IELTS)</span>
+            </button>
+            <span id="guideTimerBadge" class="timer-tag independent">🛡️ Tự lực (0s)</span>
+          </div>
+
+          <div id="guideCollapsibleBox" class="guide-collapsible" style="display: none;">
+            <div id="guideContentBox" class="guide-content">Đang tải hướng dẫn...</div>
           </div>
         </div>
 
-        <span id="wordCounter" class="word-counter">0 từ</span>
+        <!-- CỘT PHẢI: BÀI VIẾT & ĐỒNG HỒ BẤM GIỜ -->
+        <div class="card-t2 right-column">
+          <div class="card-header">
+            <span class="card-title">🇬🇧 Bài viết Task 2 của em</span>
+            
+            <div class="stopwatch-container">
+              <span class="stopwatch-icon">⏱️</span>
+              <span id="stopwatchDisplay" class="stopwatch-display">00:00:00</span>
+              <div class="stopwatch-buttons">
+                <button type="button" id="btnStartStopwatch" class="btn-sw start">▶️ Bắt đầu</button>
+                <button type="button" id="btnPauseStopwatch" class="btn-sw pause" style="display:none;">⏸️ Tạm dừng</button>
+                <button type="button" id="btnResetStopwatch" class="btn-sw reset">🔄</button>
+              </div>
+            </div>
+
+            <span id="wordCounter" class="word-counter">0 từ</span>
+          </div>
+
+          <textarea id="studentEssayInput" placeholder="Đọc kỹ đề bài bên trái và viết bài luận Task 2 (tối thiểu 250 từ). Bấm 'Bắt đầu' trên đồng hồ để đo thời gian làm bài của em nhé!"></textarea>
+          
+          <div class="action-footer">
+            <span class="tip-text">💡 Chuẩn Task 2: 4 đoạn (Intro, Body 1, Body 2, Conclusion) & trên 250 từ.</span>
+            <button type="button" id="btnSubmitGrading" class="btn-submit-grading">⚡ Chấm & Sửa bài 2 tầng</button>
+          </div>
+        </div>
       </div>
 
-      <textarea id="studentEssayInput" placeholder="Đọc kỹ đề bài bên trái và viết bài luận Task 2 (tối thiểu 250 từ). Bấm 'Bắt đầu' trên đồng hồ để đo thời gian làm bài của em nhé!"></textarea>
-      
-      <div class="action-footer">
-        <span class="tip-text">💡 Chuẩn Task 2: Cần 4 đoạn (Intro, Body 1, Body 2, Conclusion) & trên 250 từ.</span>
-        <button type="button" id="btnSubmitGrading" class="btn-submit-grading">⚡ Chấm & Sửa bài 2 tầng</button>
+      <div id="scrollSignalBar" class="scroll-signal-bar" style="display: none;">
+        <button type="button" id="btnJumpToResult" class="btn-jump-result">
+          👇 Thầy đang chấm bài ở bên dưới! Bấm vào đây để xem chi tiết 👇
+        </button>
+      </div>
+
+      <!-- KẾT QUẢ SỬA BÀI -->
+      <div id="resultBox" class="result-box" style="display: none;">
+        <div id="statusBar" class="status-bar">⏳ Sẵn sàng hỗ trợ học sinh...</div>
+        <div class="color-legend">
+          <div class="legend-item"><span class="dot normal"></span> Chữ thường: Câu em viết</div>
+          <div class="legend-item"><span class="dot err"></span> <del class="err">Gạch đỏ:</del> Lỗi sai cần bỏ</div>
+          <div class="legend-item"><span class="dot fix"></span> <ins class="fix">Xanh lá:</ins> Sửa sạch lỗi cơ bản (Band 6.0)</div>
+          <div class="legend-item"><span class="dot vocab"></span> <mark class="vocab">Vàng:</mark> Nâng cấp hoàn mỹ C1-C2 (Band 8.0+)</div>
+          <div class="legend-item"><span class="dot note"></span> <span class="teacher-note">💬 Tím: Lời dặn dò</span></div>
+        </div>
+        <div id="resultMarkdown" class="result-markdown"></div>
+        <center>
+          <button type="button" class="btn-print" onclick="window.print()">📥 Xuất Báo Cáo PDF</button>
+        </center>
       </div>
     </div>
-
   </div>
 
-  <!-- NÚT SIGNAL NHẢY NHANH XUỐNG KẾT QUẢ CHẤM BÀI -->
-  <div id="scrollSignalBar" class="scroll-signal-bar" style="display: none;">
-    <button type="button" id="btnJumpToResult" class="btn-jump-result">
-      👇 Thầy đang chấm bài ở bên dưới! Bấm vào đây để xem chi tiết 👇
-    </button>
-  </div>
-
-  <!-- VÙNG KẾT QUẢ SỬA BÀI 2 TẦNG -->
-  <div id="resultBox" class="result-box" style="display: none;">
-    <div id="statusBar" class="status-bar">⏳ Sẵn sàng hỗ trợ học sinh...</div>
-    
-    <div class="color-legend">
-      <div class="legend-item"><span class="dot normal"></span> Chữ thường: Câu em viết</div>
-      <div class="legend-item"><span class="dot err"></span> <del class="err">Gạch đỏ:</del> Lỗi sai cần bỏ</div>
-      <div class="legend-item"><span class="dot fix"></span> <ins class="fix">Xanh lá:</ins> Sửa sạch lỗi cơ bản (Band 6.0)</div>
-      <div class="legend-item"><span class="dot vocab"></span> <mark class="vocab">Vàng:</mark> Nâng cấp hoàn mỹ C1-C2 (Band 8.0+)</div>
-      <div class="legend-item"><span class="dot note"></span> <span class="teacher-note">💬 Tím: Lời dặn dò</span></div>
-    </div>
-
-    <div id="resultMarkdown" class="result-markdown"></div>
-    <center>
-      <button type="button" class="btn-print" onclick="window.print()">📥 Xuất Báo Cáo PDF</button>
-    </center>
-  </div>
-</div>
-
-<script type="module" src="js/app-t2.js"></script>
+  <script type="module" src="js/app-t2.js"></script>
 </body>
 </html>
