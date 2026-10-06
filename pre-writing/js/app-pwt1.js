@@ -2,74 +2,154 @@ import { streamGeminiPWT1 } from './api-pwt1.js';
 
 let manifestData = [];
 let currentExercise = null;
+let currentCategory = "ALL";
+
+const CATEGORIES = ["ALL", "Line", "Bar", "Pie", "Table", "Mixed", "Map", "Floor Plan", "Process"];
+const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec";
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await initExerciseList();
-  document.getElementById('exerciseSelect').addEventListener('change', onExerciseSelected);
-  document.getElementById('bandTargetSelect').addEventListener('change', updateExerciseView);
-  document.getElementById('studentEnglishInput').addEventListener('input', updateWordCount);
-  document.getElementById('btnGrading').addEventListener('click', runEvaluation);
+  await loadManifestAndInitPortal();
+  document.getElementById('bandTargetSelect')?.addEventListener('change', updateExerciseView);
+  document.getElementById('studentEnglishInput')?.addEventListener('input', updateWordCount);
+  document.getElementById('btnGrading')?.addEventListener('click', runEvaluation);
 });
 
-async function initExerciseList() {
+// ==================== LẤY LỊCH SỬ LÀM BÀI ====================
+function getCompletedRecord(fileOrTitle) {
+  try {
+    const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    return list.find(item => item.testTitle && item.testTitle.includes(fileOrTitle));
+  } catch (e) {
+    return null;
+  }
+}
+
+// ==================== MÀN HÌNH PORTAL CARD ====================
+async function loadManifestAndInitPortal() {
   try {
     const res = await fetch('data/pwt1-manifest.json');
     manifestData = await res.json();
-    const selectBox = document.getElementById('exerciseSelect');
-    selectBox.innerHTML = '';
-    manifestData.forEach((item, idx) => {
-      const opt = document.createElement('option');
-      opt.value = idx;
-      opt.innerText = item.title;
-      selectBox.appendChild(opt);
-    });
-    if (manifestData.length > 0) {
-      await loadExerciseDetail(manifestData[0].file);
-    }
+    renderTabs();
+    renderCards();
   } catch (err) {
-    console.error("Lỗi đọc danh mục đề thi:", err);
+    console.error("Lỗi đọc pwt1-manifest.json:", err);
   }
 }
 
-async function onExerciseSelected(e) {
-  const item = manifestData[e.target.value];
-  if (item) {
-    await loadExerciseDetail(item.file);
-  }
+function renderTabs() {
+  const container = document.getElementById('categoryTabsContainer');
+  if (!container) return;
+  container.innerHTML = CATEGORIES.map(cat => {
+    const isActive = cat === currentCategory;
+    return `
+      <button onclick="window.switchPWT1Category('${cat}')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+        isActive ? 'bg-sky-600 text-white shadow-sm ring-2 ring-sky-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+      }">
+        ${cat === 'ALL' ? 'Tất cả dạng bài' : cat}
+      </button>
+    `;
+  }).join('');
 }
 
-async function loadExerciseDetail(filePath) {
+window.switchPWT1Category = (cat) => {
+  currentCategory = cat;
+  renderTabs();
+  renderCards();
+};
+
+function renderCards() {
+  const container = document.getElementById('portalCardsGrid');
+  const search = (document.getElementById('portalSearchInput')?.value || '').toLowerCase().trim();
+  if (!container) return;
+
+  let completedCount = 0;
+  manifestData.forEach(item => {
+    if (getCompletedRecord(item.title)) completedCount++;
+  });
+  document.getElementById('portalProgressBadge').innerText = `${completedCount}/${manifestData.length} Đã xong`;
+
+  const filtered = manifestData.filter(item => {
+    const matchCat = (currentCategory === "ALL") || item.title.toLowerCase().includes(currentCategory.toLowerCase());
+    const matchSearch = item.title.toLowerCase().includes(search);
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">Không tìm thấy bài tập nào!</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const rec = getCompletedRecord(item.title);
+    const isDone = !!rec;
+
+    return `
+      <div class="bg-white rounded-xl border ${
+        isDone ? 'border-emerald-400 bg-emerald-50/20 shadow-emerald-100 ring-1 ring-emerald-300' : 'border-slate-200 shadow-sm hover:border-sky-300'
+      } p-4 transition flex flex-col justify-between hover:shadow-md">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-700'}">
+              ID: ${item.id}
+            </span>
+            ${isDone 
+              ? `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã nộp'}</span>` 
+              : `<span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Chưa làm</span>`
+            }
+          </div>
+          <h4 class="font-bold text-slate-800 text-sm mb-3 line-clamp-2 leading-snug" title="${item.title}">
+            ${item.title}
+          </h4>
+        </div>
+
+        <button onclick="window.startLessonPWT1('${item.file}', '${item.title.replace(/'/g, "\\'")}')" class="w-full py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
+          isDone ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-sky-600 hover:bg-sky-700 text-white'
+        }">
+          <i class="fa-solid fa-pen-nib text-[11px]"></i> ${isDone ? 'Xem lại & Dịch lại' : 'Vào làm bài &rarr;'}
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+window.filterPWT1Cards = () => renderCards();
+
+// ==================== CHUYỂN QUA LẠI WORKSPACE ====================
+window.startLessonPWT1 = async (filePath, title) => {
+  document.getElementById('portalScreen').classList.add('hidden');
+  document.getElementById('workspaceScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
   try {
     const res = await fetch(filePath);
     currentExercise = await res.json();
+    currentExercise.title = title;
     updateExerciseView();
   } catch (err) {
-    console.error("Lỗi tải chi tiết bài tập:", err);
+    console.error("Lỗi nạp bài tập:", err);
   }
-}
+};
+
+window.backToPortalPWT1 = () => {
+  document.getElementById('workspaceScreen').classList.add('hidden');
+  document.getElementById('portalScreen').classList.remove('hidden');
+  renderCards();
+};
 
 function updateExerciseView() {
   if (!currentExercise) return;
   const targetBand = document.getElementById('bandTargetSelect').value;
 
-  // Hiển thị loại biểu đồ
   document.getElementById('chartTypeBadge').innerText = currentExercise.type || 'Task 1';
-
-  // Hiển thị nội dung đề và bản mẫu tiếng Việt
   const promptText = `📌 ĐỀ BÀI (ENGLISH PROMPT):\n${currentExercise.prompt}\n\n--- BẢN MẪU TIẾNG VIỆT ĐỐI ỨNG (${targetBand.toUpperCase()}): ---\n\n${currentExercise[targetBand] || currentExercise.band8}`;
   document.getElementById('vietnameseSourceText').innerText = promptText;
 
-  // Tự động gán và tải ảnh biểu đồ từ thư mục prewt12images
   const imgElement = document.getElementById('chartImage');
   const fallback = document.getElementById('imageFallback');
   const pathDisplay = document.getElementById('expectedImgName');
 
-  // ==============================================================
-  // ĐÂY LÀ CHỖ ĐÃ ĐƯỢC SỬA TỰ ĐỘNG LẤY ẢNH TỪ THƯ MỤC prewt12images:
   const fileName = currentExercise.image.split('/').pop();
   const relativeImagePath = `prewt12images/${fileName}`;
-  // ==============================================================
-
   pathDisplay.innerText = relativeImagePath;
 
   imgElement.style.display = 'none';
@@ -94,6 +174,7 @@ function updateWordCount() {
   document.getElementById('wordCountDisplay').innerText = `${words} từ`;
 }
 
+// ==================== CHẤM BÀI & LƯU CLOUD DRIVE ====================
 async function runEvaluation() {
   const studentText = document.getElementById('studentEnglishInput').value.trim();
   const sourceVN = document.getElementById('vietnameseSourceText').innerText.trim();
@@ -122,14 +203,14 @@ QUY TẮC ĐỊNH DẠNG: Dùng cú pháp Markdown chuẩn (#, ##, ###, ####). D
 <mark class="vocab">từ vựng C1-C2 Task 1</mark>
 <span class="teacher-note">💬 (lời dặn của Anh)</span>
 
-XUẤT THEO CẤU TRÚC 5 PHẦN:
+XUẤT THEO CẤU TRÚC:
 # PHẦN 1: MỔ XẺ TỪNG CÂU DỊCH (SỬA BÀI 2 TẦNG TASK 1)
 ---
 ### 📌 Câu [Số]: "[Câu học sinh]"
 *Đối chiếu tiếng Việt: "[Câu tiếng Việt]"*
 #### 🛠️ TẦNG 1: SỬA LỖI NGỮ PHÁP, SỐ LIỆU & DIỄN ĐẠT (Band 6.5 - 7.0)
 - **Anh sửa trực tiếp:** [Câu sửa]
-- **🔄 Các điểm cần sửa ngay:** [Lỗi sai giới từ at/by/to, chia thì, chia số ít/nhiều]
+- **🔄 Các điểm cần sửa ngay:** [Lỗi sai]
 - **👉 Bản sửa sạch lỗi:** "[Câu hoàn chỉnh]"
 
 #### ✨ TẦNG 2: NÂNG TẦM ACADEMIC TASK 1 (Band 8.0 - 8.5)
@@ -166,7 +247,9 @@ XUẤT THEO CẤU TRÚC 5 PHẦN:
       resultContent.innerHTML = marked.parse(fullText);
     });
     statusBar.innerHTML = `✅ Thầy đã chấm xong bằng model [${usedModel}]. Em học kỹ các cấu trúc Tầng 2 nhé!`;
-    // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
+    btn.disabled = false;
+
+    // --- LƯU VÀO LOCALSTORAGE VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
@@ -188,13 +271,11 @@ XUẤT THEO CẤU TRÚC 5 PHẦN:
         pageUrl: "pre-writing/index-pwt1.html"
       };
 
-      // 1. Lưu LocalStorage
       const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
       localHist.unshift(attemptSnapshot);
       localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
 
-      // 2. Bắn lên Google Drive
-      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+      fetch(CLOUD_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -203,8 +284,7 @@ XUẤT THEO CẤU TRÚC 5 PHẦN:
     } catch(errHist) {
       console.warn("Lỗi lưu Pre-Writing 1:", errHist);
     }
-    // ------------------------------------------------
-    btn.disabled = false;
+
   } catch (e) {
     statusBar.innerHTML = `❌ Lỗi: ${e.message}. Em bấm thử lại nhé!`;
     btn.disabled = false;
