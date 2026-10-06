@@ -1,8 +1,9 @@
 /**
  * IELTS SPEAKING CONTROLLER & 2-TIER GRADING ENGINE
+ * Tích hợp Màn hình Portal Lưới Card + Đổi màu theo Lịch sử hoàn thành
  */
 
-// MÃ HÓA RUNTIME AUTH KEY
+// 1. MÃ HÓA RUNTIME AUTH KEY
 const _AUTH_SEEDS = [
   65, 81, 46, 65, 98, 56, 82, 78, 54, 75, 116, 80, 107, 51, 45, 50,
   75, 103, 117, 114, 119, 117, 116, 65, 115, 55, 95, 118, 82, 66,
@@ -14,10 +15,13 @@ function getDecodedKey() {
   return _AUTH_SEEDS.map(c => String.fromCharCode(c)).join('');
 }
 
+const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec";
+
 // Global States
 let currentPart = 1;
 let currentPromptsData = [];
 let selectedPromptItem = null;
+let isCustomMode = false;
 
 // Speech & Recording States
 let recognition = null;
@@ -26,11 +30,11 @@ let mediaRecorder = null;
 let audioChunks = [];
 let base64Audio = null;
 
-// Self-Reliance Timer (20 Seconds Rule)
+// Self-Reliance Timer (20s Rule)
 let guideTimer = null;
 let guideSecondsCount = 0;
 let isGuideOpen = false;
-let hasUsedAssistance = false; // Đổi thành true khi xem > 20 giây
+let hasUsedAssistance = false;
 
 if (window.marked) {
   marked.setOptions({ breaks: true, gfm: true });
@@ -41,99 +45,186 @@ window.addEventListener('DOMContentLoaded', () => {
   initSpeechRecognition();
 });
 
-/* ================== QUẢN LÝ DỮ LIỆU TỪ DATA FOLDER ================== */
-async function loadPartData(partNum) {
+// ==================== LẤY LỊCH SỬ TỪ LOCALSTORAGE ====================
+function getCompletedRecord(promptId, topicName) {
   try {
-    const res = await fetch(`data/speaking-part${partNum}.json`);
-    if (!res.ok) throw new Error("Chưa tìm thấy file json");
-    currentPromptsData = await res.json();
-  } catch (e) {
-    console.warn(`Lỗi nạp data part ${partNum}, dùng dự phòng:`, e);
-    currentPromptsData = getFallbackData(partNum);
+    const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    return list.find(item => 
+      (item.testTitle && (item.testTitle.includes(promptId) || item.testTitle.includes(topicName))) ||
+      (item.details && (item.details.includes(promptId) || item.details.includes(topicName)))
+    );
+  } catch(e) {
+    return null;
   }
-  populateDropdowns();
 }
 
-function getFallbackData(partNum) {
-  if (partNum === 1) {
-    return [{
-      id: "p1_boredom",
-      topic: "Feeling bored",
-      title: "[Part 1] Feeling bored - Full Question Set",
-      fullPromptText: "1. Do you often feel bored?\n2. When would you feel bored?\n3. What do you do when you feel bored?\n4. Do you think childhood is boring or adulthood is boring?",
-      guide: {
-        suggestedIdeas: "Part 1 nói một mạch 4 câu, trả theo cấu trúc A-R-E-A.",
-        keyVocab: ["Monotonous routine", "Kill time", "Preoccupied with"],
-        sampleOutline: "- Q1: Seldom\n- Q2: Commutes\n- Q3: Podcasts\n- Q4: Adulthood"
-      }
-    }];
-  }
-  return [];
-}
-
-window.switchPart = (partNum) => {
+// ==================== MÀN HÌNH 1: PORTAL CARD LOGIC ====================
+async function loadPartData(partNum) {
   currentPart = partNum;
-  document.getElementById('tabPart1Btn').classList.toggle('active', partNum === 1);
-  document.getElementById('tabPart2Btn').classList.toggle('active', partNum === 2);
-  document.getElementById('tabPart3Btn').classList.toggle('active', partNum === 3);
-  document.getElementById('currentPartTag').innerText = `Part ${partNum}`;
+  document.getElementById('tabPart1Btn')?.classList.toggle('bg-violet-600', partNum === 1);
+  document.getElementById('tabPart1Btn')?.classList.toggle('text-white', partNum === 1);
+  document.getElementById('tabPart1Btn')?.classList.toggle('bg-slate-800', partNum !== 1);
 
-  resetGuideTimer();
+  document.getElementById('tabPart2Btn')?.classList.toggle('bg-violet-600', partNum === 2);
+  document.getElementById('tabPart2Btn')?.classList.toggle('text-white', partNum === 2);
+  document.getElementById('tabPart2Btn')?.classList.toggle('bg-slate-800', partNum !== 2);
+
+  document.getElementById('tabPart3Btn')?.classList.toggle('bg-violet-600', partNum === 3);
+  document.getElementById('tabPart3Btn')?.classList.toggle('text-white', partNum === 3);
+  document.getElementById('tabPart3Btn')?.classList.toggle('bg-slate-800', partNum !== 3);
+
+  const urlsToTry = [
+    `speaking-part${partNum}.json`,
+    `data/speaking-part${partNum}.json`,
+    `data/manifest-part${partNum}.json`
+  ];
+
+  currentPromptsData = [];
+  for (const url of urlsToTry) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const raw = await res.json();
+        currentPromptsData = Array.isArray(raw) ? raw : (raw.topics || []);
+        if (currentPromptsData.length > 0) break;
+      }
+    } catch(e) {}
+  }
+
+  renderPortalCards();
+}
+
+window.switchSpeakingPart = (partNum) => {
   loadPartData(partNum);
 };
 
-/* ================== DROPDOWN 2 CẤP (TOPIC -> PROMPTS) ================== */
-function populateDropdowns() {
-  const topicSel = document.getElementById('topicSelect');
-  topicSel.innerHTML = '';
+function renderPortalCards() {
+  const container = document.getElementById('portalCardsGrid');
+  const search = (document.getElementById('portalSearchInput')?.value || '').toLowerCase().trim();
+  if (!container) return;
 
-  // Lọc lấy danh sách Topic duy nhất
-  const uniqueTopics = [...new Set(currentPromptsData.map(item => item.topic))];
-
-  uniqueTopics.forEach((topic) => {
-    const opt = document.createElement('option');
-    opt.value = topic;
-    opt.innerText = topic;
-    topicSel.appendChild(opt);
+  let completedCount = 0;
+  currentPromptsData.forEach(item => {
+    if (getCompletedRecord(item.id, item.topic)) completedCount++;
   });
 
-  handleTopicChange();
+  const progressBadge = document.getElementById('portalProgressBadge');
+  if (progressBadge) {
+    progressBadge.innerText = `${completedCount}/${currentPromptsData.length} Đã luyện`;
+  }
+
+  const filtered = currentPromptsData.filter(item => {
+    const t = (item.title || item.topic || '').toLowerCase();
+    const p = (item.fullPromptText || '').toLowerCase();
+    return t.includes(search) || p.includes(search);
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 font-medium">Không tìm thấy chủ đề nào!</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const rec = getCompletedRecord(item.id, item.topic);
+    const isDone = !!rec;
+
+    const cardClass = isDone 
+      ? 'border-emerald-500/60 bg-emerald-950/20 hover:border-emerald-400' 
+      : 'border-slate-800 bg-slate-850 hover:border-violet-500/60 bg-slate-800/80';
+
+    const statusBadge = isDone
+      ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1">
+           <i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã luyện'}
+         </span>`
+      : `<span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+           <i class="fa-regular fa-clock"></i> Chưa làm
+         </span>`;
+
+    const qCount = item.questions ? `${item.questions.length} câu hỏi` : (item.questionCount ? `${item.questionCount} câu hỏi` : 'Full set');
+
+    return `
+      <div class="rounded-xl border p-4 transition-all duration-200 shadow-sm hover:shadow-lg flex flex-col justify-between gap-3 ${cardClass}">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800 uppercase">
+              Part ${currentPart} • ${item.id}
+            </span>
+            ${statusBadge}
+          </div>
+          <h3 class="text-sm font-bold text-slate-100 line-clamp-2 mt-1 leading-snug" title="${item.title || item.topic}">
+            ${item.title || item.topic}
+          </h3>
+          <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+            <span class="truncate max-w-[190px] text-slate-400">📁 ${item.topic}</span>
+            <span class="text-sky-300 font-semibold whitespace-nowrap">⏱️ ${qCount}</span>
+          </div>
+        </div>
+
+        <button onclick="window.startLessonSpeaking('${item.id}')" class="w-full py-2.5 mt-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
+          isDone ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-violet-600 hover:bg-violet-500 text-white'
+        }">
+          <i class="fa-solid fa-microphone text-[11px]"></i> ${isDone ? 'Luyện lại & Chấm lại' : 'Vào luyện nói &rarr;'}
+        </button>
+      </div>
+    `;
+  }).join('');
 }
 
-window.handleTopicChange = () => {
-  const topicSel = document.getElementById('topicSelect');
-  const promptSel = document.getElementById('promptSelect');
-  const selectedTopic = topicSel.value;
+window.filterSpeakingCards = () => renderPortalCards();
 
-  promptSel.innerHTML = '';
-  const filteredPrompts = currentPromptsData.filter(item => item.topic === selectedTopic);
+// ==================== CHUYỂN QUA LẠI WORKSPACE ====================
+window.startLessonSpeaking = (promptId) => {
+  isCustomMode = false;
+  selectedPromptItem = currentPromptsData.find(item => item.id === promptId);
+  if (!selectedPromptItem) return;
 
-  filteredPrompts.forEach((item) => {
-    const opt = document.createElement('option');
-    opt.value = item.id;
-    opt.innerText = item.title || item.topic;
-    promptSel.appendChild(opt);
-  });
+  document.getElementById('portalScreen').classList.add('hidden');
+  document.getElementById('workspaceScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  handlePromptChange();
+  document.getElementById('currentPartTag').innerText = `Part ${currentPart}`;
+  document.getElementById('promptDisplayArea').style.display = 'block';
+  document.getElementById('customPromptInput').style.display = 'none';
+  document.getElementById('promptDisplayArea').innerText = selectedPromptItem.fullPromptText || selectedPromptItem.topic;
+
+  updateGuideView(selectedPromptItem.guide);
+  resetGuideTimer();
+  resetRecordingUI();
 };
 
-window.handlePromptChange = () => {
-  const promptId = document.getElementById('promptSelect').value;
-  selectedPromptItem = currentPromptsData.find(item => item.id === promptId);
+window.startCustomSpeaking = () => {
+  isCustomMode = true;
+  selectedPromptItem = null;
 
-  if (selectedPromptItem) {
-    document.getElementById('promptDisplayArea').innerText = selectedPromptItem.fullPromptText;
-    updateGuideView(selectedPromptItem.guide);
-  }
+  document.getElementById('portalScreen').classList.add('hidden');
+  document.getElementById('workspaceScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.getElementById('currentPartTag').innerText = "Đề tự nhập";
+  document.getElementById('promptDisplayArea').style.display = 'none';
+  const customInp = document.getElementById('customPromptInput');
+  customInp.style.display = 'block';
+  customInp.value = '';
+
+  updateGuideView(null);
   resetGuideTimer();
+  resetRecordingUI();
+};
+
+window.backToPortalSpeaking = () => {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  if (recognition) { try { recognition.stop(); } catch(e){} }
+  isRecording = false;
+
+  document.getElementById('workspaceScreen').classList.add('hidden');
+  document.getElementById('portalScreen').classList.remove('hidden');
+  renderPortalCards();
 };
 
 function updateGuideView(guide) {
   const ideasText = document.getElementById('guideIdeasText');
   const vocabList = document.getElementById('guideVocabList');
   const outlineText = document.getElementById('guideOutlineText');
-
   vocabList.innerHTML = '';
 
   if (guide) {
@@ -147,36 +238,12 @@ function updateGuideView(guide) {
       });
     }
   } else {
-    ideasText.innerText = "Chưa có gợi ý cho đề này.";
+    ideasText.innerText = "Em đang tự luyện đề riêng. Hãy áp dụng cấu trúc AREA hoặc PEEL nhé!";
     outlineText.innerText = "";
   }
 }
 
-/* ================== CHUYỂN CHẾ ĐỘ: KHO ĐỀ / TỰ DÁN ĐỀ ================== */
-window.togglePromptMode = () => {
-  const isCustom = document.getElementById('modeCustom').checked;
-  const bankSelectors = document.getElementById('bankSelectors');
-  const promptDisplayArea = document.getElementById('promptDisplayArea');
-  const customPromptInput = document.getElementById('customPromptInput');
-
-  if (isCustom) {
-    bankSelectors.style.display = 'none';
-    promptDisplayArea.style.display = 'none';
-    customPromptInput.style.display = 'block';
-  } else {
-    bankSelectors.style.display = 'grid';
-    promptDisplayArea.style.display = 'block';
-    customPromptInput.style.display = 'none';
-    handlePromptChange();
-  }
-  resetGuideTimer();
-};
-
-window.syncCustomPrompt = () => {
-  // Đồng bộ đề tự dán
-};
-
-/* ================== CƠ CHẾ BẤM GIỜ TỰ LỰC 20S ================== */
+// ==================== BẤM GIỜ TỰ LỰC 20S ====================
 window.toggleGuide = () => {
   const box = document.getElementById('guideContentBox');
   const btn = document.getElementById('btnToggleGuide');
@@ -197,15 +264,16 @@ function startGuideTimer() {
   if (guideTimer) return;
   guideTimer = setInterval(() => {
     guideSecondsCount++;
-    document.getElementById('timerCount').innerText = guideSecondsCount;
+    const timerEl = document.getElementById('timerCount');
+    if (timerEl) timerEl.innerText = guideSecondsCount;
 
     if (guideSecondsCount > 20 && !hasUsedAssistance) {
       hasUsedAssistance = true;
       const badge = document.getElementById('selfRelianceBadge');
-      badge.className = "self-reliance-badge assisted";
-      badge.innerHTML = `⚠️ Đã dùng trợ giúp (>20s: ${guideSecondsCount}s)`;
-    } else if (hasUsedAssistance) {
-      document.getElementById('selfRelianceBadge').innerHTML = `⚠️ Đã dùng trợ giúp (>20s: ${guideSecondsCount}s)`;
+      if (badge) {
+        badge.className = "self-reliance-badge assisted text-xs font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700";
+        badge.innerHTML = `⚠️ Đã dùng trợ giúp (>20s: ${guideSecondsCount}s)`;
+      }
     }
   }, 1000);
 }
@@ -224,13 +292,14 @@ function resetGuideTimer() {
   isGuideOpen = false;
   document.getElementById('guideContentBox').style.display = 'none';
   document.getElementById('btnToggleGuide').innerText = "📖 MỞ HƯỚNG DẪN CHI TIẾT (GỢI Ý & TỪ VỰNG)";
-  document.getElementById('timerCount').innerText = '0';
   const badge = document.getElementById('selfRelianceBadge');
-  badge.className = "self-reliance-badge clean";
-  badge.innerHTML = `🟢 Tự lực (<span id="timerCount">0</span>s / tối đa 20s)`;
+  if (badge) {
+    badge.className = "self-reliance-badge clean text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800";
+    badge.innerHTML = `🟢 Tự lực (<span id="timerCount">0</span>s / tối đa 20s)`;
+  }
 }
 
-/* ================== THU ÂM & WEB SPEECH API ================== */
+// ==================== THU ÂM & WEB SPEECH API ====================
 function initSpeechRecognition() {
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!window.SpeechRecognition) {
@@ -253,7 +322,8 @@ function initSpeechRecognition() {
         interim += event.results[i][0].transcript;
       }
     }
-    document.getElementById('speechTranscript').value = final + interim;
+    const txtArea = document.getElementById('speechTranscript');
+    if (txtArea) txtArea.value = final + interim;
   };
 
   recognition.onerror = (e) => console.error("Speech Error:", e.error);
@@ -289,11 +359,12 @@ window.toggleRecording = async () => {
       mediaRecorder.start();
       if (recognition) {
         document.getElementById('speechTranscript').value = '';
-        recognition.start();
+        try { recognition.start(); } catch(e){}
       }
 
       isRecording = true;
-      recBtn.classList.add('recording');
+      recBtn.classList.remove('bg-rose-600');
+      recBtn.classList.add('bg-emerald-600', 'animate-pulse');
       recText.innerText = "Dừng ghi âm & Hoàn thành bài nói";
       recIcon.innerText = "⏹️";
     } catch (err) {
@@ -301,16 +372,32 @@ window.toggleRecording = async () => {
     }
   } else {
     if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-    if (recognition) recognition.stop();
+    if (recognition) { try { recognition.stop(); } catch(e){} }
 
     isRecording = false;
-    recBtn.classList.remove('recording');
+    recBtn.classList.remove('bg-emerald-600', 'animate-pulse');
+    recBtn.classList.add('bg-rose-600');
     recText.innerText = "Nói lại lần nữa (Ghi âm mới)";
     recIcon.innerText = "🎙️";
   }
 };
 
-/* ================== STREAMING GEMINI ENGINE ================== */
+function resetRecordingUI() {
+  isRecording = false;
+  const recBtn = document.getElementById('recBtn');
+  if (recBtn) {
+    recBtn.classList.remove('bg-emerald-600', 'animate-pulse');
+    recBtn.classList.add('bg-rose-600');
+    document.getElementById('recText').innerText = "Bắt đầu ghi âm & nói tiếng Anh";
+    document.getElementById('recIcon').innerText = "🎙️";
+  }
+  document.getElementById('audioContainer').style.display = 'none';
+  document.getElementById('speechTranscript').value = '';
+  document.getElementById('result-box').style.display = 'none';
+  document.getElementById('status-bar').innerText = '';
+}
+
+// ==================== STREAMING GEMINI CHẤM ĐIỂM ====================
 async function streamGeminiDirect(apiKey, parts, onChunk) {
   const modelsQueue = [
     "gemini-3.5-flash-lite",
@@ -321,7 +408,6 @@ async function streamGeminiDirect(apiKey, parts, onChunk) {
   ];
 
   let lastError = null;
-
   for (let model of modelsQueue) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`, {
@@ -365,22 +451,19 @@ async function streamGeminiDirect(apiKey, parts, onChunk) {
   throw lastError;
 }
 
-/* ================== GỬI CHẤM SPEAKING ================== */
 window.startGrading = async () => {
   const apiKey = getDecodedKey();
-  const isCustom = document.getElementById('modeCustom').checked;
-  const taskPrompt = isCustom 
+  const taskPrompt = isCustomMode 
     ? document.getElementById('customPromptInput').value.trim() 
-    : document.getElementById('promptDisplayArea').innerText.trim();
+    : (selectedPromptItem?.fullPromptText || document.getElementById('promptDisplayArea').innerText.trim());
   const transcript = document.getElementById('speechTranscript').value.trim();
 
   if (!taskPrompt) {
     alert("⚠️ Vui lòng chọn hoặc nhập đề bài Speaking!");
     return;
   }
-
   if (!transcript) {
-    alert("⚠️ Vui lòng ghi âm hoặc dán bản ký âm câu trả lời của em!");
+    alert("⚠️ Vui lòng ghi âm hoặc gõ bản ký âm câu trả lời của em!");
     return;
   }
 
@@ -395,11 +478,11 @@ window.startGrading = async () => {
   resultBox.style.display = "block";
   resultContent.innerHTML = "";
 
-  statusBar.innerHTML = "⏳ Thầy đang phân tích phát âm, ngữ điệu & mổ xẻ bài nói 2 tầng cho em, em đợi một chút nhé...";
+  statusBar.innerHTML = "⏳ Thầy đang phân tích phát âm, ngữ điệu & mổ xẻ bài nói 2 tầng cho em...";
 
   const assistanceStatus = hasUsedAssistance
-    ? `HỌC SINH ĐÃ MỞ XEM HƯỚNG DẪN QUÁ 20S (${guideSecondsCount}s). Hãy nhận xét thêm về phản xạ độc lập và độ phụ thuộc tài liệu.`
-    : `HỌC SINH HOÀN TOÀN TỰ LỰC (Không mở hướng dẫn hoặc mở dưới 20s).`;
+    ? `HỌC SINH ĐÃ MỞ XEM HƯỚNG DẪN QUÁ 20S (${guideSecondsCount}s).`
+    : `HỌC SINH HOÀN TOÀN TỰ LỰC.`;
 
   const systemInstruction = `
 Bạn là Giám khảo IELTS Speaking hàng đầu và là người Thầy tận tụy.
@@ -408,42 +491,27 @@ QUY TẮC ĐỊNH DẠNG: DÙNG 100% MARKDOWN THUẦN (###, ####, -). MỖI Ý X
 TRẠNG THÁI BÀI LÀM: ${assistanceStatus}
 
 HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
-
 # PHẦN 1: MỔ XẺ TỪNG CÂU NÓI (2 TẦNG SPEAKING)
 ---
-### 📌 Câu nói [Số thứ tự]: "[Câu nói gốc của em]" — Đánh giá: Band [Điểm/9]
-#### 🛠️ BƯỚC 1: SỬA LỖI DIỄN ĐẠT & NGỮ PHÁP (Khắc phục xong đạt: Band [Điểm/9])
-- **Anh chỉnh lại tự nhiên:** [Viết lại câu. Lỗi dùng <del class="err">từ sai</del>, sửa đúng bằng <ins class="fix">từ chuẩn xác</ins>, lưu ý dùng <span class="teacher-note">💬 (lời dặn)</span>]
-- **🔄 Điểm cần sửa tức thì:**
-  * <del class="err">[Từ/cụm từ sai hoặc gượng]</del> ➔ <ins class="fix">[Từ chuẩn ngữ pháp & tự nhiên]</ins> *(Lý do: sai thì / word choice không tự nhiên / phát âm dễ nhầm)*
-- **🔍 Điểm trừ ở phát ngôn này:** [Giải thích ngắn gọn]
-- **👉 Câu sửa sạch lỗi cơ bản:** "[Câu hoàn chỉnh sau khi sửa sạch]"
+### 📌 Câu [Số]: "[Câu gốc của em]" — Đánh giá: Band [Điểm/9]
+#### 🛠️ BƯỚC 1: SỬA LỖI DIỄN ĐẠT & NGỮ PHÁP (Band [Điểm/9])
+- **Anh chỉnh lại tự nhiên:** [Viết lại câu. Lỗi dùng <del class="err">từ sai</del>, sửa đúng <ins class="fix">từ đúng</ins>]
+- **👉 Câu sửa sạch lỗi cơ bản:** "[Câu hoàn chỉnh]"
 
-#### ✨ BƯỚC 2: NÂNG TẦM BẢN XỨ (Chuẩn Band 8.0 - 8.5)
-- **Biến hóa với Collocations & Idioms:** [Viết câu chuẩn bản xứ với <mark class="vocab">Idiomatic expressions / Collocations C1-C2 (dịch nghĩa tiếng Việt)]</mark>]
-- **🚀 Từ vựng & cụm từ nâng cấp:**
-  * [Từ đơn giản ở Bước 1] ➔ <mark class="vocab">[Cách nói chuẩn người bản xứ (kèm nghĩa)]</mark>
-- **👉 Phiên bản nói đẳng cấp Band 8.0+:** "[Câu nói xuất sắc nhất]"
+#### ✨ BƯỚC 2: NÂNG TẦM BẢN XỨ (Band 8.0+)
+- **Biến hóa với Collocations & Idioms:** [Viết câu với <mark class="vocab">Collocations C1-C2</mark>]
+- **👉 Phiên bản nói đẳng cấp Band 8.0+:** "[Câu xuất sắc nhất]"
 ---
-*(Lặp lại cho tất cả các câu nói trong transcript của học sinh)*
-
 # PHẦN 2: BẢNG ĐÁNH GIÁ 4 TIÊU CHÍ SPEAKING
 | Fluency and Coherence | Lexical Resource | Grammatical Range & Accuracy | Pronunciation |
 |---|---|---|---|
 | Band [Điểm] | Band [Điểm] | Band [Điểm] | Band [Điểm] |
 
-<div class="score-box">
-  <h2>🎯 OVERALL SPEAKING BAND HIỆN TẠI: [Band điểm]</h2>
-</div>
+> ### 🎯 OVERALL SPEAKING BAND HIỆN TẠI: [Band điểm]
 
 # PHẦN 3: LỜI DẶN DÒ CHIẾN LƯỢC CỦA ANH
-[Đoạn văn nhận xét tật xấu khi nói: ngắt nghỉ không đúng chỗ, thiếu liên từ tự nhiên, thói quen dịch từ tiếng Việt, và đánh giá tính độc lập phản xạ theo trạng thái: "${assistanceStatus}"]
-
 # PHẦN 4: BẢN NÓI HOÀN THIỆN TỰ NHIÊN (CLEAN VERSION)
-> [Viết lại toàn bộ câu trả lời hoàn chỉnh theo Bước 1 để học sinh luyện đọc trôi chảy]
-
 # PHẦN 5: BẢN NÓI XUẤT THẦN CHUẨN BẢN XỨ (MASTER 8.5 VERSION)
-> [Viết lại toàn bộ câu trả lời hoàn chỉnh theo Bước 2 với Idioms & Collocations C1-C2]
 `;
 
   const partsPayload = [
@@ -457,7 +525,6 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
   }
 
   let fullMarkdown = "";
-
   try {
     await streamGeminiDirect(apiKey, partsPayload, (chunk) => {
       fullMarkdown += chunk;
@@ -465,7 +532,10 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
     });
 
     statusBar.innerHTML = "✅ Thầy đã chấm xong bài nói cho em rồi nhé! Em xem kỹ từng câu bên dưới nha.";
-// --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
+    submitBtn.disabled = false;
+    printBtn.style.display = "inline-block";
+
+    // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
@@ -487,29 +557,23 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
         pageUrl: `speaking/index-s.html?prompt=${selectedPromptItem ? selectedPromptItem.id : 'custom'}`
       };
 
-      // 1. Lưu LocalStorage
       const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
       localHist.unshift(attemptSnapshot);
       localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
 
-      // 2. Bắn lên Google Drive
-      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+      fetch(CLOUD_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
       }).catch(() => {});
     } catch(errHist) {
-      console.warn("Lỗi lưu Speaking:", errHist);
+      console.warn("Lỗi lưu lịch sử Speaking:", errHist);
     }
-    // ------------------------------------------------
-    submitBtn.disabled = false;
-    submitBtn.innerText = "CHẤM LẠI BÀI KHÁC";
-    printBtn.style.display = "inline-block";
+
   } catch (err) {
     console.error(err);
     statusBar.innerHTML = "❌ Có lỗi xảy ra: " + err.message;
     submitBtn.disabled = false;
-    submitBtn.innerText = "THỬ LẠI";
   }
 };
