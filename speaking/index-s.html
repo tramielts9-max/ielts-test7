@@ -3,134 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IELTS Speaking Master - Hệ Thống Sửa Bài 2 Tầng</title>
+  <title>IELTS Speaking Master - Portal Kho Đề & AI Chấm 2 Tầng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="speaking.css">
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
 
-<div class="s-container">
-  <!-- Header -->
-  <div class="s-header-nav">
-    <div>
-      <h1 class="s-title">🎙️ HỆ THỐNG LUYỆN & CHẤM IELTS SPEAKING 2 TẦNG</h1>
-      <div class="s-subtitle">Speech-to-Text Tức Thì • Đề Thi Quý Cập Nhật • Chuẩn Hóa Lỗi & Nâng Tầm Band 8.0+</div>
-    </div>
-    <a href="../index.html" class="home-link">🏠 Về Trang Chủ</a>
+  <!-- ==================== MÀN HÌNH 1: PORTAL CHỌN ĐỀ SPEAKING ==================== -->
+  <div id="portalScreen">
+    <header class="bg-slate-950/90 border-b border-slate-800 text-white shadow-xl sticky top-0 z-40 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <a href="../index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-slate-700">
+            <i class="fa-solid fa-chevron-left"></i> Trang Chủ
+          </a>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+              <i class="fa-solid fa-microphone-lines text-violet-400"></i> IELTS Speaking Portal
+            </h1>
+            <p class="text-slate-400 text-xs">Kho Đề Thi Forecast • Tự Động Ký Âm STT • Sửa Bài AI 2 Tầng</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.startCustomSpeaking()" class="bg-violet-600 hover:bg-violet-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-pen-to-square"></i> Tự luyện đề riêng
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+      <!-- 3 Tabs Lớn: Part 1, Part 2, Part 3 -->
+      <div class="flex items-center justify-center gap-3 mb-6 flex-wrap">
+        <button type="button" id="tabPart1Btn" onclick="window.switchSpeakingPart(1)" class="px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase transition-all shadow-md bg-violet-600 text-white shadow-violet-600/30">
+          💬 Part 1: Daily Topics
+        </button>
+        <button type="button" id="tabPart2Btn" onclick="window.switchSpeakingPart(2)" class="px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+          🎙️ Part 2: Long Turn (Cue Cards)
+        </button>
+        <button type="button" id="tabPart3Btn" onclick="window.switchSpeakingPart(3)" class="px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+          🧠 Part 3: Deep Discussion
+        </button>
+      </div>
+
+      <!-- Thanh Tìm Kiếm & Tiến Độ -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+        <div class="text-sm font-medium text-slate-300 flex items-center gap-2">
+          <span>Tiến độ luyện tập:</span>
+          <span id="portalProgressBadge" class="bg-violet-950 text-violet-300 border border-violet-800 text-xs px-2.5 py-1 rounded-full font-bold">0/0 Đã luyện</span>
+        </div>
+        <input type="text" id="portalSearchInput" oninput="window.filterSpeakingCards()" placeholder="🔍 Tìm kiếm chủ đề hoặc câu hỏi..." class="px-3.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-violet-500 outline-none w-full sm:w-80">
+      </div>
+
+      <!-- Lưới Card Bài Tập -->
+      <div id="portalCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </main>
   </div>
 
-  <!-- Tabs Chọn Part -->
-  <div class="part-tabs">
-    <button type="button" class="part-tab-btn active" id="tabPart1Btn" onclick="switchPart(1)">💬 PART 1: DAILY TOPICS</button>
-    <button type="button" class="part-tab-btn" id="tabPart2Btn" onclick="switchPart(2)">🎙️ PART 2: LONG TURN (CUE CARD)</button>
-    <button type="button" class="part-tab-btn" id="tabPart3Btn" onclick="switchPart(3)">🧠 PART 3: DISCUSSION</button>
-  </div>
+  <!-- ==================== MÀN HÌNH 2: WORKSPACE PHÒNG LUYỆN NÓI ==================== -->
+  <div id="workspaceScreen" class="hidden">
+    <div class="s-container max-w-5xl mx-auto py-4 px-3">
+      <!-- Header Workspace -->
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
+        <button type="button" onclick="window.backToPortalSpeaking()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-slate-700 shadow">
+          <i class="fa-solid fa-arrow-left"></i> Quay lại kho đề Speaking
+        </button>
+        <span class="part-tag" id="currentPartTag">Part 1</span>
+      </div>
 
-  <!-- Chọn chế độ kho đề hoặc tự dán -->
-  <div class="mode-selection">
-    <label class="radio-label">
-      <input type="radio" name="promptMode" id="modeBank" value="bank" checked onchange="togglePromptMode()">
-      📚 Chọn từ kho đề
-    </label>
-    <label class="radio-label">
-      <input type="radio" name="promptMode" id="modeCustom" value="custom" onchange="togglePromptMode()">
-      ✍️ Tự dán đề riêng
-    </label>
-  </div>
+      <!-- Đề bài Card -->
+      <div class="prompt-card bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-lg mb-4">
+        <div class="prompt-card-header flex justify-between items-center mb-2">
+          <span class="prompt-badge-title text-xs font-extrabold text-violet-300 uppercase">📌 Đề bài & Hướng dẫn trả lời</span>
+        </div>
+        <div class="prompt-box mb-3">
+          <div class="prompt-heading text-xs font-bold text-slate-400 mb-1">📋 IELTS SPEAKING PROMPT:</div>
+          <div id="promptDisplayArea" class="prompt-text text-sm font-semibold text-slate-100 whitespace-pre-line leading-relaxed">Vui lòng chọn đề bài...</div>
+          <textarea id="customPromptInput" class="custom-prompt-input w-full p-2.5 rounded-lg bg-slate-900 text-slate-100 text-xs border border-slate-600 mt-2" rows="4" placeholder="Dán toàn bộ câu hỏi Speaking của em vào đây..." style="display:none;"></textarea>
+        </div>
 
-  <!-- Khu vực chọn đề 2 tầng -->
-  <div id="bankSelectors" class="dropdown-grid">
-    <div class="input-group">
-      <label for="topicSelect">📁 1. Chọn Chủ đề (Topic):</label>
-      <select id="topicSelect" onchange="handleTopicChange()"></select>
-    </div>
-    <div class="input-group">
-      <label for="promptSelect">📁 2. Chọn Đề bài thuộc dạng này:</label>
-      <select id="promptSelect" onchange="handlePromptChange()"></select>
-    </div>
-  </div>
+        <!-- Thanh mở hướng dẫn và bấm giờ tự lực -->
+        <div class="guide-actions-bar flex items-center justify-between pt-2 border-t border-slate-700/60">
+          <button type="button" id="btnToggleGuide" class="btn-guide-toggle text-xs font-bold text-sky-400 hover:text-sky-300" onclick="toggleGuide()">
+            📖 MỞ HƯỚNG DẪN CHI TIẾT (GỢI Ý & TỪ VỰNG)
+          </button>
+          <div id="selfRelianceBadge" class="self-reliance-badge clean text-xs font-bold px-2 py-0.5 rounded">
+            🟢 Tự lực (<span id="timerCount">0</span>s / tối đa 20s)
+          </div>
+        </div>
 
-  <!-- Đề bài Card (Theo UI mẫu) -->
-  <div class="prompt-card">
-    <div class="prompt-card-header">
-      <span class="prompt-badge-title">📌 Đề bài & Hướng dẫn trả lời</span>
-      <span class="part-tag" id="currentPartTag">Part 1</span>
-    </div>
-    <div class="prompt-box">
-      <div class="prompt-heading">📋 IELTS SPEAKING PROMPT:</div>
-      <div id="promptDisplayArea" class="prompt-text">Vui lòng chọn đề bài bên trên...</div>
-      <textarea id="customPromptInput" class="custom-prompt-input" rows="4" placeholder="Dán toàn bộ câu hỏi Speaking của em vào đây..." style="display:none;" oninput="syncCustomPrompt()"></textarea>
-    </div>
+        <!-- Hộp gợi ý ẩn -->
+        <div id="guideContentBox" class="guide-content-box mt-3 pt-3 border-t border-slate-700" style="display:none;">
+          <div class="guide-section mb-2 text-xs">
+            <strong class="text-sky-300">💡 Ý tưởng & Chiến lược phản xạ:</strong>
+            <p id="guideIdeasText" class="text-slate-300 mt-1">Chưa có hướng dẫn cho đề này.</p>
+          </div>
+          <div class="guide-section mb-2 text-xs">
+            <strong class="text-amber-300">🚀 Từ vựng & Collocations đắt giá:</strong>
+            <ul id="guideVocabList" class="guide-vocab-list list-disc pl-4 mt-1 text-slate-300 space-y-0.5"></ul>
+          </div>
+          <div class="guide-section text-xs">
+            <strong class="text-emerald-300">📝 Dàn ý tham khảo nhanh:</strong>
+            <pre id="guideOutlineText" class="guide-outline bg-slate-900 p-2 rounded text-slate-300 mt-1 whitespace-pre-wrap font-sans text-xs"></pre>
+          </div>
+        </div>
+      </div>
 
-    <!-- Thanh mở hướng dẫn và bấm giờ tự lực -->
-    <div class="guide-actions-bar">
-      <button type="button" id="btnToggleGuide" class="btn-guide-toggle" onclick="toggleGuide()">
-        📖 MỞ HƯỚNG DẪN CHI TIẾT (GỢI Ý & TỪ VỰNG)
-      </button>
-      <div id="selfRelianceBadge" class="self-reliance-badge clean">
-        🟢 Tự lực (<span id="timerCount">0</span>s / tối đa 20s)
+      <!-- Khu vực thu âm & Speech-to-Text -->
+      <div class="record-box bg-slate-800/90 border border-slate-700 rounded-xl p-4 text-center mb-4">
+        <button type="button" id="recBtn" class="rec-btn inline-flex items-center gap-2 px-6 py-3 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm shadow-lg transition" onclick="toggleRecording()">
+          <span id="recIcon">🎙️</span> <span id="recText">Bắt đầu ghi âm & nói tiếng Anh (1 lần cho toàn bộ câu)</span>
+        </button>
+        <p class="rec-tip text-xs text-slate-400 mt-2">
+          ⚡ Tích hợp <b>Web Speech API</b>: Trả lời liên tục, bài nói sẽ tự ký âm trực tiếp vào ô bên dưới.
+        </p>
+        <div id="audioContainer" class="audio-container mt-3" style="display:none;">
+          <audio id="audioPreview" controls class="mx-auto"></audio>
+        </div>
+      </div>
+
+      <!-- Bản Ký Âm -->
+      <div class="input-group mb-4">
+        <label for="speechTranscript" class="block text-xs font-bold text-slate-300 uppercase mb-1">Bản ký âm câu trả lời của em (Transcript - có thể gõ hoặc sửa tự do):</label>
+        <textarea id="speechTranscript" rows="7" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:ring-2 focus:ring-violet-500 outline-none" placeholder="Bấm nút đỏ ghi âm để nói, hoặc gõ/dán trực tiếp toàn bộ bài nói tiếng Anh của em vào đây..."></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-container flex gap-3 mb-4">
+        <button type="button" id="btnStartGrading" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg transition" onclick="startGrading()">
+          🚀 GIÁO VIÊN BẮT ĐẦU CHẤM SPEAKING
+        </button>
+        <button type="button" id="btnPrintReport" class="px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-sm transition" style="display:none;" onclick="window.print()">
+          📥 XUẤT BÁO CÁO (PDF)
+        </button>
+      </div>
+
+      <div id="status-bar" class="text-sm font-semibold text-center text-slate-400 mb-4"></div>
+
+      <!-- Kết Quả Chấm 2 Tầng -->
+      <div id="result-box" class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-2xl mb-8" style="display:none;">
+        <div class="color-legend flex flex-wrap gap-3 pb-3 mb-4 border-b border-slate-700 text-xs">
+          <div class="legend-item"><span class="badge-dot" style="background:#cbd5e1;"></span> Chữ thường: Em nói thực tế</div>
+          <div class="legend-item"><span class="badge-dot" style="background:#ef4444;"></span> <del class="err">Gạch đỏ:</del> Lỗi sai / Phát âm nhầm</div>
+          <div class="legend-item"><span class="badge-dot" style="background:#22c55e;"></span> <ins class="fix">Xanh lá:</ins> Sửa đúng chuẩn tự nhiên</div>
+          <div class="legend-item"><span class="badge-dot" style="background:#eab308;"></span> <mark class="vocab">Vàng:</mark> Collocation / Idiom Band 8.0+</div>
+          <div class="legend-item"><span class="badge-dot" style="background:#a855f7;"></span> <span class="teacher-note">💬 Tím: Lưu ý phản xạ</span></div>
+        </div>
+        <div id="result-content" class="text-slate-100 text-sm leading-relaxed"></div>
       </div>
     </div>
-
-    <!-- Hộp gợi ý ẩn -->
-    <div id="guideContentBox" class="guide-content-box" style="display:none;">
-      <div class="guide-section">
-        <strong>💡 Ý tưởng & Chiến lược phản xạ:</strong>
-        <p id="guideIdeasText">Chưa có hướng dẫn cho đề này.</p>
-      </div>
-      <div class="guide-section">
-        <strong>🚀 Từ vựng & Collocations đắt giá:</strong>
-        <ul id="guideVocabList" class="guide-vocab-list"></ul>
-      </div>
-      <div class="guide-section">
-        <strong>📝 Dàn ý tham khảo nhanh:</strong>
-        <pre id="guideOutlineText" class="guide-outline"></pre>
-      </div>
-    </div>
   </div>
 
-  <!-- Khu vực thu âm & Speech-to-Text -->
-  <div class="record-box">
-    <button type="button" id="recBtn" class="rec-btn" onclick="toggleRecording()">
-      <span id="recIcon">🎙️</span> <span id="recText">Bắt đầu ghi âm & nói tiếng Anh (1 lần cho toàn bộ câu)</span>
-    </button>
-    <p class="rec-tip">
-      ⚡ Tích hợp <b>Web Speech API</b>: Trả lời liên tục, bài nói sẽ tự ký âm trực tiếp vào ô bên dưới.
-    </p>
-    <div id="audioContainer" class="audio-container" style="display:none;">
-      <audio id="audioPreview" controls></audio>
-    </div>
-  </div>
-
-  <!-- Bản Ký Âm -->
-  <div class="input-group">
-    <label for="speechTranscript">Bản ký âm câu trả lời của em (Transcript - có thể chỉnh sửa tự do):</label>
-    <textarea id="speechTranscript" rows="8" placeholder="Bấm nút đỏ ghi âm để nói, hoặc gõ/dán trực tiếp toàn bộ bài nói tiếng Anh của em vào đây..."></textarea>
-  </div>
-
-  <!-- Actions -->
-  <div class="btn-container">
-    <button type="button" id="btnStartGrading" class="btn-action btn-grade" onclick="startGrading()">🚀 GIÁO VIÊN BẮT ĐẦU CHẤM SPEAKING</button>
-    <button type="button" id="btnPrintReport" class="btn-action btn-print" onclick="window.print()">📥 XUẤT BÁO CÁO NHẬN XÉT (PDF)</button>
-  </div>
-
-  <div id="status-bar"></div>
-
-  <!-- Kết Quả Chấm 2 Tầng -->
-  <div id="result-box">
-    <div class="color-legend">
-      <div class="legend-item"><span class="badge-dot" style="background:#2d3748;"></span> Chữ thường: Em nói thực tế</div>
-      <div class="legend-item"><span class="badge-dot" style="background:#e53e3e;"></span> <del class="err">Gạch đỏ:</del> Lỗi ngữ pháp / Phát âm nhầm</div>
-      <div class="legend-item"><span class="badge-dot" style="background:#166534;"></span> <ins class="fix">Xanh lá:</ins> Sửa đúng chuẩn tự nhiên</div>
-      <div class="legend-item"><span class="badge-dot" style="background:#854d0e;"></span> <mark class="vocab">Vàng:</mark> Collocation / Idiom Band 8.0+</div>
-      <div class="legend-item"><span class="badge-dot" style="background:#6b21a8;"></span> <span class="teacher-note">💬 Tím: Lưu ý phản xạ & ngữ điệu</span></div>
-    </div>
-    <div id="result-content"></div>
-  </div>
-</div>
-
-<script src="speaking.js"></script>
+  <script src="speaking.js"></script>
 </body>
 </html>
