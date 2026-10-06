@@ -682,6 +682,42 @@ window.completeLessonSubmission = () => {
   if (currentLesson) {
     saveCompletedLesson(currentLesson.id);
   }
+  // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
+    try {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+      const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+      const sEmail = localStorage.getItem('ielts_student_email') || '';
+      const sc = document.getElementById('resOverall')?.innerText || '60';
+
+      const attemptSnapshot = {
+        id: "attempt_ps_" + Date.now(),
+        timestamp: timeStr,
+        testTitle: `Pre-Speaking: [${currentLesson.id}] ${currentLesson.title}`,
+        studentName: sName,
+        studentEmail: sEmail,
+        score: `${sc}%`,
+        timeSpent: `${secondsRecorded}s`,
+        details: `Fluency: ${document.getElementById('resFluency')?.innerText || 0}% | Pronunciation: ${document.getElementById('resPronun')?.innerText || 0}%\nNhận xét: ${document.getElementById('resFeedback')?.innerText || ''}`,
+        pageUrl: "pre-speaking/index-ps.html"
+      };
+
+      // 1. Lưu LocalStorage
+      const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+      localHist.unshift(attemptSnapshot);
+      localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+
+      // 2. Bắn lên Google Drive
+      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
+      }).catch(() => {});
+    } catch(errHist) {
+      console.warn("Lỗi lưu Pre-Speaking:", errHist);
+    }
+    // ------------------------------------------------
   alert(`🎉 Chúc mừng em đã hoàn thành bài tập [${currentLesson.id}]! Hệ thống đã ghi nhận tiến độ.`);
   window.backToPortal(); // Tự động quay về Portal và Card đã làm sẽ đổi sang màu xanh lá
 };
