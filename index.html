@@ -6,6 +6,7 @@
   <title>Cổng Luyện Thi IELTS Toàn Diện</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="curriculum-system/style-system.css">
   <style>
     .portal-hero {
       background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
@@ -168,37 +169,8 @@
 
     <!-- VIEW HỌC VIÊN -->
     <div id="studentViewSection">
-      <!-- LỘ TRÌNH ĐỐT SỐNG -->
-      <div id="roadmapSection" style="background: var(--bg-card); border: 2px solid #0284c7; border-radius: 12px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.08);">
-        <div id="noRoadmapBox" style="text-align: center; padding: 15px 10px;">
-          <h3 style="margin: 0 0 6px 0; font-size: 19px; color: #0284c7;">🎯 EM CHƯA CÓ LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA</h3>
-          <p style="margin: 0 0 16px 0; font-size: 13.5px; color: var(--text-muted);">
-            Hệ thống sẽ tự động gọt bỏ các đốt sống em đã thành thạo và tính toán lịch học từng ngày phù hợp với tốc độ của em:
-          </p>
-          <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-            <button type="button" class="btn-submit" onclick="window.triggerQuickRoadmapSetup('beginner')" style="width: auto; padding: 10px 20px; font-size: 14px; background: #0284c7; margin: 0;">
-              🌱 Mất gốc hoàn toàn (Học từ Đốt N0010)
-            </button>
-            <button type="button" class="btn-submit" onclick="window.triggerQuickRoadmapSetup('intermediate')" style="width: auto; padding: 10px 20px; font-size: 14px; background: #16a34a; margin: 0;">
-              ⚡ Đã vững ngữ pháp (Gọt bỏ 40% đốt căn bản)
-            </button>
-          </div>
-        </div>
-
-        <div id="activeRoadmapBox" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <span id="roadmapSpeedBadge" style="font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 12px; background: #dcfce7; color: #166534;">HỌC BÌNH THƯỜNG</span>
-              <h3 style="margin: 4px 0 0 0; font-size: 18px; color: #0284c7;" id="roadmapDayTitle">📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY 1)</h3>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <span style="font-size: 13px; color: var(--text-muted);" id="roadmapStatsSummary">Tiến độ: 0/0 đốt</span>
-              <button type="button" onclick="window.resetStudentRoadmap()" style="background: none; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-size: 12px; color: #64748b; cursor: pointer;">🔄 Đặt lại</button>
-            </div>
-          </div>
-          <div id="todayTasksList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-        </div>
-      </div>
+ <!-- KHỐI LỘ TRÌNH HỆ THỐNG MỚI (TỰ ĐỘNG RENDER) -->
+      <div id="roadmapSectionMount"></div>
 
       <!-- KHUNG LỊCH SỬ BÀI LÀM -->
       <div class="history-section">
@@ -411,7 +383,7 @@
 <script type="module">
   import { CONFIG } from './js/config.js';
   import { stateManager } from './js/state.js';
-  import { curriculumEngine } from './js/curriculum-engine.js';
+  import { curriculumUI } from './curriculum-system/ui-system.js';
 
   let rawAdminAttempts = [];
   let studentsMap = {};
@@ -476,7 +448,7 @@
 
       loadModuleSettings();
       syncAndRenderHistory(user.email);
-      renderRoadmapUI(user.email);
+      curriculumUI.render('roadmapSectionMount');
     } else {
       document.getElementById('authGateBox').style.display = 'flex';
       document.getElementById('unlockedContentBox').style.display = 'none';
