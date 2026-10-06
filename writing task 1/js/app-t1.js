@@ -3,57 +3,173 @@ import { streamGeminiTask1 } from './api-t1.js';
 let manifestData = [];
 let currentItemJson = null;
 let currentBase64Image = null;
+let currentCategory = "ALL";
 
 let guideTimerInterval = null;
 let guideTotalOpenSeconds = 0;
 let isGuideOpen = false;
 
+const CATEGORIES = ["ALL", "Line Graph", "Bar Chart", "Pie Chart", "Table", "Mixed Charts", "Map", "Floor Plan", "Process"];
+const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec";
+
 marked.setOptions({ breaks: true, gfm: true });
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupEventListeners();
-  loadManifest();
+  setupWorkspaceListeners();
+  loadManifestAndInitPortal();
 });
 
-function setupEventListeners() {
-  document.querySelectorAll('input[name="promptSource"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      const isCustom = e.target.value === 'custom';
-      document.getElementById('catalogDropdowns').style.display = isCustom ? 'none' : 'flex';
-      document.getElementById('customPromptBox').style.display = isCustom ? 'block' : 'none';
-      if (!isCustom) {
-        loadSelectedExercise();
-      } else {
-        clearForCustomPrompt();
-      }
-    });
+function getCompletedRecord(title) {
+  try {
+    const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    return list.find(item => item.testTitle && item.testTitle.includes(title));
+  } catch (e) {
+    return null;
+  }
+}
+
+// ==================== MÀN HÌNH 1: PORTAL LOGIC ====================
+async function loadManifestAndInitPortal() {
+  try {
+    const res = await fetch('data/manifest-t1.json');
+    manifestData = await res.json();
+    renderTabs();
+    renderCards();
+  } catch (err) {
+    console.error("Lỗi manifest Task 1:", err);
+  }
+}
+
+function renderTabs() {
+  const container = document.getElementById('categoryTabsContainer');
+  if (!container) return;
+  container.innerHTML = CATEGORIES.map(cat => {
+    const isActive = cat === currentCategory;
+    return `
+      <button onclick="window.switchTask1Category('${cat}')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
+        isActive ? 'bg-red-800 text-white shadow-sm ring-2 ring-red-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+      }">
+        ${cat === 'ALL' ? 'Tất cả 133 đề' : cat}
+      </button>
+    `;
+  }).join('');
+}
+
+window.switchTask1Category = (cat) => {
+  currentCategory = cat;
+  renderTabs();
+  renderCards();
+};
+
+function renderCards() {
+  const container = document.getElementById('portalCardsGrid');
+  const search = (document.getElementById('portalSearchInput')?.value || '').toLowerCase().trim();
+  if (!container) return;
+
+  let completedCount = 0;
+  manifestData.forEach(item => {
+    if (getCompletedRecord(item.title)) completedCount++;
+  });
+  document.getElementById('portalProgressBadge').innerText = `${completedCount}/${manifestData.length} Đã viết`;
+
+  const filtered = manifestData.filter(item => {
+    const matchCat = (currentCategory === "ALL") || item.type === currentCategory;
+    const matchSearch = item.title.toLowerCase().includes(search) || item.id.toLowerCase().includes(search);
+    return matchCat && matchSearch;
   });
 
-  const customPromptInput = document.getElementById('customPromptInput');
-  if (customPromptInput) {
-    customPromptInput.addEventListener('input', (e) => {
-      const promptDisplay = document.getElementById('promptDisplayText');
-      if (promptDisplay) {
-        promptDisplay.innerText = e.target.value.trim() || "Vui lòng nhập đề bài vào ô bên trên...";
-      }
-    });
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">Không tìm thấy đề thi phù hợp!</div>`;
+    return;
   }
 
-  document.getElementById('categorySelect').addEventListener('change', populateExercisesForCategory);
-  document.getElementById('exerciseSelect').addEventListener('change', loadSelectedExercise);
+  container.innerHTML = filtered.map(item => {
+    const rec = getCompletedRecord(item.title);
+    const isDone = !!rec;
 
+    return `
+      <div class="bg-white rounded-xl border ${
+        isDone ? 'border-emerald-400 bg-emerald-50/20 shadow-emerald-100 ring-1 ring-emerald-300' : 'border-slate-200 shadow-sm hover:border-red-400'
+      } p-4 transition flex flex-col justify-between hover:shadow-md">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+              ${item.type}
+            </span>
+            ${isDone 
+              ? `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã viết'}</span>` 
+              : `<span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Chưa làm</span>`
+            }
+          </div>
+          <h4 class="font-bold text-slate-800 text-sm mb-3 line-clamp-2 leading-snug" title="${item.title}">
+            ${item.title}
+          </h4>
+        </div>
+
+        <button onclick="window.startLessonTask1('${item.file}', '${item.image || ''}', '${item.type}')" class="w-full py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
+          isDone ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-red-800 hover:bg-red-700 text-white'
+        }">
+          <i class="fa-solid fa-pen text-[11px]"></i> ${isDone ? 'Xem lại & Viết lại' : 'Vào phòng thi viết &rarr;'}
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+window.filterTask1Cards = () => renderCards();
+
+// ==================== CHUYỂN QUA LẠI WORKSPACE ====================
+window.startLessonTask1 = async (filePath, imageSrc, chartType) => {
+  document.getElementById('portalScreen').classList.add('hidden');
+  document.getElementById('workspaceScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.getElementById('chartTypeBadge').innerText = chartType;
+
+  try {
+    const res = await fetch(filePath);
+    currentItemJson = await res.json();
+    document.getElementById('promptDisplayText').innerText = currentItemJson.prompt || "The graph below shows...";
+    const finalImg = currentItemJson.image || imageSrc;
+    if (finalImg) {
+      showImage(finalImg);
+      loadRemoteImageToBase64(finalImg);
+    } else {
+      removeImage();
+    }
+    renderGuideContent(currentItemJson.guide);
+    resetGuideTimer();
+  } catch (err) {
+    console.warn("Lỗi tải chi tiết:", err.message);
+    if (imageSrc) {
+      showImage(imageSrc);
+      loadRemoteImageToBase64(imageSrc);
+    } else {
+      removeImage();
+    }
+    renderGuideContent(null);
+  }
+};
+
+window.backToPortalTask1 = () => {
+  document.getElementById('workspaceScreen').classList.add('hidden');
+  document.getElementById('portalScreen').classList.remove('hidden');
+  renderCards();
+};
+
+// ==================== WORKSPACE LOGIC ====================
+function setupWorkspaceListeners() {
   const essayInput = document.getElementById('studentEssayInput');
-  essayInput.addEventListener('input', () => {
+  essayInput?.addEventListener('input', () => {
     const text = essayInput.value.trim();
     const count = text ? text.split(/\s+/).length : 0;
     document.getElementById('wordCounter').innerText = `${count} từ`;
   });
 
-  document.getElementById('btnToggleGuide').addEventListener('click', toggleGuide);
-
+  document.getElementById('btnToggleGuide')?.addEventListener('click', toggleGuide);
   const fileInput = document.getElementById('chartFileInput');
-  fileInput.addEventListener('change', (e) => handleImageUpload(e.target.files[0]));
-  document.getElementById('btnRemoveImage').addEventListener('click', removeImage);
+  fileInput?.addEventListener('change', (e) => handleImageUpload(e.target.files[0]));
+  document.getElementById('btnRemoveImage')?.addEventListener('click', removeImage);
 
   window.addEventListener('paste', (e) => {
     const items = (e.clipboardData || window.clipboardData).items;
@@ -65,95 +181,7 @@ function setupEventListeners() {
     }
   });
 
-  document.getElementById('btnSubmitGrading').addEventListener('click', submitEssay);
-}
-
-// ==================== NẠP DỮ LIỆU TỪ MANIFEST ====================
-async function loadManifest() {
-  try {
-    const res = await fetch('data/manifest-t1.json');
-    if (!res.ok) throw new Error("Không thể tải data/manifest-t1.json");
-    manifestData = await res.json();
-    populateExercisesForCategory();
-  } catch (err) {
-    console.error("Lỗi manifest:", err);
-  }
-}
-
-function populateExercisesForCategory() {
-  const currentCategory = document.getElementById('categorySelect').value;
-  const exerciseSelect = document.getElementById('exerciseSelect');
-  exerciseSelect.innerHTML = '';
-
-  const filtered = manifestData.filter(item => item.type === currentCategory);
-
-  if (filtered.length === 0) {
-    const opt = document.createElement('option');
-    opt.innerText = `Chưa có bài nào cho dạng ${currentCategory}`;
-    exerciseSelect.appendChild(opt);
-    return;
-  }
-
-  filtered.forEach(item => {
-    const opt = document.createElement('option');
-    opt.value = item.file;
-    opt.innerText = item.title;
-    opt.setAttribute('data-image', item.image || '');
-    exerciseSelect.appendChild(opt);
-  });
-
-  loadSelectedExercise();
-}
-
-// ==================== TẢI CHI TIẾT ĐỀ BÀI ====================
-async function loadSelectedExercise() {
-  const exerciseSelect = document.getElementById('exerciseSelect');
-  const filePath = exerciseSelect.value;
-  if (!filePath || filePath.startsWith('Chưa')) return;
-
-  const currentCategory = document.getElementById('categorySelect').value;
-  document.getElementById('chartTypeBadge').innerText = currentCategory;
-
-  const selectedOpt = exerciseSelect.options[exerciseSelect.selectedIndex];
-  const manifestImg = selectedOpt?.getAttribute('data-image') || '';
-
-  try {
-    const res = await fetch(filePath);
-    if (!res.ok) throw new Error(`Chưa tạo file ${filePath} trên GitHub`);
-    currentItemJson = await res.json();
-
-    // 1. Hiển thị đề bài
-    document.getElementById('promptDisplayText').innerText = currentItemJson.prompt || "The graph below shows...";
-
-    // 2. Hiển thị ảnh (ưu tiên ảnh trong file JSON, nếu không có lấy từ manifest)
-    const finalImg = currentItemJson.image || manifestImg;
-    if (finalImg) {
-      showImage(finalImg);
-      loadRemoteImageToBase64(finalImg);
-    } else {
-      removeImage();
-    }
-
-    // 3. Đổ hướng dẫn chi tiết
-    renderGuideContent(currentItemJson.guide);
-
-    // 4. Reset Timer 30s
-    resetGuideTimer();
-
-  } catch (err) {
-    console.warn("Thông báo:", err.message);
-    document.getElementById('promptDisplayText').innerText = `⚠️ Bài này chưa có file JSON (${filePath}). Em có thể bấm "Tự dán đề riêng" để làm ngay nhé!`;
-    
-    // Nếu chưa có file JSON nhưng manifest đã có đường dẫn ảnh thì vẫn hiện ảnh cho học sinh viết
-    if (manifestImg) {
-      showImage(manifestImg);
-      loadRemoteImageToBase64(manifestImg);
-    } else {
-      removeImage();
-    }
-    
-    renderGuideContent(null);
-  }
+  document.getElementById('btnSubmitGrading')?.addEventListener('click', submitEssay);
 }
 
 function renderGuideContent(guideMarkdown) {
@@ -165,18 +193,6 @@ function renderGuideContent(guideMarkdown) {
   }
 }
 
-function clearForCustomPrompt() {
-  currentItemJson = null;
-  removeImage();
-  document.getElementById('chartTypeBadge').innerText = "Đề tự nhập";
-  const promptDisplay = document.getElementById('promptDisplayText');
-  if (promptDisplay) {
-    promptDisplay.innerText = document.getElementById('customPromptInput')?.value || "Vui lòng nhập đề bài vào ô bên trên...";
-  }
-  document.getElementById('guideContentBox').innerHTML = `<p>💡 Em đang làm đề tự nhập. Hãy phân tích kỹ đề và lập dàn ý 4 phần nhé!</p>`;
-}
-
-// ==================== TIMER 30S & MỞ/THU GỌN HƯỚNG DẪN ====================
 function toggleGuide() {
   const box = document.getElementById('guideCollapsibleBox');
   const toggleText = document.getElementById('guideToggleText');
@@ -232,29 +248,17 @@ function updateTimerBadge() {
   }
 }
 
-// ==================== HIỂN THỊ ẢNH (AUTO FALLBACK .JPEG / .JPG) ====================
 function showImage(src) {
   const img = document.getElementById('chartImage');
   const fallback = document.getElementById('imageFallback');
   const removeBtn = document.getElementById('btnRemoveImage');
 
   img.onerror = () => {
-    if (src.endsWith('.jpg')) {
-      img.src = src.replace('.jpg', '.jpeg');
-    } else if (src.endsWith('.jpeg')) {
-      img.src = src.replace('.jpeg', '.jpg');
-    } else {
-      img.style.display = 'none';
-      fallback.style.display = 'block';
-    }
+    if (src.endsWith('.jpg')) img.src = src.replace('.jpg', '.jpeg');
+    else if (src.endsWith('.jpeg')) img.src = src.replace('.jpeg', '.jpg');
+    else { img.style.display = 'none'; fallback.style.display = 'block'; }
   };
-
-  img.onload = () => {
-    img.style.display = 'block';
-    fallback.style.display = 'none';
-    removeBtn.style.display = 'inline-block';
-  };
-
+  img.onload = () => { img.style.display = 'block'; fallback.style.display = 'none'; removeBtn.style.display = 'inline-block'; };
   img.src = src;
 }
 
@@ -272,10 +276,7 @@ function handleImageUpload(file) {
   if (!file || !file.type.startsWith('image/')) return;
   const reader = new FileReader();
   reader.onload = (e) => {
-    currentBase64Image = {
-      mimeType: file.type,
-      data: e.target.result.split(',')[1]
-    };
+    currentBase64Image = { mimeType: file.type, data: e.target.result.split(',')[1] };
     showImage(e.target.result);
   };
   reader.readAsDataURL(file);
@@ -287,20 +288,15 @@ async function loadRemoteImageToBase64(url) {
     const blob = await res.blob();
     const reader = new FileReader();
     reader.onloadend = () => {
-      currentBase64Image = {
-        mimeType: blob.type || 'image/jpeg',
-        data: reader.result.split(',')[1]
-      };
+      currentBase64Image = { mimeType: blob.type || 'image/jpeg', data: reader.result.split(',')[1] };
     };
     reader.readAsDataURL(blob);
   } catch(e) {}
 }
 
-window.openImageModal = (src) => {
-  window.open(src, '_blank');
-};
+window.openImageModal = (src) => window.open(src, '_blank');
 
-// ==================== CHẤM BÀI 2 TẦNG AI ====================
+// ==================== CHẤM BÀI & LƯU CLOUD ====================
 async function submitEssay() {
   const essay = document.getElementById('studentEssayInput').value.trim();
   if (!essay) {
@@ -309,17 +305,12 @@ async function submitEssay() {
   }
 
   stopTimer();
-
   const isAssisted = guideTotalOpenSeconds > 30;
   const modeStatus = isAssisted 
     ? `Có trợ giúp từ gợi ý mẫu (${guideTotalOpenSeconds} giây xem hướng dẫn)`
     : `Tự lực làm bài hoàn toàn (${guideTotalOpenSeconds} giây)`;
 
-  const isCustom = document.querySelector('input[name="promptSource"]:checked').value === 'custom';
-  const prompt = isCustom 
-    ? document.getElementById('customPromptInput').value.trim()
-    : (currentItemJson?.prompt || document.getElementById('promptDisplayText').innerText);
-
+  const prompt = currentItemJson?.prompt || document.getElementById('promptDisplayText').innerText;
   const submitBtn = document.getElementById('btnSubmitGrading');
   const resultBox = document.getElementById('resultBox');
   const resultMarkdown = document.getElementById('resultMarkdown');
@@ -330,66 +321,49 @@ async function submitEssay() {
   resultMarkdown.innerHTML = '';
   statusBar.innerHTML = `⏳ Thầy đang phân tích và sửa bài 2 tầng cho em... (Chế độ: <b>${modeStatus}</b>)`;
 
-  const promptPayload = [
-    {
-      text: `
+  const promptPayload = [{
+    text: `
 Bạn là Giám khảo IELTS & Giáo viên dạy viết cự phách.
 QUY TẮC XƯNG HÔ: Bắt buộc xưng "Thầy" và gọi học sinh là "Em".
-THÔNG TIN LÀM BÀI CỦA HỌC SINH:
-- Trạng thái: ${modeStatus}.
+THÔNG TIN LÀM BÀI: ${modeStatus}.
 
-HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 6 PHẦN SAU (DÙNG 100% MARKDOWN, KHÔNG DÙNG THẺ DIV):
-
+HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 6 PHẦN SAU (DÙNG 100% MARKDOWN):
 # PHẦN 1: MỔ XẺ 2 TẦNG CHI TIẾT TỪNG CÂU
 ---
-### 📌 Câu [Số thứ tự] ([Vị trí câu]) — Điểm gốc của em: Band [Điểm/9]
-#### 🛠️ BƯỚC 1: SỬA LỖI HIỂN NHIÊN (Khắc phục xong đạt: Band 6.0 - 6.5)
-- **Thầy sửa trực tiếp:** [Viết lại câu. Lỗi sai dùng <del class="err">từ sai</del>, sửa đúng dùng <ins class="fix">từ đúng</ins>, nhắc nhở dùng <span class="teacher-note">💬 (lời dặn)</span>]
-- **🔄 Từ được sửa ở Bước 1:**
-  * <del class="err">[Từ sai]</del> ➔ <ins class="fix">[Từ đúng]</ins> *(Lý do lỗi)*
-- **🔍 Lý do bị trừ điểm:** [Giải thích ngắn gọn]
-- **👉 Câu sạch lỗi cơ bản:** "[Viết lại câu hoàn chỉnh]"
+### 📌 Câu [Số] — Điểm gốc: Band [Điểm/9]
+#### 🛠️ BƯỚC 1: SỬA LỖI HIỂN NHIÊN (Band 6.0 - 6.5)
+- **Thầy sửa trực tiếp:** [Câu sửa]
+- **🔄 Từ sửa:** <del class="err">[Sai]</del> ➔ <ins class="fix">[Đúng]</ins>
+- **👉 Câu sạch lỗi:** "[Viết lại câu]"
 
-#### ✨ BƯỚC 2: NÂNG CẤP HOÀN MỸ (Chuẩn Band 8.0 - 8.5)
-- **Bơm từ vựng & cấu trúc đỉnh cao:** [Viết câu với <mark class="vocab">từ C1-C2 (dịch nghĩa)</mark>]
-- **🚀 Từ vựng nâng cấp ở Bước 2:**
-  * [Từ ở bước 1] ➔ <mark class="vocab">[Từ C1-C2 xịn (dịch nghĩa)]</mark>
-- **👉 Chốt câu hoàn mỹ Band 8.0+:** "[Câu xuất sắc nhất]"
+#### ✨ BƯỚC 2: NÂNG CẤP HOÀN MỸ (Band 8.0+)
+- **Bơm từ C1-C2:** [Viết câu với <mark class="vocab">từ C1-C2</mark>]
+- **👉 Chốt câu hoàn mỹ:** "[Câu đỉnh cao]"
 ---
-
 # PHẦN 2: BẢNG TỔNG HỢP ĐIỂM TỪNG CÂU
-| Câu số | Vị trí | Điểm gốc (/9) | Điểm sau sửa lỗi (/9) | Điểm hoàn mỹ (/9) | Lỗi cốt lõi cần nhớ |
-|---|---|---|---|---|---|
+| Câu số | Điểm gốc (/9) | Điểm sau sửa lỗi (/9) | Điểm hoàn mỹ (/9) | Lỗi cốt lõi |
+|---|---|---|---|---|
 
 # PHẦN 3: ĐÁNH GIÁ 4 TIÊU CHÍ (IELTS TASK 1 RUBRIC)
 | Task Achievement | Coherence & Cohesion | Lexical Resource | Grammatical Range & Accuracy |
 |---|---|---|---|
 | Band [Điểm] | Band [Điểm] | Band [Điểm] | Band [Điểm] |
 
-> ### 🎯 OVERALL BAND SCORE: [Band điểm tổng]
+> ### 🎯 OVERALL BAND SCORE: [Band tổng]
 
 # PHẦN 4: LỜI DẶN DÒ CHIẾN LƯỢC CỦA THẦY
-[Đoạn văn thầy tâm sự 2-3 điểm mấu chốt em cần cải thiện]
-
 # PHẦN 5: BẢN SẠCH LỖI HIỂN NHIÊN (CLEAN VERSION)
-> [Toàn bộ bài viết hoàn chỉnh sạch lỗi cơ bản theo Bước 1]
-
 # PHẦN 6: BẢN NÂNG CẤP HOÀN MỸ (BAND 8.0+ MASTER VERSION)
-> [Toàn bộ bài viết hoàn chỉnh viết lại xuất sắc theo Bước 2]
 
 Đề bài: ${prompt}
 Bài làm của học sinh:
 ${essay}
-      `
-    }
-  ];
+    `
+  }];
 
   if (currentBase64Image) {
     promptPayload.push({
-      inlineData: {
-        mimeType: currentBase64Image.mimeType,
-        data: currentBase64Image.data
-      }
+      inlineData: { mimeType: currentBase64Image.mimeType, data: currentBase64Image.data }
     });
   }
 
@@ -401,6 +375,8 @@ ${essay}
     });
 
     statusBar.innerHTML = `✅ Thầy đã chấm xong! (Trạng thái: <b>${modeStatus}</b>)`;
+    submitBtn.disabled = false;
+
     // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
       const now = new Date();
@@ -414,7 +390,7 @@ ${essay}
       const attemptSnapshot = {
         id: "attempt_wt1_" + Date.now(),
         timestamp: timeStr,
-        testTitle: `Writing Task 1: ${currentItemJson?.title || currentCategory || 'Tự luyện'}`,
+        testTitle: `Writing Task 1: ${currentItemJson?.title || 'Biểu đồ Task 1'}`,
         studentName: sName,
         studentEmail: sEmail,
         score: bandScore,
@@ -423,13 +399,11 @@ ${essay}
         pageUrl: "writing task 1/index-t1.html"
       };
 
-      // 1. Lưu LocalStorage
       const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
       localHist.unshift(attemptSnapshot);
       localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
 
-      // 2. Bắn lên Google Drive
-      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+      fetch(CLOUD_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -438,8 +412,7 @@ ${essay}
     } catch(errHist) {
       console.warn("Lỗi lưu Writing Task 1:", errHist);
     }
-    // ------------------------------------------------
-    submitBtn.disabled = false;
+
   } catch (err) {
     console.error(err);
     statusBar.innerHTML = `❌ Lỗi: ${err.message}. Em bấm thử lại nhé!`;
