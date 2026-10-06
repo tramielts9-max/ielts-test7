@@ -5,10 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pre-Writing Task 1 - AI Translation & Sửa bài 2 tầng</title>
   <link rel="stylesheet" href="css/style-pwt1.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
+  <!-- ================== MÀN HÌNH 1: PORTAL DANH SÁCH CARD PRE-WRITING 1 ================== -->
+<div id="portalScreen" class="max-w-7xl mx-auto px-4 py-6">
+  <header class="bg-gradient-to-r from-sky-700 to-sky-600 text-white shadow-lg rounded-2xl p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <a href="../index.html" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+        <i class="fa-solid fa-chevron-left"></i> Trang Chủ
+      </a>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-sky-200"></i> Pre-Writing Task 1 Portal
+        </h1>
+        <p class="text-sky-100 text-xs">Luyện dịch câu số liệu 3 Band • Tự động nhận diện bài đã làm</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- THANH TABS DẠNG BIỂU ĐỒ -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+      <span class="text-xs font-semibold uppercase text-slate-400 whitespace-nowrap mr-1">Dạng biểu đồ:</span>
+      <div id="categoryTabsContainer" class="flex gap-2"></div>
+    </div>
+  </div>
+
+  <!-- TIẾN ĐỘ & Ô TÌM KIẾM -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div class="text-sm font-medium text-slate-600 flex items-center gap-2">
+      <span>Tiến độ dạng bài:</span>
+      <span id="pwt1ProgressBadge" class="bg-sky-100 text-sky-800 text-xs px-3 py-1 rounded-full font-bold">0/0 Đã hoàn thành</span>
+    </div>
+    <input type="text" id="pwt1SearchInput" oninput="window.filterPWT1Cards()" placeholder="🔍 Tìm kiếm đề bài..." class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-400 outline-none w-full sm:w-72">
+  </div>
+
+  <!-- LƯỚI CARD ĐỀ BÀI -->
+  <div id="pwt1CardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</div>
+
+<!-- ================== MÀN HÌNH 2: PHÒNG LÀM BÀI WORKSPACE ================== -->
+<div id="workspaceScreen" style="display: none;">
+  <div style="max-width: 1200px; margin: 10px auto -15px auto; padding: 0 15px;">
+    <button type="button" onclick="window.backToPortalPWT1()" style="background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+      ⬅️ Quay lại danh sách đề
+    </button>
+  </div>
+  
 <div class="container">
   <header>
     <a href="../index.html" class="btn-back">⬅️ Trang chủ</a>
@@ -69,7 +116,8 @@
     <div id="result-content"></div>
   </div>
 </div>
-
+</div><!-- Đóng workspaceScreen -->
+  
 <script type="module" src="js/app-pwt1.js"></script>
 </body>
 </html>
