@@ -1,0 +1,247 @@
+/* =========================================================================
+   curriculum-system/style-system.css
+   GIAO DIỆN LỘ TRÌNH HỌC TẬP TỰ ĐỘNG & BẢNG ĐIỀU KHIỂN HÀNG NGÀY
+   ========================================================================= */
+
+.cs-container {
+  background: var(--bg-card, #ffffff);
+  border: 2px solid #0284c7;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.08);
+  font-family: inherit;
+  color: var(--text-main, #0f172a);
+}
+
+/* Header khối lộ trình */
+.cs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid var(--border-color, #e2e8f0);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cs-title-group h3 {
+  margin: 4px 0 0 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cs-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 12px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.cs-badge-speed { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.cs-badge-stage { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+/* Bảng thống kê tiến độ & giờ học thầy */
+.cs-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cs-stat-box {
+  background: var(--bg-subcard, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.cs-stat-val {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.cs-stat-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted, #64748b);
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+/* Thanh Progress tổng */
+.cs-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 12px 0 18px 0;
+}
+
+.cs-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #16a34a);
+  transition: width 0.4s ease;
+}
+
+/* Danh sách đốt nhiệm vụ hôm nay */
+.cs-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cs-task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-subcard, #f8fafc);
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  padding: 14px 18px;
+  border-radius: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.cs-task-card.is-done {
+  background: #f0fdf4 !important;
+  border-color: #86efac !important;
+}
+
+.cs-task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.cs-task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cs-node-id {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 11px;
+  background: #1e293b;
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.cs-node-domain {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.cs-node-time {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cs-task-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-main, #0f172a);
+}
+
+.cs-task-card.is-done .cs-task-title {
+  color: #166534;
+}
+
+/* Nút bấm làm bài */
+.cs-btn-action {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.cs-btn-start {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.cs-btn-start:hover {
+  background: #0369a1;
+}
+
+.cs-btn-done {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  cursor: default;
+}
+
+/* Khung khởi tạo khi chưa có lộ trình */
+.cs-setup-box {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.cs-setup-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0284c7;
+  margin-bottom: 8px;
+}
+
+.cs-setup-desc {
+  font-size: 13.5px;
+  color: var(--text-muted, #64748b);
+  max-width: 580px;
+  margin: 0 auto 20px auto;
+  line-height: 1.6;
+}
+
+.cs-setup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cs-btn-preset {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cs-btn-preset:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
