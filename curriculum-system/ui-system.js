@@ -1,6 +1,7 @@
 /**
  * curriculum-system/ui-system.js
- * HIỂN THỊ LỘ TRÌNH, DÒNG CHÚ THÍCH LỢI ÍCH HỌC TẬP VÀ CLOUD SYNC
+ * GIAO DIỆN CHỌN MA TRẬN 2 ĐẦU (START ➔ TARGET BAND), HIỂN THỊ 4 THÔNG SỐ VÀNG:
+ * ĐỐT ĐÃ XONG | GIỜ TỰ CÀY (1.5H/NGÀY) | SỐ BUỔI HỌC VỚI GV (3 BUỔI/TUẦN) | THỜI GIAN VỀ ĐÍCH
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
@@ -11,51 +12,6 @@ const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNErQQFdciAQM
 
 let diagRecognition = null;
 let isDiagRecording = false;
-
-const BENCHMARK_EXPLANATIONS = {
-  fast: {
-    label: "Học Nhanh (Fast) ⚡",
-    desc: "Dành cho học sinh tiếp thu nhanh, phản xạ tốt hoặc cần luyện thi gấp",
-    table: [
-      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "5 - 15 phút", coach: "0 - 0.25h" },
-      { type: "Từ vựng (1 Unit 30 từ)", time: "15 phút", coach: "0h (Tự ôn SRS)" },
-      { type: "Pre-Listening & Pre-Reading", time: "10 phút", coach: "0 - 0.25h" },
-      { type: "Pre-Writing Task 1 & 2", time: "15 - 20 phút", coach: "0.5h (Sửa câu)" },
-      { type: "Reading Cam (1 Passage)", time: "12 - 15 phút", coach: "0 - 0.25h" },
-      { type: "Listening Cam (1 Part)", time: "8 - 10 phút", coach: "0 - 0.25h" },
-      { type: "Writing Task 1 / Task 2", time: "20p / 40p (Chuẩn thi)", coach: "0.75 - 1.0h" },
-      { type: "Speaking Part 1 / 2 / 3", time: "10 - 15 phút", coach: "0.25 - 0.5h" }
-    ]
-  },
-  normal: {
-    label: "Học Bình Thường (Normal) 🌱",
-    desc: "Lộ trình chuẩn kiến thức, đảm bảo nắm chắc từng dạng bài và làm sổ note lỗi",
-    table: [
-      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "10 - 25 phút", coach: "0 - 0.5h" },
-      { type: "Từ vựng (1 Unit 30 từ)", time: "25 phút", coach: "0h (Tự ôn SRS)" },
-      { type: "Pre-Listening & Pre-Reading", time: "15 phút", coach: "0 - 0.25h" },
-      { type: "Pre-Writing Task 1 & 2", time: "20 - 30 phút", coach: "0.5h (Sửa câu)" },
-      { type: "Reading Cam (1 Passage)", time: "15 - 18 phút", coach: "0.25h" },
-      { type: "Listening Cam (1 Part)", time: "10 - 12 phút", coach: "0.25h" },
-      { type: "Writing Task 1 / Task 2", time: "30p / 50p", coach: "0.75 - 1.0h" },
-      { type: "Speaking Part 1 / 2 / 3", time: "15 - 20 phút", coach: "0.25 - 0.5h" }
-    ]
-  },
-  slow: {
-    label: "Học Kỹ & Chậm (Slow) 🐢",
-    desc: "Dành cho học sinh mất gốc, cần tua nghe nhiều lần và tra từ điển chi tiết",
-    table: [
-      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "20 - 45 phút", coach: "0 - 0.5h" },
-      { type: "Từ vựng (1 Unit 30 từ)", time: "40 phút", coach: "0h (Tự ôn SRS)" },
-      { type: "Pre-Listening & Pre-Reading", time: "25 phút", coach: "0.25h" },
-      { type: "Pre-Writing Task 1 & 2", time: "35 - 45 phút", coach: "0.5h" },
-      { type: "Reading Cam (1 Passage)", time: "20 - 25 phút", coach: "0.5h" },
-      { type: "Listening Cam (1 Part)", time: "15 - 18 phút", coach: "0.5h" },
-      { type: "Writing Task 1 / Task 2", time: "40p / 65p", coach: "1.0h" },
-      { type: "Speaking Part 1 / 2 / 3", time: "20 - 30 phút", coach: "0.5h" }
-    ]
-  }
-};
 
 class CurriculumUISystem {
   constructor() {
@@ -120,9 +76,7 @@ class CurriculumUISystem {
           roadmap: roadmapData
         })
       }).catch(() => {});
-    } catch(e) {
-      console.warn("Lỗi sync cloud lộ trình:", e);
-    }
+    } catch(e) {}
   }
 
   checkIsAdmin() {
@@ -198,26 +152,28 @@ class CurriculumUISystem {
       const resBox = document.getElementById('diagAIResultContainer');
       resBox.style.display = 'block';
 
-      const prunedNodes = curriculumEngineSystem.pruneCurriculum(result.mastered_tags || []);
-      const savedCount = MASTER_CURRICULUM_SYSTEM.length - prunedNodes.length;
+      const startB = parseFloat(result.estimated_band) || 2.0;
+      const targetB = 7.0; // Trần cao nhất là 7.0
+      const pruned = curriculumEngineSystem.pruneCurriculumByBands(startB, targetB, result.weak_tags || []);
+      const savedCount = MASTER_CURRICULUM_SYSTEM.length - pruned.length;
 
       resBox.innerHTML = `
         <div class="cs-ai-report-card">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <b style="color:#166534; font-size:15px;">🎯 KẾT QUẢ CHẨN ĐOÁN TỪ AI GEMINI</b>
             <span style="background:#e0f2fe; color:#0369a1; padding:3px 10px; border-radius:20px; font-weight:800; font-size:12px;">
-              Band ước lượng: ~${result.estimated_band || '4.5'}
+              Band ước lượng: ~${startB} ➔ Mục tiêu: ${targetB}
             </span>
           </div>
           <p style="font-size:13px; color:#1e293b; margin:10px 0; line-height:1.5;">
             <b>Nhận xét:</b> ${result.academic_summary}
           </p>
           <div style="display:flex; gap:12px; font-size:12px; color:#64748b; flex-wrap:wrap; margin-bottom:12px;">
-            <span>✂️ Đã gọt bỏ: <b>${savedCount} bài</b> cơ bản</span>
-            <span>⚡ Tốc độ đề xuất: <b>${(result.recommended_speed || 'normal').toUpperCase()}</b></span>
-            <span>⏱️ Cam kết: <b>${result.recommended_daily_hours || 1.0}h/ngày</b></span>
+            <span>✂️ Đã gọt bỏ: <b>${savedCount} bài</b></span>
+            <span>⏱️ BTVN: <b>1.5h/ngày</b></span>
+            <span>🏫 Lớp học: <b>3 buổi/tuần (2h/buổi)</b></span>
           </div>
-          <button type="button" onclick="window.curriculumUI.applyAIDiagnosticRoadmap(${JSON.stringify(result).replace(/"/g, '&quot;')})" style="background:#16a34a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:800; font-size:13.5px; cursor:pointer; width:100%;">
+          <button type="button" onclick="window.curriculumUI.applyBandRoadmap(${startB}, ${targetB}, ${JSON.stringify(result).replace(/"/g, '&quot;')})" style="background:#16a34a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:800; font-size:13.5px; cursor:pointer; width:100%;">
             🚀 Phê Duyệt & Kích Hoạt Lộ Trình Này Ngay
           </button>
         </div>
@@ -229,57 +185,29 @@ class CurriculumUISystem {
     }
   }
 
-  applyAIDiagnosticRoadmap(aiData) {
+  // ÁP DỤNG LỘ TRÌNH THEO 2 MỐC BAND BẤT KỲ
+  applyBandRoadmap(startBand, targetBand, aiData = null) {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const speed = aiData.recommended_speed || 'normal';
-    const dailyHours = aiData.recommended_daily_hours || 1.0;
+    const sBand = parseFloat(startBand) || 0.0;
+    const tBand = parseFloat(targetBand) || 7.0;
 
-    const retainedNodes = curriculumEngineSystem.pruneCurriculum(aiData.mastered_tags || []);
-    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, speed);
-    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, speed, dailyHours);
+    const retainedNodes = curriculumEngineSystem.pruneCurriculumByBands(sBand, tBand, aiData?.weak_tags || []);
+    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, 'normal', 1.5);
+    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, 'normal', 1.5);
 
     const payload = {
       createdAt: new Date().toISOString(),
       studentEmail: email,
-      presetLevel: `ai_band_${aiData.estimated_band}`,
-      speedProfile: speed,
-      dailyHours,
+      startBand: sBand,
+      targetBand: tBand,
+      speedProfile: 'normal',
+      dailyHours: 1.5,
       currentDay: 1,
       totals,
       schedule: scheduleData.dailySchedule,
       completedNodeIds: [],
       aiDiagnosticData: aiData,
       isLockedByAdmin: false
-    };
-
-    this.saveRoadmap(email, payload);
-    this.render();
-  }
-
-  initRoadmap(presetLevel = 'beginner', dailyHours = 1.0, speed = 'normal') {
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    let masteredTags = [];
-
-    if (presetLevel === 'intermediate') {
-      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'VOCAB_300_U01', 'VOCAB_300_U02', 'PRE_LIS_A1', 'PRE_READ_A1', 'PRE_SPK_A1'];
-    } else if (presetLevel === 'advanced') {
-      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'G_PAST_CONT', 'G_IRREG_V3', 'G_PRES_PERF', 'G_PAST_PERF', 'G_CONDITIONALS', 'G_PASSIVE_VOICE', 'G_COMPARISON', 'G_RELATIVE_CLAUSE', 'G_PREP_ADV', 'G_WORD_FORM', 'PWT1_CORE', 'PWT2_CORE', 'PRE_LIS_INTER', 'PRE_READ_INTER', 'PRE_SPK_INTER'];
-    }
-
-    const retainedNodes = curriculumEngineSystem.pruneCurriculum(masteredTags);
-    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, speed);
-    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, speed, dailyHours);
-
-    const payload = {
-      createdAt: new Date().toISOString(),
-      studentEmail: email,
-      presetLevel,
-      speedProfile: speed,
-      dailyHours,
-      currentDay: 1,
-      totals,
-      schedule: scheduleData.dailySchedule,
-      completedNodeIds: []
     };
 
     this.saveRoadmap(email, payload);
@@ -316,146 +244,6 @@ class CurriculumUISystem {
     this.render();
   }
 
-  showZaloReportModal() {
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
-    const data = this.getSavedRoadmap(email);
-    if (!data) return;
-
-    const today = new Date();
-    const todayStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
-    const todayPlan = data.schedule.find(s => s.dayNumber === data.currentDay) || data.schedule[0];
-    
-    let todayDoneCount = 0;
-    todayPlan.nodes.forEach(n => {
-      if (data.completedNodeIds.includes(n.id) || this.isNodeCompletedInHistory(n)) todayDoneCount++;
-    });
-
-    const isTodayCompleted = todayDoneCount >= todayPlan.nodes.length;
-    const progressPercent = Math.round((data.completedNodeIds.length / data.totals.nodeCount) * 100);
-
-    let zaloMessage = "";
-    if (isTodayCompleted) {
-      zaloMessage = `[TRẠM IELTS - BÁO CÁO HỌC TẬP HÔM NAY]
-Kính gửi Phụ huynh em: ${sName}
-Ngày: ${todayStr}
-
-🎉 Chúc mừng em đã HOÀN THÀNH 100% bài tập hôm nay (${todayDoneCount}/${todayPlan.nodes.length} bài)!
-📊 Tiến độ lộ trình: Đã xong ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt (${progressPercent}%).
-⏱️ Tốc độ học tập: ${data.speedProfile.toUpperCase()} (${data.dailyHours}h tự cày/ngày).
-👨‍🏫 Tổng số buổi giáo viên đồng hành sửa bài: ${data.totals.coachSessionsEstimate} buổi.
-
-Kính nhờ Phụ huynh động viên em tiếp tục duy trì phong độ ngày mai nhé!`;
-    } else {
-      zaloMessage = `[TRẠM IELTS - THÔNG BÁO NHẮC NHỞ HỌC TẬP]
-Kính gửi Phụ huynh em: ${sName}
-Ngày: ${todayStr}
-
-⚠️ Báo động tiến độ: Tính đến 21:30 tối nay, em ${sName} mới hoàn thành ${todayDoneCount}/${todayPlan.nodes.length} bài tập theo lịch ngày.
-📌 Bài tập còn thiếu:
-${todayPlan.nodes.filter(n => !data.completedNodeIds.includes(n.id) && !this.isNodeCompletedInHistory(n)).map(n => `- ${n.title}`).join('\n')}
-
-Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để không bị dồn bài sang ngày mai ạ!`;
-    }
-
-    this.openModal(`
-      <div class="cs-modal-header" style="background:#0068ff;">
-        <div>
-          <h3 style="margin:0; font-size:16px; font-weight:bold;"><i class="fa-solid fa-paper-plane"></i> XUẤT BÁO CÁO ZALO GỬI PHỤ HUYNH</h3>
-          <span style="font-size:12px; color:#dbeafe;">Học viên: ${sName} (${email})</span>
-        </div>
-        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
-      </div>
-      <div class="cs-modal-body">
-        <div class="cs-zalo-card">
-          <div class="cs-zalo-title">
-            <i class="fa-solid fa-comment-dots"></i> Tin nhắn Zalo được soạn tự động (${isTodayCompleted ? '✅ Khen ngợi' : '⚠️ Nhắc nhở'}):
-          </div>
-          <textarea id="zaloMessageText" class="cs-zalo-textarea" readonly>${zaloMessage}</textarea>
-          <button type="button" class="cs-btn-zalo-copy" onclick="window.curriculumUI.copyZaloMessage()">
-            <i class="fa-solid fa-copy"></i> Sao chép tin nhắn (Để dán vào Zalo)
-          </button>
-        </div>
-      </div>
-    `);
-  }
-
-  copyZaloMessage() {
-    const textEl = document.getElementById('zaloMessageText');
-    if (!textEl) return;
-    textEl.select();
-    navigator.clipboard.writeText(textEl.value).then(() => {
-      alert("✅ Đã sao chép tin nhắn báo cáo! Thầy/Cô chỉ việc dán thẳng vào Zalo gửi cho Phụ huynh nhé.");
-    });
-  }
-
-  showAdminOverrideModal() {
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const data = this.getSavedRoadmap(email);
-    if (!data) return;
-
-    this.openModal(`
-      <div class="cs-modal-header" style="background:#92400e;">
-        <div>
-          <h3 style="margin:0; font-size:16px; font-weight:bold;">👑 BẢNG ĐIỀU CHỈNH LỘ TRÌNH ĐỘC QUYỀN (ADMIN)</h3>
-          <span style="font-size:12px; color:#fde68a;">Học viên: ${email}</span>
-        </div>
-        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
-      </div>
-      <div class="cs-modal-body">
-        <div style="display:flex; flex-direction:column; gap:14px;">
-          <div>
-            <label style="display:block; font-size:13px; font-weight:bold; margin-bottom:4px;">1. Điều chỉnh tốc độ học (Speed Profile):</label>
-            <select id="admSpeedSelect" class="border border-slate-300 rounded p-2 text-sm w-full">
-              <option value="fast" ${data.speedProfile === 'fast' ? 'selected' : ''}>⚡ Học Nhanh (Fast - ~12 tháng)</option>
-              <option value="normal" ${data.speedProfile === 'normal' ? 'selected' : ''}>🌱 Học Bình Thường (Normal - ~14 tháng)</option>
-              <option value="slow" ${data.speedProfile === 'slow' ? 'selected' : ''}>🐢 Học Kỹ / Chậm (Slow - ~16-18 tháng)</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="display:block; font-size:13px; font-weight:bold; margin-bottom:4px;">2. Thời gian cam kết học BTVN mỗi ngày:</label>
-            <select id="admHoursSelect" class="border border-slate-300 rounded p-2 text-sm w-full">
-              <option value="1.0" ${data.dailyHours === 1.0 ? 'selected' : ''}>1.0 tiếng / ngày</option>
-              <option value="1.5" ${data.dailyHours === 1.5 ? 'selected' : ''}>1.5 tiếng / ngày</option>
-              <option value="2.0" ${data.dailyHours === 2.0 ? 'selected' : ''}>2.0 tiếng / ngày (Gấp rút)</option>
-            </select>
-          </div>
-
-          <div style="padding:10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
-            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:bold; color:#1e293b;">
-              <input type="checkbox" id="admLockToggle" ${data.isLockedByAdmin ? 'checked' : ''}>
-              🔒 Khóa cứng lộ trình (Học sinh không thể tự bấm 'Đặt lại' lộ trình)
-            </label>
-          </div>
-
-          <button type="button" onclick="window.curriculumUI.saveAdminOverride()" style="background:#b45309; color:white; border:none; padding:12px; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; margin-top:10px;">
-            💾 Lưu Thay Đổi Của Admin
-          </button>
-        </div>
-      </div>
-    `);
-  }
-
-  saveAdminOverride() {
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const data = this.getSavedRoadmap(email);
-    if (!data) return;
-
-    data.speedProfile = document.getElementById('admSpeedSelect').value;
-    data.dailyHours = parseFloat(document.getElementById('admHoursSelect').value) || 1.0;
-    data.isLockedByAdmin = document.getElementById('admLockToggle').checked;
-
-    const retained = curriculumEngineSystem.pruneCurriculum(data.aiDiagnosticData?.mastered_tags || []);
-    data.totals = curriculumEngineSystem.calculateTotals(retained, data.speedProfile);
-    data.schedule = curriculumEngineSystem.generateDailyCalendar(retained, data.speedProfile, data.dailyHours).dailySchedule;
-
-    this.saveRoadmap(email, data);
-    this.render();
-    this.closeModal();
-    alert("👑 Admin đã cập nhật lộ trình thành công!");
-  }
-
   render(targetContainerId = 'roadmapSectionMount') {
     let container = document.getElementById(targetContainerId);
     if (!container) return;
@@ -464,39 +252,69 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     const data = this.getSavedRoadmap(email);
     const isAdmin = this.checkIsAdmin();
 
+    // 1. MÀN HÌNH CHƯA CÓ LỘ TRÌNH ➔ CHỌN MA TRẬN 2 ĐẦU (CÓ Ô 2.0)
     if (!data) {
       container.innerHTML = `
         <div class="cs-container">
           <div style="text-align:center; padding:10px;">
-            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA (858 BÀI)</h3>
-            <p style="margin:0 auto 16px auto; max-width:620px; font-size:13px; color:#64748b;">
-              Chọn xuất phát điểm nhanh, hoặc sử dụng <b>Trợ lý AI Gemini</b> để nhận diện giọng nói và gọt bài thừa:
+            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH CÁ NHÂN HÓA (MỌI MỐC BAND)</h3>
+            <p style="margin:0 auto 16px auto; max-width:650px; font-size:13px; color:#64748b;">
+              Chọn Điểm xuất phát và Điểm mục tiêu mong muốn, hệ thống sẽ tự động băm lộ trình và tính chuẩn xác số buổi học:
             </p>
 
-            <div class="cs-setup-buttons" style="margin-bottom:20px;">
-              <button type="button" class="cs-btn-preset" style="background:#0284c7;" onclick="window.curriculumUI.initRoadmap('beginner', 1.0)">
-                🌱 Mất gốc hoàn toàn (Học full 858 đốt)
-              </button>
-              <button type="button" class="cs-btn-preset" style="background:#16a34a;" onclick="window.curriculumUI.initRoadmap('intermediate', 1.0)">
-                ⚡ Đã có nền 4.5 - 5.0 (Gọt bỏ Giai đoạn 1)
-              </button>
-              <button type="button" class="cs-btn-preset" style="background:#8B1518;" onclick="window.curriculumUI.initRoadmap('advanced', 1.0)">
-                🔥 Bứt phá 6.0+ ➔ 7.5 (Tập trung Cam & Viết Nói)
+            <!-- KHUNG CHỌN MA TRẬN 2 ĐẦU (BỔ SUNG Ô 2.0) -->
+            <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:18px; max-width:620px; margin:0 auto 20px auto; display:flex; flex-direction:column; gap:12px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:left;">
+                <div>
+                  <label style="font-size:12.5px; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 1. Điểm hiện tại của em:</label>
+                  <select id="matrixStartBandSelect" class="border border-slate-300 rounded p-2 text-sm w-full font-semibold">
+                    <option value="0.0">0.0 (Mất gốc hoàn toàn)</option>
+                    <option value="2.0" selected>2.0 (Biết bập bõm, mất gốc)</option>
+                    <option value="3.0">3.0 (Nhớ từ vựng căn bản)</option>
+                    <option value="3.5">3.5 (Ngữ pháp câu đơn)</option>
+                    <option value="4.0">4.0 (Đã học tiếng Anh cơ bản)</option>
+                    <option value="4.5">4.5 (Có gốc, chưa làm đề)</option>
+                    <option value="5.0">5.0 (Bắt đầu làm quen đề)</option>
+                    <option value="5.5">5.5 (Đã thi thử 5.0 - 5.5)</option>
+                    <option value="6.0">6.0 (Cần lên 6.5 - 7.0)</option>
+                    <option value="6.5">6.5 (Nước rút chạm trần 7.0)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:12.5px; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">🎯 2. Mục tiêu mong muốn:</label>
+                  <select id="matrixTargetBandSelect" class="border border-slate-300 rounded p-2 text-sm w-full font-semibold">
+                    <option value="5.0">Band 5.0 (Tốt nghiệp cơ bản / Định cư)</option>
+                    <option value="5.5">Band 5.5 (Chuẩn đầu ra Cao đẳng / ĐH)</option>
+                    <option value="6.0">Band 6.0 (Xét tuyển Đại học Top đầu)</option>
+                    <option value="6.5" selected>Band 6.5 (Chuẩn vàng Du học & Việc làm)</option>
+                    <option value="7.0">Band 7.0 (TRẦN CAO NHẤT KHÓA HỌC)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="font-size:12px; color:#64748b; text-align:left;">
+                ⏱️ Quy chuẩn: <b>1.5h BTVN tự cày/ngày</b> • Lớp học: <b>3 buổi/tuần (2h/buổi = 12 buổi/tháng)</b>.
+              </div>
+
+              <button type="button" onclick="window.curriculumUI.applyBandRoadmap(document.getElementById('matrixStartBandSelect').value, document.getElementById('matrixTargetBandSelect').value)" style="background:#0284c7; color:white; border:none; padding:11px; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; shadow;">
+                🚀 BẮT ĐẦU TẠO LỘ TRÌNH RIÊNG
               </button>
             </div>
 
+            <!-- CHẨN ĐOÁN THÔNG MINH BẰNG AI GEMINI -->
             <div class="cs-diag-box">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
-                  <b style="color:#0369a1; font-size:14px;"><i class="fa-solid fa-wand-magic-sparkles"></i> CHẨN ĐOÁN TRÌNH ĐỘ BẰNG AI GEMINI (SPEECH-TO-TEXT)</b>
-                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, hoặc dán bảng điểm thi thử vào ô bên dưới:</div>
+                  <b style="color:#0369a1; font-size:14px;"><i class="fa-solid fa-wand-magic-sparkles"></i> HOẶC CHẨN ĐOÁN TỰ ĐỘNG BẰNG AI (SPEECH-TO-TEXT)</b>
+                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, AI sẽ tự động đoán điểm và tạo lộ trình:</div>
                 </div>
                 <button type="button" id="btnDiagMic" class="cs-diag-mic-btn" onclick="window.curriculumUI.toggleMicrophone()">
                   <i class="fa-solid fa-microphone"></i> Bấm để nói tự thuật trình độ
                 </button>
               </div>
 
-              <textarea id="diagTextInput" class="cs-diag-textarea" placeholder="Ví dụ: Em đã vững ngữ pháp cơ bản và các thì, nhưng kỹ năng nghe số liệu hay bị sót, viết bài Task 1 chưa biết nhóm số liệu... (hoặc dán nội dung báo cáo kết quả thi thử vào đây)"></textarea>
+              <textarea id="diagTextInput" class="cs-diag-textarea" placeholder="Ví dụ: Em đang ở band 2.0 bập bõm, muốn học lên 6.5..."></textarea>
 
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -520,6 +338,7 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
       return;
     }
 
+    // 2. MÀN HÌNH ĐÃ CÓ LỘ TRÌNH ➔ 4 THÔNG SỐ VÀNG CHUẨN XÁC
     data.schedule.forEach(day => {
       day.nodes.forEach(node => {
         if (!data.completedNodeIds.includes(node.id) && this.isNodeCompletedInHistory(node)) {
@@ -532,39 +351,30 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     const progressPercent = data.totals.nodeCount > 0 ? Math.min(100, Math.round((completedTotal / data.totals.nodeCount) * 100)) : 0;
     const currentDayPlan = data.schedule.find(s => s.dayNumber === data.currentDay) || data.schedule[0];
 
-    const adminBtnHtml = isAdmin ? `
-      <button type="button" onclick="window.curriculumUI.showAdminOverrideModal()" style="background:#f59e0b; color:#78350f; border:1px solid #d97706; padding:6px 12px; border-radius:8px; font-weight:800; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-        👑 Điều Chỉnh (Admin)
-      </button>
-    ` : '';
-
-    const resetBtnHtml = (!data.isLockedByAdmin || isAdmin) ? `
+    const resetBtnHtml = `
       <button type="button" onclick="window.curriculumUI.resetRoadmap()" style="background:none; border:1px solid #cbd5e1; padding:5px 10px; border-radius:8px; font-size:12px; color:#64748b; cursor:pointer;">
         🔄 Đặt lại
       </button>
-    ` : `<span style="font-size:11.5px; color:#94a3b8; font-weight:bold;"><i class="fa-solid fa-lock"></i> Lộ trình đã khóa bởi Admin</span>`;
+    `;
 
     container.innerHTML = `
       <div class="cs-container">
         <div class="cs-header">
           <div class="cs-title-group">
-            <span class="cs-badge cs-badge-speed" onclick="window.curriculumUI.showBenchmarkExplanationModal()">
-              TỐC ĐỘ: ${data.speedProfile.toUpperCase()} (${data.dailyHours || 1.0}h/ngày) <i class="fa-solid fa-circle-info"></i>
+            <span class="cs-badge cs-badge-speed">
+              CHẶNG: BAND ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0} (1.5h BTVN/NGÀY)
             </span>
             <h3>📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})</h3>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <button type="button" onclick="window.curriculumUI.showZaloReportModal()" style="background:#0068ff; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-              <i class="fa-solid fa-paper-plane"></i> Báo Cáo Zalo
-            </button>
             <button type="button" onclick="window.curriculumUI.showFullRoadmapModal()" style="background:#0f172a; color:white; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:6px;">
               <i class="fa-solid fa-map-location-dot text-sky-400"></i> Xem Toàn Bộ Lộ Trình
             </button>
-            ${adminBtnHtml}
             ${resetBtnHtml}
           </div>
         </div>
 
+        <!-- 4 Ô THỐNG KÊ VÀNG CHUẨN TOÁN HỌC -->
         <div class="cs-stats-grid">
           <div class="cs-stat-box">
             <div class="cs-stat-val">${completedTotal}/${data.totals.nodeCount}</div>
@@ -572,21 +382,21 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
           </div>
           <div class="cs-stat-box">
             <div class="cs-stat-val" style="color:#16a34a;">${data.totals.totalSelfStudyHours}h</div>
-            <div class="cs-stat-lbl">Tổng giờ tự cày</div>
+            <div class="cs-stat-lbl">BTVN Tự cày (1.5h/ngày)</div>
           </div>
           <div class="cs-stat-box">
-            <div class="cs-stat-val" style="color:#8B1518;">${data.totals.totalCoachHours}h</div>
-            <div class="cs-stat-lbl">Giờ giáo viên (${data.totals.coachSessionsEstimate} buổi)</div>
+            <div class="cs-stat-val" style="color:#8B1518;">${data.totals.totalLiveSessions} buổi</div>
+            <div class="cs-stat-lbl">Lớp học với GV (${data.totals.totalTeacherHours}h trực tiếp)</div>
           </div>
           <div class="cs-stat-box">
-            <div class="cs-stat-val" style="color:#d97706;">${data.schedule.length} ngày</div>
-            <div class="cs-stat-lbl">Thời gian về đích</div>
+            <div class="cs-stat-val" style="color:#d97706;">${data.totals.estimatedMonths} tháng</div>
+            <div class="cs-stat-lbl">${data.totals.totalWeeks} tuần (${data.schedule.length} ngày BTVN)</div>
           </div>
         </div>
 
         <div class="cs-progress-container">
           <div class="cs-progress-header">
-            <span>Tiến độ hoàn thành lộ trình</span>
+            <span>Tiến độ hoàn thành</span>
             <span><b>${progressPercent}%</b> (${completedTotal}/${data.totals.nodeCount} bài)</span>
           </div>
           <div class="cs-progress-bar-bg">
@@ -604,13 +414,12 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
                     <span class="cs-node-id">${node.id}</span>
                     <span class="cs-node-domain">${node.domain}</span>
                     <span class="cs-node-time">⏱️ Dự kiến: <b>${node.assignedDurationMinutes} phút</b></span>
-                    ${node.coachHours > 0 ? `<span style="font-size:11px; color:#991b1b; font-weight:bold;">👨‍🏫 Có thầy sửa: ${node.coachHours}h</span>` : ''}
                   </div>
                   <div class="cs-task-title">
                     ${isDone ? '✓ ' : ''}${node.title}
                   </div>
                   <div style="font-size:12px; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:4px 8px; border-radius:6px; margin-top:5px; line-height:1.4;">
-                    <i class="fa-solid fa-lightbulb text-amber-500"></i> <b>Lợi ích:</b> ${node.benefit || 'Củng cố phản xạ và độ chính xác ngữ liệu.'}
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> <b>Lợi ích:</b> ${node.benefit || 'Củng cố phản xạ ngôn ngữ.'}
                   </div>
                 </div>
 
@@ -641,8 +450,8 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     this.openModal(`
       <div class="cs-modal-header">
         <div>
-          <h3 style="margin:0; font-size:17px; font-weight:bold;">🗺️ TOÀN CẢNH LỘ TRÌNH HỌC TẬP (${data.schedule.length} NGÀY)</h3>
-          <span style="font-size:12px; color:#94a3b8;">Đang ở Ngày ${data.currentDay} • Tiến độ: ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt</span>
+          <h3 style="margin:0; font-size:17px; font-weight:bold;">🗺️ TOÀN CẢNH LỘ TRÌNH: BAND ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0}</h3>
+          <span style="font-size:12px; color:#94a3b8;">Thời gian: ${data.totals.estimatedMonths} tháng (${data.totals.totalLiveSessions} buổi học với GV) • ${data.schedule.length} ngày BTVN</span>
         </div>
         <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
       </div>
@@ -668,7 +477,7 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
                             <span style="font-weight:700; margin-left:6px; color:${done ? '#16a34a' : '#1e293b'};">${done ? '✓ ' : ''}${n.title}</span>
                           </div>
                           <div style="font-size:11.5px; color:#0369a1; margin-top:3px;">
-                            💡 ${n.benefit || 'Tăng cường phản xạ ngôn ngữ.'}
+                            💡 ${n.benefit || 'Củng cố phản xạ học thuật.'}
                           </div>
                         </div>
                         <span style="font-size:11.5px; color:#64748b; white-space:nowrap; font-weight:bold;">${n.assignedDurationMinutes}p</span>
@@ -682,187 +491,6 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
         </div>
       </div>
     `);
-  }
-
-  showBenchmarkExplanationModal() {
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const data = this.getSavedRoadmap(email);
-    const speed = data?.speedProfile || 'normal';
-    const info = BENCHMARK_EXPLANATIONS[speed] || BENCHMARK_EXPLANATIONS.normal;
-
-    this.openModal(`
-      <div class="cs-modal-header">
-        <h3 style="margin:0; font-size:16px; font-weight:bold;">⏱️ Chú Thích Định Mức Thời Gian: ${info.label}</h3>
-        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
-      </div>
-      <div class="cs-modal-body">
-        <p style="font-size:13px; color:#64748b; margin-top:0;">${info.desc}</p>
-        <table class="cs-benchmark-table">
-          <thead>
-            <tr>
-              <th>Phân hệ / Dạng bài tập</th>
-              <th>Thời gian làm ước tính</th>
-              <th>Giờ giáo viên sửa</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${info.table.map(r => `
-              <tr>
-                <td><b>${r.type}</b></td>
-                <td><span style="color:#0284c7; font-weight:bold;">${r.time}</span></td>
-                <td><span style="color:#dc2626; font-weight:bold;">${r.coach}</span></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `);
-  }
-
-  renderTodayHistoryAndCalendar(allAttempts, email) {
-    const historyListEl = document.getElementById('historyResultsList');
-    const badgeEl = document.getElementById('totalAttemptsBadge');
-    if (!historyListEl) return;
-
-    const today = new Date();
-    const todayStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
-    const todayAttempts = allAttempts.filter(att => att.timestamp && att.timestamp.includes(todayStr));
-    if (badgeEl) badgeEl.innerText = `${todayAttempts.length} bài hôm nay`;
-
-    let historyHtml = '';
-    if (todayAttempts.length === 0) {
-      historyHtml = `
-        <div class="cs-empty-today">
-          <i class="fa-regular fa-calendar-xmark text-lg text-rose-500 mb-1"></i><br>
-          Chưa có bài tập nào đã được làm hôm nay.<br>
-          <span style="font-size:12px; color:#94a3b8;">Hãy bắt đầu làm các bài trong Lộ trình hôm nay bên trên nhé!</span>
-        </div>
-      `;
-    } else {
-      historyHtml = todayAttempts.map(att => {
-        let targetPage = att.pageUrl || 'reading/runner-reading.html';
-        if (targetPage.startsWith('runner-reading.html')) targetPage = 'reading/' + targetPage;
-        if (targetPage.startsWith('runner-listening.html')) targetPage = 'listening/' + targetPage;
-        const separator = targetPage.includes('?') ? '&' : '?';
-        const reviewLink = `${targetPage}${separator}attemptId=${att.id}&email=${encodeURIComponent(email)}`;
-
-        return `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-            <div>
-              <b style="color:#0f172a; font-size:14px;">📝 ${att.testTitle}</b>
-              <div style="font-size:12px; color:#64748b; margin-top:2px;">
-                ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span class="score-pill" style="background:#16a34a; color:white; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:20px;">Điểm: ${att.score}</span>
-              <a href="${reviewLink}" target="_blank" style="background:#0284c7; color:white; text-decoration:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold;">👁️ Xem lại bài</a>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    const calendarHtml = this.generateMonthCalendarHtml(allAttempts);
-    historyListEl.innerHTML = historyHtml + calendarHtml;
-  }
-
-  generateMonthCalendarHtml(allAttempts) {
-    const year = this.calCurrentYear;
-    const month = this.calCurrentMonth;
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-    const todayDate = today.getDate();
-    const todayMonth = today.getMonth();
-    const todayYear = today.getFullYear();
-
-    const dayAttemptCounts = {};
-    allAttempts.forEach(att => {
-      const m = att.timestamp?.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-      if (m) {
-        const d = parseInt(m[1], 10);
-        const mo = parseInt(m[2], 10) - 1;
-        const y = parseInt(m[3], 10);
-        if (mo === month && y === year) dayAttemptCounts[d] = (dayAttemptCounts[d] || 0) + 1;
-      }
-    });
-
-    const dailyTarget = 2;
-    const shiftedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
-
-    let cellsHtml = '';
-    for (let i = 0; i < shiftedFirstDay; i++) {
-      cellsHtml += `<div class="cs-cal-cell cs-cal-cell-empty"></div>`;
-    }
-
-    for (let d = 1; d <= daysInMonth; d++) {
-      const isPastOrToday = (year < todayYear) || (year === todayYear && month < todayMonth) || (year === todayYear && month === todayMonth && d <= todayDate);
-      const count = dayAttemptCounts[d] || 0;
-
-      let colorClass = 'cal-color-future';
-      let statusLabel = 'Chưa tới';
-
-      if (isPastOrToday) {
-        const ratio = count / dailyTarget;
-        if (count === 0) { colorClass = 'cal-color-zero'; statusLabel = '0 bài (0%)'; }
-        else if (ratio < 0.5) { colorClass = 'cal-color-low'; statusLabel = `${count} bài (<50%)`; }
-        else if (ratio < 1.0) { colorClass = 'cal-color-mid'; statusLabel = `${count} bài (≥50%)`; }
-        else if (ratio === 1.0) { colorClass = 'cal-color-full'; statusLabel = `${count} bài (100%)`; }
-        else { colorClass = 'cal-color-over'; statusLabel = `✨ ${count} bài (>100%)`; }
-      }
-
-      cellsHtml += `
-        <div class="cs-cal-cell ${colorClass}" title="Ngày ${d}/${month + 1}/${year}: ${statusLabel}">
-          <span>${d}</span>
-          ${isPastOrToday ? `<span class="cs-cal-subtext">${count} bài</span>` : ''}
-        </div>
-      `;
-    }
-
-    const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
-
-    return `
-      <div class="cs-calendar-wrapper">
-        <div class="cs-calendar-nav">
-          <div class="cs-calendar-title">
-            🗓️ Lịch Hoạt Động & Chuyên Cần: <b>${monthNames[month]} / ${year}</b>
-          </div>
-          <div style="display:flex; gap:6px;">
-            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(-1)">◀ Tháng trước</button>
-            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(1)">Tháng sau ▶</button>
-          </div>
-        </div>
-
-        <div class="cs-calendar-grid">
-          <div class="cs-cal-day-name">T2</div>
-          <div class="cs-cal-day-name">T3</div>
-          <div class="cs-cal-day-name">T4</div>
-          <div class="cs-cal-day-name">T5</div>
-          <div class="cs-cal-day-name">T6</div>
-          <div class="cs-cal-day-name">T7</div>
-          <div class="cs-cal-day-name" style="color:#ef4444;">CN</div>
-          ${cellsHtml}
-        </div>
-
-        <div class="cs-legend-bar">
-          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#dc2626;"></span><span>0% (Không làm)</span></div>
-          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#fecdd3; border:1px solid #fda4af;"></span><span>&lt; 50%</span></div>
-          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#bbf7d0; border:1px solid #86efac;"></span><span>50% - 99%</span></div>
-          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#15803d;"></span><span>100% Đạt chỉ tiêu</span></div>
-          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:linear-gradient(135deg, #fef08a, #f59e0b); border:1px solid #d97706;"></span><span>✨ &gt; 100% (Vượt chỉ tiêu)</span></div>
-        </div>
-      </div>
-    `;
-  }
-
-  changeCalendarMonth(delta) {
-    this.calCurrentMonth += delta;
-    if (this.calCurrentMonth < 0) { this.calCurrentMonth = 11; this.calCurrentYear--; }
-    else if (this.calCurrentMonth > 11) { this.calCurrentMonth = 0; this.calCurrentYear++; }
-    const email = localStorage.getItem('ielts_student_email') || 'guest';
-    const local = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
-    this.renderTodayHistoryAndCalendar(local, email);
   }
 
   openModal(htmlContent) {
