@@ -55,6 +55,14 @@
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .test-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+
+    /* STYLE KHI ĐÃ HOÀN THÀNH (ĐỔI VIỀN XANH LÁ) */
+    .test-card.is-completed {
+      border-color: #10b981 !important;
+      background: #f0fdf4 !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12) !important;
+    }
+
     .badge-lis {
       display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px;
       font-size: 12px; font-weight: 700; background: #e0f2fe; color: #0284c7; margin-bottom: 6px; width: fit-content;
@@ -62,6 +70,11 @@
     .badge-lis.badge-vol {
       background: #ccfbf1; color: #0f766e;
     }
+    .badge-done {
+      display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+    }
+
     .card-title { color: #0369a1; font-size: 15px; font-weight: 800; margin: 0 0 4px 0; line-height: 1.4; }
     .card-title.vol-title { color: #0f766e; }
     .card-desc { font-size: 13px; color: #64748b; margin: 0 0 14px 0; line-height: 1.4; }
@@ -73,6 +86,8 @@
     .btn-play:hover { background: #0369a1; }
     .btn-play.btn-vol { background: #0d9488; }
     .btn-play.btn-vol:hover { background: #0f766e; }
+    .btn-play.btn-done { background: #16a34a !important; }
+    .btn-play.btn-done:hover { background: #15803d !important; }
   </style>
 </head>
 <body>
@@ -133,9 +148,22 @@
     }
   } catch(e) {}
 
+  // HÀM KIỂM TRA BÀI ĐÃ LÀM TRONG LỊCH SỬ CHUNG
+  function getCompletedRecord(keyString, titleString) {
+    try {
+      const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+      return list.find(item => {
+        const matchUrl = item.pageUrl && keyString && item.pageUrl.includes(keyString);
+        const matchTitle = item.testTitle && titleString && item.testTitle.toLowerCase().includes(titleString.toLowerCase());
+        return matchUrl || matchTitle;
+      });
+    } catch(e) {
+      return null;
+    }
+  }
+
   async function loadCatalog() {
     try {
-      // Đọc từ data-l/ cục bộ của module listening
       const res = await fetch(`data-l/listening-catalog.json?t=${Date.now()}`);
       if (res.ok) {
         listeningData = await res.json();
@@ -181,17 +209,26 @@
         test.parts.forEach(part => {
           const standardId = `LIS_CAM${item.cam}_T${test.testNum}_P${part.p}`;
           const tagsHtml = renderTagsHtml(standardId);
+          const fileKey = part.file ? part.file.replace('.json', '') : `cam${item.cam}-lis-test${test.testNum}-p${part.p}`;
           const testUrl = `runner-listening.html?test=${part.file}`;
+
+          // Kiểm tra xem bài đã nộp hay chưa
+          const rec = getCompletedRecord(fileKey, part.title);
+          const isDone = !!rec;
+
           html += `
-            <div class="test-card">
+            <div class="test-card ${isDone ? 'is-completed' : ''}">
               <div>
-                <span class="badge-lis">🎧 Part ${part.p}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="badge-lis">🎧 Part ${part.p}</span>
+                  ${isDone ? `<span class="badge-done">✓ Đã nộp (${rec.score})</span>` : ''}
+                </div>
                 <h4 class="card-title">${part.title}</h4>
                 ${tagsHtml}
                 <div class="card-desc">${part.desc}</div>
               </div>
-              <a href="${testUrl}" class="btn-play">
-                <span>▶</span> Nghe & Làm Bài
+              <a href="${testUrl}" class="btn-play ${isDone ? 'btn-done' : ''}">
+                <span>${isDone ? '✓' : '▶'}</span> ${isDone ? 'Nghe Lại / Làm Lại' : 'Nghe & Làm Bài'}
               </a>
             </div>
           `;
@@ -210,17 +247,25 @@
         for (let p = 1; p <= 4; p++) {
           const standardId = `LIS_VOL${volNum}_T${t}_P${p}`;
           const tagsHtml = renderTagsHtml(standardId);
-          const testUrl = `runner-listening.html?test=vol${volNum}-lis-test${t}-p${p}`;
+          const fileKey = `vol${volNum}-lis-test${t}-p${p}`;
+          const testUrl = `runner-listening.html?test=${fileKey}`;
+
+          const rec = getCompletedRecord(fileKey, `Vol ${volNum} Test ${t} - Part ${p}`);
+          const isDone = !!rec;
+
           html += `
-            <div class="test-card">
+            <div class="test-card ${isDone ? 'is-completed' : ''}">
               <div>
-                <span class="badge-lis badge-vol">🎧 Part ${p}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="badge-lis badge-vol">🎧 Part ${p}</span>
+                  ${isDone ? `<span class="badge-done">✓ Đã nộp (${rec.score})</span>` : ''}
+                </div>
                 <h4 class="card-title vol-title">Vol ${volNum} Test ${t} - Part ${p}</h4>
                 ${tagsHtml}
                 <div class="card-desc">IELTS Listening Practice Part ${p}</div>
               </div>
-              <a href="${testUrl}" class="btn-play btn-vol">
-                <span>▶</span> Vào Nghe Part ${p}
+              <a href="${testUrl}" class="btn-play ${isDone ? 'btn-done' : 'btn-vol'}">
+                <span>${isDone ? '✓' : '▶'}</span> ${isDone ? 'Nghe Lại / Làm Lại' : `Vào Nghe Part ${p}`}
               </a>
             </div>
           `;
