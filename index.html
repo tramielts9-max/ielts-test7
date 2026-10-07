@@ -3,165 +3,595 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cổng Luyện Thi IELTS Toàn Diện</title>
+  <title>Trạm IELTS - Luyện Thi Toàn Diện</title>
+  <!-- Font chữ tròn tương đồng với font Duolingo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="curriculum-system/style-system.css">
+
   <style>
-    .portal-hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-      color: white; padding: 32px 20px; text-align: center; border-radius: 12px; margin-bottom: 24px;
-    }
-    .user-dashboard-bar {
-      background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: 10px;
-      margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-    }
-    .history-section {
-      background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 10px; padding: 18px; margin-bottom: 25px;
-    }
-    .score-pill { background: #16a34a; color: white; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-size: 13px; }
-    .btn-review { background: #0284c7; color: white; text-decoration: none; padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; }
-    
-    .date-accordion-header {
-      padding: 10px 14px; background: var(--bg-subcard); font-weight: bold; font-size: 14px;
-      display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
+    /* ===================================================
+       DUOLINGO DESIGN SYSTEM (ADAPTED TO TRẠM IELTS BRAND)
+       - Nền chủ đạo: Màu kem ấm của Logo (#FAF7F2)
+       - Màu thương hiệu chính: Đỏ Trạm (#8B1518) thay thế Duolingo Lime Green
+    =================================================== */
+    :root {
+      --bg-cream: #FAF7F2;
+      --bg-card: #FFFFFF;
+      --bg-subcard: #F4EFEB;
+      --tram-red: #8B1518;
+      --tram-red-hover: #9E1B1E;
+      --tram-red-border: #630D10; /* Viền 3D của nút đỏ */
+      --tram-gold: #FF9600;
+      --tram-gold-border: #CC7A00;
+      --tram-blue: #1CB0F6;
+      --tram-blue-border: #1899D6;
+      --border-duo: #E5DFD5;
+      --border-duo-shadow: #D6CEC0;
+      --text-main: #2B2523;
+      --text-muted: #7E7672;
     }
 
-    /* TIÊU CHUẨN CARD BANNER HỌC TẬP GỐC */
+    body {
+      background-color: var(--bg-cream) !important;
+      color: var(--text-main);
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif !important;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .main-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 60px 16px;
+    }
+
+    /* 1. HEADER LOGO THEO PHONG CÁCH DUOLINGO */
+    .duo-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 4px solid var(--border-duo-shadow);
+      border-radius: 20px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+    }
+
+    .duo-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .tram-roundel-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 6px solid var(--tram-red);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      background: var(--bg-card);
+    }
+    .tram-roundel-icon::after {
+      content: '';
+      position: absolute;
+      width: 52px;
+      height: 10px;
+      background: var(--tram-red);
+      border-radius: 2px;
+    }
+
+    .duo-brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--tram-red);
+      letter-spacing: -0.5px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .duo-brand-sub {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+    }
+
+    /* 2. DUOLINGO 3D CHUNKY BUTTONS */
+    .btn-duo-primary {
+      background-color: var(--tram-red);
+      color: #FFFFFF !important;
+      border: 2px solid var(--tram-red-border);
+      border-bottom: 5px solid var(--tram-red-border);
+      border-radius: 16px;
+      padding: 12px 22px;
+      font-size: 14.5px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.08s ease;
+      box-sizing: border-box;
+    }
+    .btn-duo-primary:hover {
+      background-color: var(--tram-red-hover);
+    }
+    .btn-duo-primary:active {
+      transform: translateY(3px);
+      border-bottom-width: 2px;
+    }
+
+    .btn-duo-white {
+      background-color: #FFFFFF;
+      color: var(--tram-red) !important;
+      border: 2px solid var(--border-duo);
+      border-bottom: 5px solid var(--border-duo-shadow);
+      border-radius: 16px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.08s ease;
+    }
+    .btn-duo-white:hover {
+      background-color: #FAF8F5;
+    }
+    .btn-duo-white:active {
+      transform: translateY(3px);
+      border-bottom-width: 2px;
+    }
+
+    /* 3. HERO BANNER MANG ĐẬM CHẤT DUOLINGO WELCOME */
+    .duo-hero {
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 5px solid var(--border-duo-shadow);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .duo-hero-text h1 {
+      margin: 0 0 6px 0;
+      font-size: 23px;
+      font-weight: 900;
+      color: var(--tram-red);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .duo-hero-text p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* 4. DUOLINGO STATUS BAR & USER CARD */
+    .duo-user-bar {
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 4px solid var(--border-duo-shadow);
+      border-radius: 18px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .duo-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 13px;
+      border: 2px solid transparent;
+    }
+    .pill-red {
+      background: #FDEDEE;
+      color: var(--tram-red);
+      border-color: #F8B4B7;
+    }
+    .pill-streak {
+      background: #FFF5E5;
+      color: #D97706;
+      border-color: #FED7AA;
+    }
+
+    /* 5. KHUNG LỊCH CHUYÊN CẦN / BÀI TẬP (GIỐNG DUOLINGO QUEST & STREAK) */
+    .duo-streak-widget {
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 5px solid var(--border-duo-shadow);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 28px;
+    }
+    .duo-streak-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 2px solid var(--bg-cream);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .duo-streak-header h3 {
+      margin: 0;
+      font-size: 16.5px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 6. DUOLINGO LEARNING MODULE CARDS */
+    .duo-section-title {
+      margin: 32px 0 16px 0;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.3px;
+    }
+
     .module-banner {
-      border-radius: 12px; padding: 18px 22px; margin-bottom: 18px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; color: white;
-      transition: transform 0.2s, box-shadow 0.2s;
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 5px solid var(--border-duo-shadow);
+      border-radius: 20px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      transition: transform 0.1s ease, border-bottom 0.1s ease;
     }
-    .module-banner h3 { color: #ffffff !important; }
-    .module-banner:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.12); }
+    .module-banner:hover {
+      transform: translateY(-2px);
+      border-bottom-width: 6px;
+    }
+    .module-banner:active {
+      transform: translateY(1px);
+      border-bottom-width: 3px;
+    }
+
     .module-icon-box {
-      font-size: 34px; background: rgba(255,255,255,0.18); border-radius: 10px;
-      width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 30px;
+      background: var(--bg-cream);
+      border: 2px solid var(--border-duo);
+      border-radius: 16px;
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .module-badge { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
-    .module-btn {
-      background: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px;
-      font-weight: 800; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      display: inline-block; white-space: nowrap; transition: opacity 0.2s;
+    .module-info-wrap {
+      flex: 1;
+      min-width: 260px;
     }
-    .module-btn:hover { opacity: 0.92; }
+    .module-info-wrap h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .module-info-wrap p {
+      margin: 5px 0 0 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .module-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-    /* Khi module bị Admin tạm khóa */
-    .module-banner.is-locked { filter: grayscale(0.85); opacity: 0.65; }
+    /* KHI MODULE TẠM KHÓA */
+    .module-banner.is-locked {
+      background: #F1ECE6 !important;
+      border-color: #DCD4CA !important;
+      opacity: 0.65;
+    }
 
-    /* GIAO DIỆN PHÂN QUYỀN ADMIN */
+    /* 7. DIALOG ĐĂNG NHẬP (DUOLINGO ONBOARDING CARD) */
+    .duo-auth-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 6px solid var(--border-duo-shadow);
+      border-radius: 24px;
+      max-width: 460px;
+      margin: 40px auto;
+      padding: 32px 26px;
+      text-align: center;
+    }
+    .duo-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      border: 2px solid var(--border-duo);
+      border-bottom: 4px solid var(--border-duo);
+      border-radius: 14px;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 700;
+      color: var(--text-main);
+      background: var(--bg-cream);
+      outline: none;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .duo-input:focus {
+      background: #FFFFFF;
+      border-color: var(--tram-red);
+      border-bottom-color: var(--tram-red-border);
+    }
+
+    /* 8. GIAO DIỆN ADMIN */
     .admin-switch-bar {
-      background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 12px 18px;
-      margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+      background: #FFFBEB;
+      border: 2px solid #F59E0B;
+      border-bottom: 5px solid #D97706;
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .role-btn {
-      padding: 7px 16px; border-radius: 6px; font-weight: 700; font-size: 13.5px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.2s;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: 2px solid #F59E0B;
+      border-bottom: 4px solid #D97706;
+      background: white;
+      color: #92400E;
+      transition: all 0.1s;
     }
-    .role-btn.active { background: #d97706; color: white; border-color: #d97706; }
-    .role-btn:not(.active) { background: white; border-color: #f59e0b; color: #b45309; }
+    .role-btn.active {
+      background: #D97706;
+      color: white;
+      border-color: #B45309;
+    }
+    .role-btn:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
 
     .admin-panel {
-      background: var(--bg-card); border: 2px solid #f59e0b; border-radius: 12px; padding: 22px; margin-bottom: 28px;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
-    }
-    .admin-tab-nav {
-      display: flex; gap: 10px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; margin-bottom: 18px;
+      background: var(--bg-card);
+      border: 2px solid #F59E0B;
+      border-bottom: 5px solid #D97706;
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 28px;
     }
     .admin-tab-btn {
-      background: var(--bg-subcard); border: 1px solid var(--border-color); padding: 8px 18px;
-      border-radius: 6px; font-weight: 700; font-size: 13.5px; cursor: pointer;
+      background: var(--bg-cream);
+      border: 2px solid var(--border-duo);
+      border-bottom: 4px solid var(--border-duo-shadow);
+      padding: 9px 18px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13.5px;
+      cursor: pointer;
+      color: var(--text-main);
     }
-    .admin-tab-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+    .admin-tab-btn.active {
+      background: var(--tram-red);
+      color: white;
+      border-color: var(--tram-red-border);
+      border-bottom-color: #4A080A;
+    }
 
     .student-card {
-      border: 1.5px solid var(--border-color); border-radius: 8px; margin-bottom: 12px; overflow: hidden; background: var(--bg-card);
+      border: 2px solid var(--border-duo);
+      border-bottom: 4px solid var(--border-duo-shadow);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+      overflow: hidden;
     }
     .student-card-header {
-      padding: 12px 16px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; user-select: none; transition: background 0.15s; flex-wrap: wrap; gap: 10px;
+      padding: 12px 16px;
+      background: #FAF7F2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 800;
     }
-    .student-card-header:hover { background: #f1f5f9; }
-    .student-info-left { display: flex; align-items: center; gap: 12px; }
     .student-avatar-badge {
-      width: 38px; height: 38px; border-radius: 50%; background: #e0f2fe; color: #0284c7;
-      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: #FDEDEE;
+      color: var(--tram-red);
+      border: 2px solid #F8B4B7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
     }
 
-    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .score-pill {
+      background: #16A34A;
+      border-bottom: 3px solid #15803D;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .btn-review {
+      background: var(--tram-blue);
+      border-bottom: 3px solid var(--tram-blue-border);
+      color: white;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+
+    .switch { position: relative; display: inline-block; width: 46px; height: 26px; }
     .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .25s; border-radius: 24px; }
-    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .25s; border-radius: 50%; }
-    input:checked + .slider { background-color: #16a34a; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #CBD5E1; transition: .2s; border-radius: 26px; }
+    .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--tram-red); }
     input:checked + .slider:before { transform: translateX(20px); }
   </style>
 </head>
 <body>
 
-<div style="max-width: 1200px; margin: auto; padding: 15px;">
-  <div class="portal-hero">
-    <h1 style="margin:0 0 8px 0; font-size: 26px;">📚 CỔNG LUYỆN THI IELTS TOÀN DIỆN</h1>
-    <p style="margin:0; opacity: 0.9;">Từ Vựng • Ngữ Pháp • Nền Tảng (Pre) • Luyện Đề Cambridge 17-21 • AI Sửa Lỗi Chi Tiết</p>
+<div class="main-wrapper">
+
+  <!-- DUOLINGO BRANDED APP BAR -->
+  <div class="duo-topbar">
+    <div class="duo-logo-wrap">
+      <div class="tram-roundel-icon"></div>
+      <div>
+        <div class="duo-brand-title">TRẠM IELTS</div>
+        <div class="duo-brand-sub">LUYỆN THI TOÀN DIỆN</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="duo-stat-pill pill-streak"><i class="fa-solid fa-fire"></i> STREAK</span>
+      <span class="duo-stat-pill pill-red"><i class="fa-solid fa-gem"></i> BAND 8.0+</span>
+    </div>
   </div>
 
-  <!-- 1. CỔNG ĐĂNG NHẬP -->
-  <div id="authGateBox" class="user-info-box" style="max-width: 520px; margin: 0 auto 30px auto; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
-    <h3 style="margin: 0; text-align: center;">👤 Đăng Nhập Học Viên</h3>
-    <p style="margin: 0; font-size: 13.5px; color: var(--text-muted); text-align: center;">Nhập thông tin 1 lần để mở khóa hệ thống và tự động lưu bảng điểm:</p>
-    <input type="text" id="loginNameInput" placeholder="Họ và tên..." style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
-    <input type="email" id="loginEmailInput" placeholder="Email Google..." style="padding: 10px; border: 1px solid var(--border-color); border-radius: 6px;">
-    <button type="button" class="btn-submit" onclick="handleStudentLogin()" style="margin-top: 5px; padding: 10px;">🚀 Bắt Đầu Học Ngay</button>
+  <!-- HERO WELCOME BANNER -->
+  <div class="duo-hero">
+    <div class="duo-hero-text">
+      <h1><i class="fa-solid fa-graduation-cap"></i> CỔNG LUYỆN THI IELTS THẾ HỆ MỚI</h1>
+      <p>Lộ trình toàn diện: Từ vựng • Ngữ pháp • Pre Foundation • Cambridge 17-21 • Chấm chữa AI 2 tầng</p>
+    </div>
+  </div>
+
+  <!-- 1. CỔNG ĐĂNG NHẬP HỌC VIÊN (DUOLINGO CARD FORMAT) -->
+  <div id="authGateBox" class="duo-auth-card">
+    <div class="tram-roundel-icon" style="margin: 0 auto 16px auto; transform: scale(1.15);"></div>
+    <h3 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 900; color: var(--tram-red);">Chào mừng em đến với Trạm!</h3>
+    <p style="margin: 0 0 20px 0; font-size: 14px; font-weight: 700; color: var(--text-muted);">
+      Nhập thông tin để mở khóa bài học và tự động lưu bảng điểm đám mây:
+    </p>
+    
+    <input type="text" id="loginNameInput" class="duo-input" placeholder="Họ và tên của em...">
+    <input type="email" id="loginEmailInput" class="duo-input" placeholder="Email Google của em...">
+    
+    <button type="button" class="btn-duo-primary" onclick="handleStudentLogin()" style="width: 100%; margin-top: 6px;">
+      🚀 BẮT ĐẦU HỌC NGAY
+    </button>
   </div>
 
   <!-- 2. KHU VỰC ĐÃ ĐĂNG NHẬP -->
   <div id="unlockedContentBox" style="display: none;">
-    <div class="user-dashboard-bar">
-      <div>
-        <h4 style="margin: 0; font-size: 16px;" id="userNameDisplay">Học viên</h4>
-        <p style="margin: 2px 0 0 0; font-size: 13px; color: var(--text-muted);" id="userEmailDisplay">email@gmail.com</p>
+
+    <!-- TOP USER DASHBOARD BAR -->
+    <div class="duo-user-bar">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="student-avatar-badge" id="userAvatarChar">H</div>
+        <div>
+          <h4 style="margin: 0; font-size: 16px; font-weight: 900; color: var(--text-main);" id="userNameDisplay">Học viên</h4>
+          <p style="margin: 2px 0 0 0; font-size: 13px; font-weight: 700; color: var(--text-muted);" id="userEmailDisplay">email@gmail.com</p>
+        </div>
       </div>
+
       <div style="display: flex; align-items: center; gap: 10px;">
-        <span id="roleBadge" style="font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: #e0f2fe; color: #0284c7;">HỌC SINH</span>
-        <button type="button" class="btn-header" style="background:#fee2e2; color:#dc2626; border-color:#fca5a5;" onclick="handleStudentLogout()">🚪 Đổi tài khoản</button>
+        <span id="roleBadge" class="duo-stat-pill pill-red">HỌC SINH</span>
+        <button type="button" class="btn-duo-white" onclick="handleStudentLogout()" style="padding: 6px 12px; font-size: 12.5px;">
+          🚪 Đổi nick
+        </button>
       </div>
     </div>
 
-    <!-- THANH ĐIỀU KHIỂN CHỈ HIỆN KHI EMAIL LÀ ADMIN -->
+    <!-- THANH ĐIỀU KHIỂN DÀNH CHO ADMIN -->
     <div id="adminSwitchBar" class="admin-switch-bar" style="display: none;">
       <div>
-        <b style="color: #92400e; font-size: 14.5px;">👑 BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN (ADMIN)</b>
-        <div style="font-size: 12px; color: #b45309; margin-top: 2px;">Em đang đăng nhập bằng tài khoản Quản trị toàn hệ thống</div>
+        <b style="color: #92400e; font-size: 15px;"><i class="fa-solid fa-shield-halved"></i> BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN</b>
+        <div style="font-size: 12px; font-weight: 700; color: #b45309; margin-top: 2px;">Tài khoản được cấp toàn quyền quản lý hệ thống Trạm IELTS</div>
       </div>
       <div style="display: flex; gap: 8px;">
         <button type="button" class="role-btn active" id="btnViewStudent" onclick="switchMainView('student')">👨‍🎓 Chế độ Học viên</button>
-        <button type="button" class="role-btn" id="btnViewAdmin" onclick="switchMainView('admin')">🛠️ Chế độ Quản trị (Admin)</button>
+        <button type="button" class="role-btn" id="btnViewAdmin" onclick="switchMainView('admin')">🛠️ Chế độ Quản trị</button>
       </div>
     </div>
 
     <!-- VIEW ADMIN -->
     <div id="adminPanelSection" class="admin-panel" style="display: none;">
-      <div class="admin-tab-nav">
-        <button type="button" class="admin-tab-btn active" id="btnAdminTabStudents" onclick="switchAdminTab('students')">👥 Danh Sách Học Sinh & Bài Làm</button>
-        <button type="button" class="admin-tab-btn" id="btnAdminTabModules" onclick="switchAdminTab('modules')">⚙️ Bật / Tắt Tạm Thời Phân Hệ</button>
+      <div style="display: flex; gap: 10px; margin-bottom: 18px; border-bottom: 2px solid var(--border-duo); padding-bottom: 14px;">
+        <button type="button" class="admin-tab-btn active" id="btnAdminTabStudents" onclick="switchAdminTab('students')">👥 Danh Sách Học Sinh</button>
+        <button type="button" class="admin-tab-btn" id="btnAdminTabModules" onclick="switchAdminTab('modules')">⚙️ Bật / Tắt Phân Hệ</button>
       </div>
 
       <div id="adminTabContentStudents">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h4 style="margin: 0; font-size: 15.5px;">📋 Danh sách học viên đã làm bài trong hệ thống:</h4>
-            <span style="font-size: 12px; color: var(--text-muted);">Nhấp vào học sinh để xem các bài đã nộp chia theo từng ngày</span>
+            <h4 style="margin: 0; font-size: 15px; font-weight: 900;">📋 Bảng theo dõi bài tập học sinh:</h4>
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Bấm vào học sinh để xem chi tiết bài làm từng ngày</span>
           </div>
-          <input type="text" id="adminStudentSearch" oninput="filterAdminStudents()" placeholder="🔍 Tìm theo Tên hoặc Email..." style="padding: 7px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13.5px; width: 260px;">
+          <input type="text" id="adminStudentSearch" oninput="filterAdminStudents()" class="duo-input" placeholder="🔍 Tìm theo Tên hoặc Email..." style="width: 250px; padding: 8px 12px; margin-bottom: 0;">
         </div>
         <div id="adminStudentsContainer">
-          <div style="text-align: center; padding: 25px; color: var(--text-muted);">⏳ Đang đồng bộ toàn bộ học sinh từ Google Drive...</div>
+          <div style="text-align: center; padding: 25px; font-weight: 700; color: var(--text-muted);">⏳ Đang đồng bộ toàn bộ học sinh từ Google Drive...</div>
         </div>
       </div>
 
       <div id="adminTabContentModules" style="display: none;">
-        <h4 style="margin: 0 0 12px 0; font-size: 15.5px;">⚙️ Bật / Tắt trạng thái hoạt động:</h4>
+        <h4 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 900;">⚙️ Quản lý trạng thái phân hệ học tập:</h4>
         <div id="adminModuleToggleList" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
     </div>
@@ -171,207 +601,206 @@
       <!-- 1. KHỐI LỘ TRÌNH HỆ THỐNG MỚI (TỰ ĐỘNG RENDER TOÀN DIỆN) -->
       <div id="roadmapSectionMount"></div>
 
-      <!-- 2. KHUNG BÀI TẬP HÔM NAY & LỊCH THÁNG HEATMAP -->
-      <div class="history-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-          <h3 style="margin: 0; font-size: 17px; color: #0284c7; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-calendar-day"></i> BÀI TẬP ĐÃ LÀM HÔM NAY & LỊCH CHUYÊN CẦN
-            <span id="totalAttemptsBadge" style="font-size: 12px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px;">0 bài hôm nay</span>
+      <!-- 2. KHUNG LỊCH CHUYÊN CẦN & BÀI TẬP (PHONG CÁCH DUOLINGO QUEST & STREAK) -->
+      <div class="duo-streak-widget">
+        <div class="duo-streak-header">
+          <h3>
+            <i class="fa-solid fa-calendar-check" style="color: var(--tram-red);"></i> BÀI TẬP ĐÃ NỘP HÔM NAY & CHUYÊN CẦN
           </h3>
+          <span id="totalAttemptsBadge" class="duo-stat-pill pill-red">
+            0 bài hôm nay
+          </span>
         </div>
         <div id="historyResultsList">
-          <div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>
+          <div style="text-align:center; padding:15px; font-weight:700; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>
         </div>
       </div>
 
-      <!-- TIÊU ĐỀ LỘ TRÌNH CÁC PHÂN HỆ -->
-      <div style="margin: 30px 0 16px 0; font-size: 19px; font-weight: 800; color: #0f172a; border-left: 5px solid #0284c7; padding-left: 10px;">
-        🗺️ LỘ TRÌNH LUYỆN THI TOÀN DIỆN (CHỌN PHÂN HỆ ĐỂ VÀO HỌC)
+      <!-- TIÊU ĐỀ KHỐI BÀI HỌC -->
+      <div class="duo-section-title">
+        <i class="fa-solid fa-map-location-dot" style="color: var(--tram-red);"></i> CÁC TRẠM LUYỆN THI (CHỌN ĐỂ VÀO HỌC)
       </div>
 
       <!-- 1. TỪ VỰNG -->
-      <div class="module-banner" id="mod_vocab" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);">
+      <div class="module-banner" id="mod_vocab">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">🧠</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">1. LUYỆN TỪ VỰNG THÔNG MINH (SPACED REPETITION)</h3>
-              <span class="module-badge" style="background: #f59e0b; color: #78350f;">CORE</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">5 Hũ Trí Nhớ Lặp Lại Ngắt Quãng • Bảng xếp hạng thi đua • Giữ chuỗi Streak 🔥</p>
+          <div class="module-icon-box" style="color: #4F46E5;">🧠</div>
+          <div class="module-info-wrap">
+            <h3>
+              1. TỪ VỰNG THÔNG MINH (SPACED REPETITION)
+              <span class="module-badge" style="background: #FEF3C7; color: #B45309;">CORE</span>
+            </h3>
+            <p>5 Hũ trí nhớ lặp lại ngắt quãng • Bảng xếp hạng thi đua • Giữ chuỗi Streak 🔥</p>
           </div>
         </div>
-        <a href="vocab/index-v.html" class="module-btn" style="color: #4f46e5;">🚀 VÀO HỌC TỪ VỰNG &rarr;</a>
+        <a href="vocab/index-v.html" class="btn-duo-primary">HỌC TIẾP &rarr;</a>
       </div>
 
       <!-- 2. NGỮ PHÁP -->
-      <div class="module-banner" id="mod_grammar" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+      <div class="module-banner" id="mod_grammar">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📐</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">2. NGỮ PHÁP TRỌNG TÂM IELTS (GRAMMAR MASTERY)</h3>
-              <span class="module-badge" style="background: #ecfdf5; color: #065f46;">NỀN TẢNG</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Các cấu trúc câu phức, mệnh đề quan hệ, đảo ngữ & bẫy ngữ pháp thường gặp</p>
+          <div class="module-icon-box" style="color: #059669;">📐</div>
+          <div class="module-info-wrap">
+            <h3>
+              2. NGỮ PHÁP TRỌNG TÂM IELTS
+              <span class="module-badge" style="background: #ECFDF5; color: #047857;">NỀN TẢNG</span>
+            </h3>
+            <p>Cấu trúc câu phức, mệnh đề quan hệ, đảo ngữ và các bẫy ngữ pháp thường gặp</p>
           </div>
         </div>
-        <a href="grammar/index-g.html" class="module-btn" style="color: #059669;">🚀 VÀO HỌC NGỮ PHÁP &rarr;</a>
+        <a href="grammar/index-g.html" class="btn-duo-primary">BẮT ĐẦU &rarr;</a>
       </div>
 
       <!-- 3. PRE-LISTENING -->
-      <div class="module-banner" id="mod_pre_listening" style="background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);">
+      <div class="module-banner" id="mod_pre_listening">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">👂</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">3. PRE-LISTENING (LUYỆN NGHE CHÉP CHÍNH TẢ & PHẢN XẠ)</h3>
-              <span class="module-badge" style="background: #e0f2fe; color: #0369a1;">PREPARATION</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Tập nghe nối âm, nuốt âm, số liệu, tên riêng & Dictation từng câu trước khi vào đề</p>
+          <div class="module-icon-box" style="color: #0891B2;">👂</div>
+          <div class="module-info-wrap">
+            <h3>
+              3. PRE-LISTENING (CHÉP CHÍNH TẢ & PHẢN XẠ)
+              <span class="module-badge" style="background: #E0F2FE; color: #0369A1;">PREPARATION</span>
+            </h3>
+            <p>Luyện nối âm, nuốt âm, số liệu, tên riêng & Dictation từng câu trước khi vào đề</p>
           </div>
         </div>
-        <a href="pre-listening/index-pl.html" class="module-btn" style="color: #0891b2;">🚀 VÀO PRE-LISTENING &rarr;</a>
+        <a href="pre-listening/index-pl.html" class="btn-duo-primary">BẮT ĐẦU &rarr;</a>
       </div>
 
       <!-- 4. IELTS LISTENING -->
-      <div class="module-banner" id="mod_listening" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+      <div class="module-banner" id="mod_listening">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">🎧</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">4. PHÒNG THI IELTS LISTENING (AUDIO-SYNC)</h3>
-              <span class="module-badge" style="background: #fef08a; color: #854d0e;">CAM 17 - 21</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Audio chạy đồng bộ Transcript • Nhấp câu nghe ngay • Tự động chấm điểm</p>
+          <div class="module-icon-box" style="color: #0284C7;">🎧</div>
+          <div class="module-info-wrap">
+            <h3>
+              4. IELTS LISTENING (AUDIO-SYNC)
+              <span class="module-badge" style="background: #FEF08A; color: #854D0E;">CAM 17 - 21</span>
+            </h3>
+            <p>Audio đồng bộ Transcript • Nhấp câu nghe ngay • Tự động chấm điểm</p>
           </div>
         </div>
-        <a href="listening/listening.html" class="module-btn" style="color: #0284c7;">🚀 VÀO PHÒNG NGHE &rarr;</a>
+        <a href="listening/listening.html" class="btn-duo-primary">LUYỆN ĐỀ &rarr;</a>
       </div>
 
       <!-- 5. PRE-READING -->
-      <div class="module-banner" id="mod_pre_reading" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);">
+      <div class="module-banner" id="mod_pre_reading">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">🔍</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">5. PRE-READING (KỸ NĂNG ĐỌC QUÉT SKIMMING & SCANNING)</h3>
-              <span class="module-badge" style="background: #fef3c7; color: #92400e;">KỸ NĂNG</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Phương pháp định vị từ khóa (Keywords), đọc lướt nắm ý chính và xử lý bài đọc dài</p>
+          <div class="module-icon-box" style="color: #D97706;">🔍</div>
+          <div class="module-info-wrap">
+            <h3>
+              5. PRE-READING (SKIMMING & SCANNING)
+              <span class="module-badge" style="background: #FEF3C7; color: #B45309;">KỸ NĂNG</span>
+            </h3>
+            <p>Kỹ thuật định vị từ khóa (Keywords), đọc lướt nắm ý và xử lý bài đọc dài</p>
           </div>
         </div>
-        <a href="pre-reading/index-pr.html" class="module-btn" style="color: #d97706;">🚀 VÀO PRE-READING &rarr;</a>
+        <a href="pre-reading/index-pr.html" class="btn-duo-primary">BẮT ĐẦU &rarr;</a>
       </div>
 
       <!-- 6. IELTS READING -->
-      <div class="module-banner" id="mod_reading" style="background: linear-gradient(135deg, #8B1518 0%, #b91c1c 100%);">
+      <div class="module-banner" id="mod_reading">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📖</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">6. PHÒNG THI IELTS READING (CAMBRIDGE 17 - 21)</h3>
-              <span class="module-badge" style="background: #fee2e2; color: #991b1b;">FULL TESTS</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Tự động chấm điểm • AI Trợ giảng giải thích câu sai • Lưu tiến độ Google Drive</p>
+          <div class="module-icon-box" style="color: var(--tram-red);">📖</div>
+          <div class="module-info-wrap">
+            <h3>
+              6. PHÒNG THI IELTS READING
+              <span class="module-badge" style="background: #FDEDEE; color: var(--tram-red);">CAM 17 - 21</span>
+            </h3>
+            <p>Tự động chấm điểm • AI Trợ giảng giải thích câu sai • Lưu tiến độ đám mây</p>
           </div>
         </div>
-        <a href="reading/reading.html" class="module-btn" style="color: #8B1518;">🚀 VÀO PHÒNG ĐỌC &rarr;</a>
+        <a href="reading/reading.html" class="btn-duo-primary">LUYỆN ĐỀ &rarr;</a>
       </div>
 
       <!-- 7A. PRE-WRITING TASK 1 -->
-      <div class="module-banner" id="mod_pre_writing_t1" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+      <div class="module-banner" id="mod_pre_writing_t1">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📊</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">7A. PRE-WRITING TASK 1 (DỊCH SONG NGỮ & MÔ TẢ BIỂU ĐỒ)</h3>
-              <span class="module-badge" style="background: #e0f2fe; color: #0369a1;">TASK 1 NỀN TẢNG</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Dạng biểu đồ Line, Bar, Pie, Table, Map, Process • Đối chiếu mẫu Band 6-7-8 • AI Sửa 2 tầng</p>
+          <div class="module-icon-box" style="color: #0284C7;">📊</div>
+          <div class="module-info-wrap">
+            <h3>
+              7A. PRE-WRITING TASK 1 (DỊCH SONG NGỮ)
+              <span class="module-badge" style="background: #E0F2FE; color: #0369A1;">TASK 1 NỀN TẢNG</span>
+            </h3>
+            <p>Dạng Line, Bar, Pie, Table, Process • Đối chiếu mẫu Band 6-7-8 • AI Sửa 2 tầng</p>
           </div>
         </div>
-        <a href="pre-writing/index-pwt1.html" class="module-btn" style="color: #0284c7;">🚀 VÀO PRE-WRITING T1 &rarr;</a>
+        <a href="pre-writing/index-pwt1.html" class="btn-duo-primary">BẮT ĐẦU &rarr;</a>
       </div>
 
       <!-- 7B. PRE-WRITING TASK 2 -->
-      <div class="module-banner" id="mod_pre_writing_t2" style="background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);">
+      <div class="module-banner" id="mod_pre_writing_t2">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📝</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">7B. PRE-WRITING TASK 2 (DỊCH LUẬN & PHÁT TRIỂN Ý TƯỞNG)</h3>
-              <span class="module-badge" style="background: #ffe4e6; color: #9f1239;">TASK 2 ESSAY</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Opinion, Discussion, Problem-Solution, Two-part • Rèn tư duy phản biện & Paraphrase học thuật</p>
+          <div class="module-icon-box" style="color: #BE123C;">📝</div>
+          <div class="module-info-wrap">
+            <h3>
+              7B. PRE-WRITING TASK 2 (DỊCH LUẬN & Ý TƯỞNG)
+              <span class="module-badge" style="background: #FFE4E6; color: #9F1239;">TASK 2 ESSAY</span>
+            </h3>
+            <p>Opinion, Discussion, Problem-Solution • Rèn tư duy phản biện & Paraphrase học thuật</p>
           </div>
         </div>
-        <a href="pre-writing/index-pwt2.html" class="module-btn" style="color: #be123c;">🚀 VÀO PRE-WRITING T2 &rarr;</a>
+        <a href="pre-writing/index-pwt2.html" class="btn-duo-primary">BẮT ĐẦU &rarr;</a>
       </div>
 
       <!-- 8A. IELTS WRITING TASK 1 -->
-      <div class="module-banner" id="mod_writing_t1" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+      <div class="module-banner" id="mod_writing_t1">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📊</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">8A. IELTS WRITING TASK 1 (TRẠM HƯỚNG DẪN & SỬA BÀI 2 TẦNG)</h3>
-              <span class="module-badge" style="background: #fef08a; color: #854d0e;">BAND 8.0+</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Kho 133 đề thi thật • Hướng dẫn viết từng câu (Trạm IELTS) • Tự lực bấm giờ • AI Chấm 2 tầng</p>
+          <div class="module-icon-box" style="color: #0284C7;">📊</div>
+          <div class="module-info-wrap">
+            <h3>
+              8A. IELTS WRITING TASK 1 (TRẠM HƯỚNG DẪN)
+              <span class="module-badge" style="background: #FEF08A; color: #854D0E;">BAND 8.0+</span>
+            </h3>
+            <p>Kho 133 đề thi thật • Hướng dẫn viết từng câu • Tự lực bấm giờ • AI Chấm 2 tầng</p>
           </div>
         </div>
-        <a href="writing task 1/index-t1.html" class="module-btn" style="color: #0284c7;">🚀 VÀO VIẾT TASK 1 &rarr;</a>
+        <a href="writing task 1/index-t1.html" class="btn-duo-primary">VIẾT BÀI &rarr;</a>
       </div>
       
       <!-- 8B. IELTS WRITING TASK 2 -->
-      <div class="module-banner" id="mod_writing_t2" style="background: linear-gradient(135deg, #4338ca 0%, #312e81 100%);">
+      <div class="module-banner" id="mod_writing_t2">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">📝</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">8B. IELTS WRITING TASK 2 (TRẠM HƯỚNG DẪN & SỬA BÀI 2 TẦNG)</h3>
-              <span class="module-badge" style="background: #fef08a; color: #854d0e;">BAND 8.0+ MASTER</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Kho đề thi thật 5 dạng bài • Hướng dẫn viết từng câu (Trạm IELTS) • Bấm giờ làm bài • AI Sửa 2 tầng</p>
+          <div class="module-icon-box" style="color: #4338CA;">📝</div>
+          <div class="module-info-wrap">
+            <h3>
+              8B. IELTS WRITING TASK 2 (TRẠM HƯỚNG DẪN)
+              <span class="module-badge" style="background: #FEF08A; color: #854D0E;">BAND 8.0+ MASTER</span>
+            </h3>
+            <p>Kho đề thi thật 5 dạng bài • Hướng dẫn chi tiết từng câu • AI Sửa 2 tầng chuyên sâu</p>
           </div>
         </div>
-        <a href="writing task 2/index-t2.html" class="module-btn" style="color: #4338ca;">🚀 VÀO VIẾT TASK 2 &rarr;</a>
+        <a href="writing task 2/index-t2.html" class="btn-duo-primary">VIẾT BÀI &rarr;</a>
       </div>
 
       <!-- 9. PRE-SPEAKING -->
-      <div class="module-banner" id="mod_pre_speaking" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+      <div class="module-banner" id="mod_pre_speaking">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">🗣️</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 18px; font-weight: 800;">9. PRE-SPEAKING (PHÁT ÂM IPA & SHADOWING NÓI ĐUỔI)</h3>
-              <span class="module-badge" style="background: #ede9fe; color: #5b21b6;">PRONUNCIATION</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Chuẩn hóa 44 âm IPA, trọng âm từ, ngữ điệu câu và phản xạ kéo dài câu trả lời</p>
+          <div class="module-icon-box" style="color: #7C3AED;">🗣️</div>
+          <div class="module-info-wrap">
+            <h3>
+              9. PRE-SPEAKING (IPA & SHADOWING NÓI ĐUỔI)
+              <span class="module-badge" style="background: #EDE9FE; color: #5B21B6;">PRONUNCIATION</span>
+            </h3>
+            <p>Chuẩn hóa 44 âm IPA, trọng âm từ, ngữ điệu câu và phản xạ kéo dài câu trả lời</p>
           </div>
         </div>
-        <a href="pre-speaking/index-ps.html" class="module-btn" style="color: #7c3aed;">🚀 VÀO PRE-SPEAKING &rarr;</a>
+        <a href="pre-speaking/index-ps.html" class="btn-duo-primary">LUYỆN ÂM &rarr;</a>
       </div>
 
       <!-- 10. IELTS SPEAKING -->
-      <div class="module-banner" id="mod_speaking" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin-bottom: 30px; box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3);">
+      <div class="module-banner" id="mod_speaking" style="border: 3px solid var(--tram-red); border-bottom: 6px solid var(--tram-red-border);">
         <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="module-icon-box">🎙️</div>
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <h3 style="margin: 0; font-size: 19px; color: white; font-weight: 800;">PHÒNG LUYỆN NÓI IELTS SPEAKING 2 TẦNG</h3>
-              <span style="background: #fef08a; color: #854d0e; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;">AI EXAMINER</span>
-            </div>
-            <p style="margin: 4px 0 0 0; font-size: 13.5px; opacity: 0.95;">
-              Ký âm giọng nói tức thì (Speech-to-Text) • Sửa sạch lỗi phát âm & ngữ pháp ➔ Nâng cấp Idiom / Collocation tự nhiên Band 8.0+
-            </p>
+          <div class="module-icon-box" style="color: var(--tram-red); background: #FDEDEE; border-color: #F8B4B7;">🎙️</div>
+          <div class="module-info-wrap">
+            <h3>
+              10. PHÒNG LUYỆN NÓI IELTS SPEAKING 2 TẦNG
+              <span class="module-badge" style="background: var(--tram-red); color: white;">AI EXAMINER</span>
+            </h3>
+            <p>Ký âm giọng nói tức thì (Speech-to-Text) • Sửa phát âm & ngữ pháp ➔ Nâng cấp Collocation Band 8.0+</p>
           </div>
         </div>
-        <a href="speaking/index-s.html" style="background: #ffffff; color: #047857; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 800; font-size: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block; white-space: nowrap;">
-          🚀 VÀO PHÒNG NÓI &rarr;
-        </a>
+        <a href="speaking/index-s.html" class="btn-duo-primary">VÀO PHÒNG NÓI &rarr;</a>
       </div>
+
     </div>
   </div>
 </div>
@@ -421,19 +850,21 @@
       document.getElementById('userNameDisplay').innerText = user.name || 'Học viên';
       document.getElementById('userEmailDisplay').innerText = user.email;
 
+      const avatarChar = (user.name || 'H').charAt(0).toUpperCase();
+      const avatarBadge = document.getElementById('userAvatarChar');
+      if (avatarBadge) avatarBadge.innerText = avatarChar;
+
       const isAdmin = checkIsAdmin(user.email);
       const roleBadge = document.getElementById('roleBadge');
       const adminSwitch = document.getElementById('adminSwitchBar');
 
       if (isAdmin) {
-        roleBadge.innerText = "👑 QUẢN TRỊ VIÊN (ADMIN)";
-        roleBadge.style.background = "#fef3c7";
-        roleBadge.style.color = "#b45309";
+        roleBadge.innerText = "👑 QUẢN TRỊ VIÊN";
+        roleBadge.className = "duo-stat-pill pill-streak";
         adminSwitch.style.display = "flex";
       } else {
         roleBadge.innerText = "HỌC SINH";
-        roleBadge.style.background = "#e0f2fe";
-        roleBadge.style.color = "#0369a1";
+        roleBadge.className = "duo-stat-pill pill-red";
         adminSwitch.style.display = "none";
       }
 
@@ -441,7 +872,7 @@
       syncAndRenderHistory(user.email);
       curriculumUI.render('roadmapSectionMount');
     } else {
-      document.getElementById('authGateBox').style.display = 'flex';
+      document.getElementById('authGateBox').style.display = 'block';
       document.getElementById('unlockedContentBox').style.display = 'none';
     }
   }
@@ -520,7 +951,7 @@
     rawAdminAttempts = Array.from(combinedMap.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
 
     if (rawAdminAttempts.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:25px; color:var(--text-muted);">Chưa có học sinh nào nộp bài tập trong hệ thống.</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:25px; font-weight:700; color:var(--text-muted);">Chưa có học sinh nào nộp bài tập trong hệ thống.</div>`;
       return;
     }
 
@@ -540,11 +971,10 @@
     renderAdminStudentsList(Object.values(studentsMap));
   }
 
-  // GIAI ĐOẠN C: HIỂN THỊ TIẾN ĐỘ LỘ TRÌNH VÀ NÚT CAN THIỆP CHO ADMIN
   function renderAdminStudentsList(studentsList) {
     const container = document.getElementById('adminStudentsContainer');
     if (studentsList.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);">Không tìm thấy học sinh nào phù hợp!</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:20px; font-weight:700; color:var(--text-muted);">Không tìm thấy học sinh nào phù hợp!</div>`;
       return;
     }
 
@@ -554,7 +984,6 @@
       const initial = (st.name || 'H').charAt(0).toUpperCase();
       const dateTreeHtml = renderStudentDateTreeHtml(st.attempts, st.email, safeEmailKey);
 
-      // Đọc tiến độ lộ trình của học sinh từ LocalStorage
       const rKey = `ielts_roadmap_data_${st.email.toLowerCase().trim()}`;
       const rRaw = localStorage.getItem(rKey);
       let rBadge = '';
@@ -564,34 +993,34 @@
           const done = rData.completedNodeIds ? rData.completedNodeIds.length : 0;
           const total = rData.totals ? rData.totals.nodeCount : 858;
           const pct = Math.round((done / total) * 100);
-          rBadge = `<span style="font-size:11px; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:10px; font-weight:800; border:1px solid #86efac;">
-            🎯 ${done}/${total} đốt (${pct}%) • ${rData.speedProfile?.toUpperCase() || 'NORMAL'}
+          rBadge = `<span style="font-size:11px; background:#DCFCE7; color:#166534; padding:3px 8px; border-radius:10px; font-weight:900; border:1px solid #86EFAC;">
+            🎯 ${done}/${total} (${pct}%) • ${rData.speedProfile?.toUpperCase() || 'NORMAL'}
           </span>`;
         } catch(e) {}
       } else {
-        rBadge = `<span style="font-size:11px; background:#f1f5f9; color:#64748b; padding:2px 8px; border-radius:10px; font-weight:600;">Chưa tạo lộ trình</span>`;
+        rBadge = `<span style="font-size:11px; background:#F1ECE6; color:#7E7672; padding:3px 8px; border-radius:10px; font-weight:800;">Chưa tạo lộ trình</span>`;
       }
 
       html += `
         <div class="student-card">
           <div class="student-card-header" onclick="window.toggleStudentAccordion('${safeEmailKey}')">
-            <div class="student-info-left">
+            <div style="display:flex; align-items:center; gap: 12px;">
               <div class="student-avatar-badge">${initial}</div>
               <div>
                 <b style="font-size: 15px; color: var(--text-main);">${st.name}</b>
-                <div style="font-size: 12px; color: #0284c7; margin-top: 2px;">✉️ ${st.email}</div>
+                <div style="font-size: 12px; color: var(--tram-red); font-weight:800; margin-top: 2px;">✉️ ${st.email}</div>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap: 8px; flex-wrap:wrap;">
               ${rBadge}
-              <span style="font-size: 12px; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 12px; font-weight: 700;">
+              <span class="duo-stat-pill pill-red" style="font-size: 11.5px; padding: 2px 8px;">
                 ${st.attempts.length} bài đã nộp
               </span>
-              <span id="st_icon_${safeEmailKey}" style="font-size: 12px; color: #64748b;">▼</span>
+              <span id="st_icon_${safeEmailKey}" style="font-size: 12px; color: #7E7672;">▼</span>
             </div>
           </div>
 
-          <div id="st_body_${safeEmailKey}" style="display: none; padding: 14px; border-top: 1px solid var(--border-color); background: #ffffff;">
+          <div id="st_body_${safeEmailKey}" style="display: none; padding: 14px; border-top: 2px solid var(--border-duo); background: #FFFFFF;">
             ${dateTreeHtml}
           </div>
         </div>
@@ -620,17 +1049,17 @@
       const arrowIcon = isFirstDate ? '▼' : '▶';
 
       html += `
-        <div style="margin-bottom: 8px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">
-          <div class="date-accordion-header" onclick="window.toggleStudentDateGroup('${safeDateId}')">
+        <div style="margin-bottom: 8px; border: 2px solid var(--border-duo); border-radius: 12px; overflow: hidden;">
+          <div style="padding: 10px 14px; background: var(--bg-cream); font-weight: 800; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="window.toggleStudentDateGroup('${safeDateId}')">
             <span style="display: flex; align-items: center; gap: 8px;">
-              <span id="icon_${safeDateId}" style="color: var(--primary-blue); font-size: 11px;">${arrowIcon}</span>
-              <span style="font-size: 13.5px;">📅 Ngày ${date}</span>
+              <span id="icon_${safeDateId}" style="color: var(--tram-red); font-size: 11px;">${arrowIcon}</span>
+              <span>📅 Ngày ${date}</span>
             </span>
-            <span style="font-size: 11.5px; background: #e2e8f0; color: #334155; padding: 1px 7px; border-radius: 10px;">
+            <span style="font-size: 11.5px; background: #E5DFD5; color: var(--text-main); padding: 2px 8px; border-radius: 10px; font-weight: 900;">
               ${groups[date].length} bài
             </span>
           </div>
-          <div id="content_${safeDateId}" style="display: ${displayStyle}; padding: 6px 14px; border-top: 1px solid var(--border-color);">
+          <div id="content_${safeDateId}" style="display: ${displayStyle}; padding: 8px 14px; border-top: 1px solid var(--border-duo);">
       `;
 
       groups[date].forEach(att => {
@@ -639,16 +1068,16 @@
         const reviewLink = `${targetPage}${separator}attemptId=${att.id}&email=${encodeURIComponent(email)}`;
 
         html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px dashed var(--border-color); flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-duo); flex-wrap: wrap; gap: 8px;">
             <div>
               <b style="color: var(--text-main); font-size: 13.5px;">📝 ${att.testTitle}</b>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 2px;">
                 ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
               </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="score-pill" style="font-size: 12px; padding: 2px 8px;">Điểm: ${att.score}</span>
-              <a href="${reviewLink}" target="_blank" class="btn-review" style="font-size: 12px; padding: 4px 10px;">👁️ Xem bài làm</a>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="score-pill">Điểm: ${att.score}</span>
+              <a href="${reviewLink}" target="_blank" class="btn-review">👁️ Xem bài</a>
             </div>
           </div>
         `;
@@ -716,11 +1145,11 @@
     container.innerHTML = Object.entries(CONFIG.MODULES).map(([key, info]) => {
       const isEnabled = systemSettings.modules[key] !== false;
       return `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid var(--border-color); padding:12px 16px; border-radius:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-cream); border:2px solid var(--border-duo); padding:12px 16px; border-radius:12px;">
           <div>
-            <b style="font-size:14px; color:#1e293b;">${info.name}</b>
-            <div style="font-size:12px; color:${isEnabled ? '#16a34a' : '#dc2626'}; font-weight:700; margin-top:2px;">
-              ${isEnabled ? '● Đang mở cho học sinh học' : '🔒 ĐANG TẠM KHÓA (BẢO TRÌ/SỬA ĐỀ)'}
+            <b style="font-size:14px; color:var(--text-main);">${info.name}</b>
+            <div style="font-size:12px; color:${isEnabled ? '#16A34A' : '#DC2626'}; font-weight:800; margin-top:2px;">
+              ${isEnabled ? '● Đang mở cho học sinh' : '🔒 ĐANG TẠM KHÓA (BẢO TRÌ/CẬP NHẬT)'}
             </div>
           </div>
           <label class="switch">
@@ -761,14 +1190,14 @@
       if (!isEnabled) {
         if (!isAdmin) {
           banner.classList.add('is-locked');
-          const btn = banner.querySelector('.module-btn');
+          const btn = banner.querySelector('.btn-duo-primary');
           if (btn) {
             btn.innerText = "🔒 Đang bảo trì";
-            btn.style.background = "#cbd5e1";
-            btn.style.color = "#64748b";
+            btn.style.background = "#CBD5E1";
+            btn.style.borderBottomColor = "#94A3B8";
             btn.onclick = (e) => {
               e.preventDefault();
-              alert("⚠️ Phân hệ này đang được Admin tạm khóa để cập nhật dữ liệu. Em quay lại sau nhé!");
+              alert("⚠️ Phân hệ này đang được Admin bảo trì hoặc cập nhật đề mới. Em quay lại sau nhé!");
             };
           }
         }
@@ -791,7 +1220,7 @@
     if (localAttempts.length > 0) {
       renderHistoryUI(localAttempts, email);
     } else {
-      resultsBox.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>`;
+      resultsBox.innerHTML = `<div style="text-align:center; padding:15px; font-weight:700; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>`;
     }
 
     if (!CONFIG.DRIVE_STORAGE_URL) return;
@@ -813,7 +1242,7 @@
       }
     } catch (e) {
       if (localAttempts.length === 0) {
-        resultsBox.innerHTML = `<div style="text-align:center; padding:14px; color:var(--text-muted);">ℹ️ Em chưa có bài làm nào trên thiết bị này.</div>`;
+        resultsBox.innerHTML = `<div style="text-align:center; padding:14px; font-weight:700; color:var(--text-muted);">ℹ️ Em chưa có bài làm nào trên thiết bị này.</div>`;
       }
     }
   }
