@@ -1,7 +1,6 @@
 /**
  * curriculum-system/engine-system.js
- * BỘ MÁY ĐIỀU PHỐI MA TRẬN 2 ĐẦU (START BAND ➔ TARGET BAND),
- * CHUẨN 1.5H/NGÀY & TỰ ĐỘNG TÍNH BUỔI HỌC (3 BUỔI/TUẦN × 2H)
+ * BỘ MÁY ĐIỀU PHỐI TÍNH XUÔI THEO SỐ BUỔI HỌC (300K/BUỔI - 12 BUỔI/NỬA BAND + LŨY TIẾN)
  */
 
 export class CurriculumEngineSystem {
@@ -41,78 +40,99 @@ export class CurriculumEngineSystem {
     return "Củng cố phản xạ và độ chính xác ngôn ngữ học thuật.";
   }
 
-  /**
-   * MA TRẬN CẮT 2 ĐẦU DỰA VÀO START BAND & TARGET BAND
-   */
+  // TÍNH CHUẨN SỐ BUỔI HỌC THEO CÔNG THỨC LŨY TIẾN CỦA BẠN
+  calculateSessionsByBands(startBand, targetBand) {
+    const s = Math.round((parseFloat(startBand) || 0.0) * 2) / 2;
+    const t = Math.round((Math.min(7.0, parseFloat(targetBand) || 7.0)) * 2) / 2;
+
+    if (s >= t) return { sessions: 12, months: 1.0, days: 26, hours: 39 };
+
+    const stepCosts = {
+      '0.0-0.5': 12, '0.5-1.0': 12, '1.0-1.5': 12, '1.5-2.0': 12,
+      '2.0-2.5': 12, '2.5-3.0': 12, '3.0-3.5': 12, '3.5-4.0': 12,
+      '4.0-4.5': 12, '4.5-5.0': 12,
+      '5.0-5.5': 12, // Chuẩn 12 buổi
+      '5.5-6.0': 13, // +1 buổi = 13
+      '6.0-6.5': 14, // +1 buổi = 14
+      '6.5-7.0': 15  // +1 buổi = 15
+    };
+
+    let totalSessions = 0;
+    let curr = s;
+
+    while (curr < t) {
+      const next = Math.round((curr + 0.5) * 2) / 2;
+      const key = `${curr.toFixed(1)}-${next.toFixed(1)}`;
+      totalSessions += (stepCosts[key] || 12);
+      curr = next;
+    }
+
+    const months = Math.round((totalSessions / 12) * 10) / 10;
+    const days = Math.round(months * 26);
+    const hours = Math.round(days * 1.5 * 10) / 10;
+    const weeks = Math.round(months * 4);
+
+    return {
+      sessions: totalSessions,
+      months,
+      days,
+      hours,
+      weeks
+    };
+  }
+
+  // LỌC KHO BÀI TẬP PHÙ HỢP VỚI MỐC BAND (ĐÃ SỬA TRIỆT ĐỂ LỖI t IS NOT DEFINED)
   pruneCurriculumByBands(startBand = 0.0, targetBand = 7.0, weakTags = []) {
     const sBand = parseFloat(startBand) || 0.0;
-    const tBand = Math.min(7.0, parseFloat(targetBand) || 7.0); // Trần cao nhất là 7.0
+    const tBand = Math.min(7.0, parseFloat(targetBand) || 7.0);
 
     return this.allNodes.filter((node, idx) => {
-      // Nếu bài này chữa đúng lỗ hổng học sinh khai báo ➔ Giữ lại 100%
       if (weakTags.length > 0 && node.tags && node.tags.some(tag => weakTags.includes(tag))) {
         return true;
       }
 
       const stg = node.stage || 'S1';
       const d = (node.domain || '').toUpperCase();
+      const titleLower = (node.title || '').toLowerCase(); // ĐÃ KHAI BÁO BIẾN titleLower CHỐNG LỖI
 
-      // 1. CẮT ĐẦU (HEAD-CUT) THEO START BAND
-      if (sBand >= 2.0 && stg === 'S1' && (d === 'GRAMMAR' && idx % 3 === 0)) return false; // Cắt bớt bài vỡ lòng quá dễ
-      if (sBand >= 3.5 && stg === 'S1') return false; // 3.5 trở lên: Cắt 100% Giai đoạn 1
-      if (sBand >= 4.5 && stg === 'S2' && d === 'GRAMMAR') return false; // 4.5 trở lên: Bỏ ngữ pháp câu phức
-      if (sBand >= 5.0 && stg === 'S2' && !d.includes('PRE_WRITING')) return false; // 5.0 trở lên: Bỏ hết S2 trừ Pre-Writing
-      if (sBand >= 5.5 && stg === 'S2') return false; // 5.5 trở lên: Cắt sạch 100% Giai đoạn 2
-      if (sBand >= 6.0 && stg === 'S3' && (t.includes('có mớm') || d.includes('PRE_'))) return false; // 6.0 trở lên: Bỏ bài có mớm
+      // 1. CẮT ĐẦU (HEAD-CUT)
+      if (sBand >= 3.5 && stg === 'S1') return false;
+      if (sBand >= 4.5 && stg === 'S1') return false;
+      if (sBand >= 5.0 && stg === 'S2' && !d.includes('PRE_WRITING')) return false;
+      if (sBand >= 5.5 && stg === 'S2') return false;
+      if (sBand >= 6.0 && stg === 'S3' && (titleLower.includes('có mớm') || d.includes('PRE_'))) return false;
+      if (sBand >= 6.5 && stg === 'S3') return false;
 
-      // 2. CẮT ĐUÔI (TAIL-CUT) THEO TARGET BAND
-      if (tBand <= 5.0 && (stg === 'S3' || stg === 'S4')) return false; // Chỉ cần 5.0: Cắt sạch S3 & S4
-      if (tBand <= 5.5 && stg === 'S4') return false; // Chỉ cần 5.5: Cắt sạch S4
-      if (tBand <= 5.5 && stg === 'S3' && (d === 'WRITING_T2' || d === 'MOCK_TEST')) return false;
-      if (tBand <= 6.0 && stg === 'S4') return false; // Chỉ cần 6.0: Cắt sạch S4
-      if (tBand <= 6.5 && stg === 'S4' && (idx % 2 === 0)) return false; // 6.5: Lọc mỏng 50% đề khó của S4
-
-      // 3. LỌC MỎNG TRÙNG DẠNG (THINNING 20%) ĐỂ TRÁNH QUÁ TẢI
-      if ((d === 'WRITING_T1' || d === 'WRITING_T2') && idx % 5 === 0) return false;
+      // 2. CẮT ĐUÔI (TAIL-CUT)
+      if (tBand <= 5.0 && (stg === 'S3' || stg === 'S4')) return false;
+      if (tBand <= 5.5 && stg === 'S4') return false;
+      if (tBand <= 6.0 && stg === 'S4') return false;
+      if (tBand <= 6.5 && stg === 'S4' && idx % 3 === 0) return false;
 
       return true;
     });
   }
 
-  /**
-   * TÍNH TOÁN THỜI LƯỢNG & SỐ BUỔI HỌC VỚI GIÁO VIÊN (1 TUẦN 3 BUỔI × 2H)
-   */
-  calculateTotals(retainedNodes, speedProfile = 'normal', dailyHours = 1.5) {
-    let totalMinutes = 0;
-
-    retainedNodes.forEach(node => {
-      const dur = node.duration?.[speedProfile] || node.duration?.normal || 20;
-      totalMinutes += dur;
-    });
-
-    const totalSelfStudyHours = Math.round((totalMinutes / 60) * 10) / 10;
-    const totalDays = Math.max(1, Math.ceil(totalMinutes / (dailyHours * 60))); // Chia cho 1.5h/ngày (90p)
-    const estimatedMonths = Math.round((totalDays / 26) * 10) / 10; // 26 ngày học thực tế/tháng
-    const totalWeeks = Math.round(estimatedMonths * 4); // 1 tháng = 4 tuần
-    const totalLiveSessions = totalWeeks * 3; // 1 tuần = 3 buổi
-    const totalTeacherHours = totalLiveSessions * 2; // 1 buổi = 2 tiếng
+  calculateTotals(retainedNodes, speedProfile = 'normal', dailyHours = 1.5, startBand = 0.0, targetBand = 7.0) {
+    const stats = this.calculateSessionsByBands(startBand, targetBand);
 
     return {
-      totalSelfStudyHours,
-      totalDays,
-      estimatedMonths,
-      totalWeeks,
-      totalLiveSessions,
-      totalTeacherHours,
+      totalSelfStudyHours: stats.hours,
+      totalDays: stats.days,
+      estimatedMonths: stats.months,
+      totalWeeks: stats.weeks,
+      totalLiveSessions: stats.sessions,
+      totalTeacherHours: stats.sessions * 2,
+      tuitionVND: (stats.sessions * 300000).toLocaleString('vi-VN') + 'đ',
       nodeCount: retainedNodes.length
     };
   }
 
-  /**
-   * XẾP LỊCH HỌC BTVN: 1.5 TIẾNG (90 PHÚT) / NGÀY, TRỘN 2-3 KỸ NĂNG, KHÔNG LẶP MÔN
-   */
-  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHours = 1.5) {
-    const dailyTargetMinutes = Math.round(dailyHours * 60); // 90 phút/ngày
+  // XẾP LỊCH BTVN THEO ĐÚNG SỐ NGÀY ĐÃ TÍNH TOÁN
+  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHours = 1.5, startBand = 0.0, targetBand = 7.0) {
+    const stats = this.calculateSessionsByBands(startBand, targetBand);
+    const targetDays = stats.days;
+    const dailyTargetMinutes = Math.round(dailyHours * 60); // 90p/ngày
     const calendarDays = [];
 
     const qGrammar = [];
@@ -181,23 +201,21 @@ export class CurriculumEngineSystem {
       return 0;
     };
 
-    while (hasPendingTasks() && currentDayIndex <= 600) {
+    while (hasPendingTasks() && currentDayIndex <= targetDays + 15) {
       let dayMinutes = 0;
       const dayNodes = [];
       const usedDomainsThisDay = new Set();
 
-      // VÒNG LẶP DUY TRÌ (CỨ 2-3 NGÀY KHI LISTENING & READING ĐÃ XONG)
       const isLisReadDone = (qPreLis.length === 0 && qOffLis.length === 0 && qPreRead.length === 0 && qOffRead.length === 0);
 
+      // VÒNG LẶP DUY TRÌ ĐỀ CŨ
       if (isLisReadDone && (qOffWrite.length > 0 || qOffSpk.length > 0)) {
         daysSinceLastReview++;
-
         if (daysSinceLastReview >= 3) {
           daysSinceLastReview = 0;
           reviewTypeToggle++;
 
           if (reviewTypeToggle % 2 === 1) {
-            // NGÀY ÔN READING: CHIẾM TRỌN 60 PHÚT
             const readReview = {
               id: `S4_REV_READ_${String(reviewCount).padStart(2, '0')}`,
               stage: "S4", domain: "READING", type: "TEST",
@@ -212,7 +230,6 @@ export class CurriculumEngineSystem {
             usedDomainsThisDay.add('READING');
             reviewCount++;
           } else {
-            // NGÀY ÔN LISTENING: CHIẾM ĐÚNG 30 PHÚT
             const lisReview = {
               id: `S4_REV_LIS_${String(reviewCount).padStart(2, '0')}`,
               stage: "S4", domain: "LISTENING", type: "TEST",
@@ -230,12 +247,12 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // 1. NGỮ PHÁP (MỖI NGÀY 1 BÀI LIÊN TỤC ĐẾN KHI HẾT)
+      // 1. NGỮ PHÁP (1 BÀI / NGÀY ĐẾN HẾT)
       if (qGrammar.length > 0) {
         dayMinutes += pickUniqueDomainTask(qGrammar, dayNodes, usedDomainsThisDay, dayMinutes, 30);
       }
 
-      // 2. NHÁNH NGHE (PRE-LIS ➔ XONG THÌ LÊN ĐỀ CHÍNH THỨC)
+      // 2. NGHE
       if (dayMinutes < dailyTargetMinutes && !usedDomainsThisDay.has('LISTENING')) {
         if (qPreLis.length > 0) {
           dayMinutes += pickUniqueDomainTask(qPreLis, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 5);
@@ -244,7 +261,7 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // 3. TỪ VỰNG HOẶC NHÁNH ĐỌC (PRE-READ ➔ XONG LÊN ĐỀ CHÍNH THỨC)
+      // 3. TỪ VỰNG HOẶC ĐỌC
       if (dayMinutes < dailyTargetMinutes) {
         if (currentDayIndex % 2 === 1 && qVocab.length > 0 && !usedDomainsThisDay.has('VOCABULARY')) {
           dayMinutes += pickUniqueDomainTask(qVocab, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
@@ -257,7 +274,7 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // 4. BỔ TRỢ: PRE-WRITING HOẶC PRE-SPEAKING
+      // 4. BỔ TRỢ PRE-WRITING HOẶC PRE-SPEAKING
       if (dayMinutes < dailyTargetMinutes) {
         if (qPreWrite.length > 0 && !usedDomainsThisDay.has('WRITING')) {
           dayMinutes += pickUniqueDomainTask(qPreWrite, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
@@ -275,12 +292,12 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // 6. MOCK TESTS GIAI ĐOẠN CUỐI
+      // 6. MOCK TESTS
       if (dayMinutes < dailyTargetMinutes && qMock.length > 0 && !usedDomainsThisDay.has('MOCK_TEST')) {
         dayMinutes += pickUniqueDomainTask(qMock, dayNodes, usedDomainsThisDay, dayMinutes, 180);
       }
 
-      // BỐC THÊM NẾU CHƯA ĐỦ 70 PHÚT TRONG NGÀY
+      // BỐC THÊM CHO ĐỦ THỜI LƯỢNG NGÀY
       if (dayMinutes < 70) {
         const fallbackQueues = [qVocab, qPreSpk, qPreWrite, qOffWrite, qOffSpk, qOffRead, qOffLis];
         for (const fq of fallbackQueues) {
@@ -306,7 +323,7 @@ export class CurriculumEngineSystem {
 
     return {
       totalDays: calendarDays.length,
-      estimatedMonths: Math.round((calendarDays.length / 26) * 10) / 10,
+      estimatedMonths: stats.months,
       dailySchedule: calendarDays
     };
   }
