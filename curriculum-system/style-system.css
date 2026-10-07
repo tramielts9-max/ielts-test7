@@ -1,6 +1,6 @@
 /* =========================================================================
    curriculum-system/style-system.css
-   GIAO DIỆN LỘ TRÌNH ĐỘC LẬP, FULL TIMELINE & BẢNG ĐỊNH MỨC THỜI GIAN
+   GIAO DIỆN LỘ TRÌNH, LỊCH SỬ HÔM NAY & LỊCH THÁNG HEATMAP 5 MÀU
    ========================================================================= */
 
 .cs-container {
@@ -49,7 +49,6 @@
 .cs-badge-speed { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
 .cs-badge-speed:hover { background: #bbf7d0; }
 
-/* Bảng thống kê tiến độ */
 .cs-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -69,64 +68,23 @@
 .cs-stat-lbl { font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b); margin-top: 2px; text-transform: uppercase; }
 
 /* THANH PROGRESS BANNER CHẠY ĐỘNG */
-.cs-progress-container {
-  margin: 14px 0 20px 0;
-}
-
-.cs-progress-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-muted, #64748b);
-  margin-bottom: 6px;
-}
-
-.cs-progress-bar-bg {
-  width: 100%;
-  height: 12px;
-  background: #e2e8f0;
-  border-radius: 99px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.cs-progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #0284c7, #10b981, #16a34a);
-  border-radius: 99px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
+.cs-progress-container { margin: 14px 0 20px 0; }
+.cs-progress-header { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: var(--text-muted, #64748b); margin-bottom: 6px; }
+.cs-progress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 99px; overflow: hidden; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+.cs-progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0284c7, #10b981, #16a34a); border-radius: 99px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
 /* Danh sách task */
 .cs-task-list { display: flex; flex-direction: column; gap: 10px; }
-
 .cs-task-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-subcard, #f8fafc);
-  border: 1.5px solid var(--border-color, #e2e8f0);
-  padding: 14px 18px;
-  border-radius: 10px;
-  flex-wrap: wrap;
-  gap: 12px;
-  transition: all 0.2s ease;
+  display: flex; justify-content: space-between; align-items: center; background: var(--bg-subcard, #f8fafc);
+  border: 1.5px solid var(--border-color, #e2e8f0); padding: 14px 18px; border-radius: 10px; flex-wrap: wrap; gap: 12px; transition: all 0.2s ease;
 }
-
-.cs-task-card.is-done {
-  background: #f0fdf4 !important;
-  border-color: #86efac !important;
-}
-
+.cs-task-card.is-done { background: #f0fdf4 !important; border-color: #86efac !important; }
 .cs-task-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 240px; }
 .cs-task-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .cs-node-id { font-family: monospace; font-weight: 800; font-size: 11px; background: #1e293b; color: #ffffff; padding: 2px 7px; border-radius: 4px; }
 .cs-node-domain { font-size: 11px; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 2px 8px; border-radius: 8px; }
 .cs-node-time { font-size: 12px; color: var(--text-muted, #64748b); }
-
 .cs-task-title { font-size: 14.5px; font-weight: 700; color: var(--text-main, #0f172a); }
 .cs-task-card.is-done .cs-task-title { color: #166534; }
 
@@ -139,44 +97,181 @@
 .cs-btn-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; cursor: default; }
 
 /* MODAL FULL LỘ TRÌNH & BẢNG ĐỊNH MỨC */
-.cs-modal-overlay {
-  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(4px); z-index: 9999; display: flex;
-  align-items: center; justify-content: center; padding: 16px;
-}
-
-.cs-modal-card {
-  background: #ffffff; border-radius: 16px; max-width: 900px; width: 100%;
-  max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #e2e8f0;
-}
-
-.cs-modal-header {
-  padding: 16px 20px; background: #0f172a; color: white;
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.cs-modal-body {
-  padding: 20px; overflow-y: auto; flex: 1;
-}
-
-.cs-day-timeline-box {
-  margin-bottom: 16px; border: 1.5px solid #e2e8f0; border-radius: 12px;
-  overflow: hidden; background: #ffffff;
-}
-
-.cs-day-timeline-header {
-  padding: 10px 16px; background: #f8fafc; font-weight: 800; font-size: 14px;
-  display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0;
-}
-
-.cs-benchmark-table {
-  width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px;
-}
+.cs-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.cs-modal-card { background: #ffffff; border-radius: 16px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #e2e8f0; }
+.cs-modal-header { padding: 16px 20px; background: #0f172a; color: white; display: flex; justify-content: space-between; align-items: center; }
+.cs-modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+.cs-day-timeline-box { margin-bottom: 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; }
+.cs-day-timeline-header { padding: 10px 16px; background: #f8fafc; font-weight: 800; font-size: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+.cs-benchmark-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
 .cs-benchmark-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-weight: 700; border: 1px solid #e2e8f0; }
 .cs-benchmark-table td { padding: 8px 10px; border: 1px solid #e2e8f0; }
-
-/* Nút Preset khởi tạo */
 .cs-setup-buttons { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; }
 .cs-btn-preset { padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 13.5px; cursor: pointer; border: none; color: white; transition: transform 0.15s; }
 .cs-btn-preset:hover { transform: translateY(-2px); }
+
+/* =========================================================================
+   LỊCH SỬ BÀI HÔM NAY & LỊCH THÁNG HEATMAP 5 MÀU
+   ========================================================================= */
+
+/* Thông báo hôm nay chưa làm bài */
+.cs-empty-today {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 24px 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+/* Khung Lịch Tháng (Calendar Container) */
+.cs-calendar-wrapper {
+  margin-top: 22px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.cs-calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cs-calendar-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
+}
+
+.cs-cal-btn {
+  background: var(--bg-subcard, #f8fafc);
+  border: 1px solid var(--border-color, #cbd5e1);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cs-cal-btn:hover { background: #e2e8f0; }
+
+/* Grid 7 Cột */
+.cs-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.cs-cal-day-name {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  padding-bottom: 6px;
+}
+
+/* Ô Ngày */
+.cs-cal-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  user-select: none;
+}
+.cs-cal-cell:hover {
+  transform: scale(1.08);
+  z-index: 10;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.cs-cal-cell-empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cs-cal-subtext {
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* 5 MÀU THEO CHUẨN YÊU CẦU */
+/* 1. ĐỎ ĐẬM: 0% (Không làm bài) */
+.cal-color-zero {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #b91c1c !important;
+}
+
+/* 2. ĐỎ NHẠT: < 50% chỉ tiêu */
+.cal-color-low {
+  background: #fecdd3 !important;
+  color: #9f1239 !important;
+  border: 1.5px solid #fda4af !important;
+}
+
+/* 3. XANH NHẠT: 50% - 99% chỉ tiêu */
+.cal-color-mid {
+  background: #bbf7d0 !important;
+  color: #14532d !important;
+  border: 1.5px solid #86efac !important;
+}
+
+/* 4. XANH ĐẬM: 100% chỉ tiêu */
+.cal-color-full {
+  background: #15803d !important;
+  color: #ffffff !important;
+  border: 1.5px solid #166534 !important;
+}
+
+/* 5. VÀNG KIM LẤP LÁNH: > 100% (Vượt chỉ tiêu) */
+.cal-color-over {
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #fbbf24 100%) !important;
+  color: #78350f !important;
+  border: 2px solid #d97706 !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
+  animation: csGoldShimmer 2s infinite alternate ease-in-out;
+}
+
+@keyframes csGoldShimmer {
+  0% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); transform: scale(1); }
+  100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.9), 0 0 25px rgba(251, 191, 36, 0.5); transform: scale(1.03); }
+}
+
+/* Ngày tương lai (Chưa tới) */
+.cal-color-future {
+  background: #f8fafc !important;
+  color: #94a3b8 !important;
+  border: 1px dashed #cbd5e1 !important;
+  cursor: default;
+}
+.cal-color-future:hover { transform: none; box-shadow: none; }
+
+/* Chú thích màu (Legend) */
+.cs-legend-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.cs-legend-item { display: flex; align-items: center; gap: 5px; }
+.cs-legend-dot { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
