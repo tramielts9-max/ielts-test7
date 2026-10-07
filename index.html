@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cổng Luyện Thi IELTS Toàn Diện</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="curriculum-system/style-system.css">
@@ -49,9 +50,7 @@
     .module-btn:hover { opacity: 0.92; }
 
     /* Khi module bị Admin tạm khóa */
-    .module-banner.is-locked {
-      filter: grayscale(0.85); opacity: 0.65;
-    }
+    .module-banner.is-locked { filter: grayscale(0.85); opacity: 0.65; }
 
     /* GIAO DIỆN PHÂN QUYỀN ADMIN */
     .admin-switch-bar {
@@ -82,12 +81,12 @@
     }
     .student-card-header {
       padding: 12px 16px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; user-select: none; transition: background 0.15s;
+      cursor: pointer; user-select: none; transition: background 0.15s; flex-wrap: wrap; gap: 10px;
     }
     .student-card-header:hover { background: #f1f5f9; }
     .student-info-left { display: flex; align-items: center; gap: 12px; }
     .student-avatar-badge {
-      width: 36px; height: 36px; border-radius: 50%; background: #e0f2fe; color: #0284c7;
+      width: 38px; height: 38px; border-radius: 50%; background: #e0f2fe; color: #0284c7;
       display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
     }
 
@@ -169,26 +168,23 @@
 
     <!-- VIEW HỌC VIÊN -->
     <div id="studentViewSection">
- <!-- KHỐI LỘ TRÌNH HỆ THỐNG MỚI (TỰ ĐỘNG RENDER) -->
+      <!-- 1. KHỐI LỘ TRÌNH HỆ THỐNG MỚI (TỰ ĐỘNG RENDER TOÀN DIỆN) -->
       <div id="roadmapSectionMount"></div>
 
-      <!-- KHUNG LỊCH SỬ BÀI LÀM -->
+      <!-- 2. KHUNG BÀI TẬP HÔM NAY & LỊCH THÁNG HEATMAP -->
       <div class="history-section">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-          <h3 style="margin: 0; font-size: 17px;">
-            📜 Lịch sử các lần làm bài 
-            <span id="totalAttemptsBadge" style="font-size: 12px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px;">0 bài</span>
+          <h3 style="margin: 0; font-size: 17px; color: #0284c7; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-calendar-day"></i> BÀI TẬP ĐÃ LÀM HÔM NAY & LỊCH CHUYÊN CẦN
+            <span id="totalAttemptsBadge" style="font-size: 12px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 12px;">0 bài hôm nay</span>
           </h3>
-          <button type="button" id="btnToggleAllDates" onclick="window.toggleAllDateGroups && window.toggleAllDateGroups()" style="background: var(--bg-subcard); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
-            🔼 Thu gọn tất cả
-          </button>
         </div>
         <div id="historyResultsList">
           <div style="text-align:center; padding:12px; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>
         </div>
       </div>
 
-      <!-- TIÊU ĐỀ LỘ TRÌNH -->
+      <!-- TIÊU ĐỀ LỘ TRÌNH CÁC PHÂN HỆ -->
       <div style="margin: 30px 0 16px 0; font-size: 19px; font-weight: 800; color: #0f172a; border-left: 5px solid #0284c7; padding-left: 10px;">
         🗺️ LỘ TRÌNH LUYỆN THI TOÀN DIỆN (CHỌN PHÂN HỆ ĐỂ VÀO HỌC)
       </div>
@@ -238,7 +234,7 @@
         <a href="pre-listening/index-pl.html" class="module-btn" style="color: #0891b2;">🚀 VÀO PRE-LISTENING &rarr;</a>
       </div>
 
-      <!-- 4. IELTS LISTENING (ĐÃ CẬP NHẬT ĐƯỜNG DẪN THƯ MỤC MỚI) -->
+      <!-- 4. IELTS LISTENING -->
       <div class="module-banner" id="mod_listening" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon-box">🎧</div>
@@ -268,7 +264,7 @@
         <a href="pre-reading/index-pr.html" class="module-btn" style="color: #d97706;">🚀 VÀO PRE-READING &rarr;</a>
       </div>
 
-      <!-- 6. IELTS READING (ĐÃ CẬP NHẬT ĐƯỜNG DẪN THƯ MỤC MỚI) -->
+      <!-- 6. IELTS READING -->
       <div class="module-banner" id="mod_reading" style="background: linear-gradient(135deg, #8B1518 0%, #b91c1c 100%);">
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon-box">📖</div>
@@ -292,7 +288,7 @@
               <h3 style="margin: 0; font-size: 18px; font-weight: 800;">7A. PRE-WRITING TASK 1 (DỊCH SONG NGỮ & MÔ TẢ BIỂU ĐỒ)</h3>
               <span class="module-badge" style="background: #e0f2fe; color: #0369a1;">TASK 1 NỀN TẢNG</span>
             </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">21 Dạng biểu đồ Line, Bar, Pie, Table, Map, Process • Đối chiếu mẫu Band 6-7-8 • AI Sửa 2 tầng</p>
+            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Dạng biểu đồ Line, Bar, Pie, Table, Map, Process • Đối chiếu mẫu Band 6-7-8 • AI Sửa 2 tầng</p>
           </div>
         </div>
         <a href="pre-writing/index-pwt1.html" class="module-btn" style="color: #0284c7;">🚀 VÀO PRE-WRITING T1 &rarr;</a>
@@ -322,7 +318,7 @@
               <h3 style="margin: 0; font-size: 18px; font-weight: 800;">8A. IELTS WRITING TASK 1 (TRẠM HƯỚNG DẪN & SỬA BÀI 2 TẦNG)</h3>
               <span class="module-badge" style="background: #fef08a; color: #854d0e;">BAND 8.0+</span>
             </div>
-            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Kho 171 đề thi thật • Hướng dẫn viết từng câu (Trạm IELTS) • Tự lực bấm giờ • AI Chấm 2 tầng</p>
+            <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Kho 133 đề thi thật • Hướng dẫn viết từng câu (Trạm IELTS) • Tự lực bấm giờ • AI Chấm 2 tầng</p>
           </div>
         </div>
         <a href="writing task 1/index-t1.html" class="module-btn" style="color: #0284c7;">🚀 VÀO VIẾT TASK 1 &rarr;</a>
@@ -389,15 +385,10 @@
   let studentsMap = {};
   let systemSettings = { modules: {} };
 
-  // Hàm chuyển đổi đường dẫn bài cũ sang đúng folder mới reading/ hoặc listening/
   function resolveReviewPageUrl(pageUrl) {
     if (!pageUrl) return 'reading/runner-reading.html';
-    if (pageUrl.startsWith('runner-reading.html')) {
-      return 'reading/' + pageUrl;
-    }
-    if (pageUrl.startsWith('runner-listening.html')) {
-      return 'listening/' + pageUrl;
-    }
+    if (pageUrl.startsWith('runner-reading.html')) return 'reading/' + pageUrl;
+    if (pageUrl.startsWith('runner-listening.html')) return 'listening/' + pageUrl;
     return pageUrl;
   }
 
@@ -455,124 +446,6 @@
     }
   }
 
-  function getStudentRoadmapStorageKey(email) {
-    return 'ielts_roadmap_' + (email || 'guest').toLowerCase().trim();
-  }
-
-  window.triggerQuickRoadmapSetup = (level) => {
-    const user = stateManager.getUser();
-    if (!user.email) return;
-
-    let masteredTags = [];
-    let speed = 'normal';
-
-    if (level === 'intermediate') {
-      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREPOSITIONS_BASIC'];
-      speed = 'fast';
-    }
-
-    const retainedNodes = curriculumEngine.pruneCurriculum(masteredTags);
-    const totals = curriculumEngine.calculateTotals(retainedNodes, speed);
-    const scheduleData = curriculumEngine.generateDailyCalendar(retainedNodes, speed, 1.5);
-
-    const roadmapPayload = {
-      createdAt: new Date().toISOString(),
-      studentEmail: user.email,
-      speedProfile: speed,
-      currentDay: 1,
-      totals: totals,
-      schedule: scheduleData.dailySchedule,
-      completedNodeIds: []
-    };
-
-    localStorage.setItem(getStudentRoadmapStorageKey(user.email), JSON.stringify(roadmapPayload));
-    renderRoadmapUI(user.email);
-  };
-
-  window.resetStudentRoadmap = () => {
-    const user = stateManager.getUser();
-    if (confirm("Em có chắc muốn xóa lộ trình hiện tại để thiết lập lại từ đầu không?")) {
-      localStorage.removeItem(getStudentRoadmapStorageKey(user.email));
-      renderRoadmapUI(user.email);
-    }
-  };
-
-  window.completeNodeTask = (nodeId) => {
-    const user = stateManager.getUser();
-    const raw = localStorage.getItem(getStudentRoadmapStorageKey(user.email));
-    if (!raw) return;
-
-    const data = JSON.parse(raw);
-    if (!data.completedNodeIds.includes(nodeId)) {
-      data.completedNodeIds.push(nodeId);
-    }
-
-    const currentDaySchedule = data.schedule.find(s => s.dayNumber === data.currentDay);
-    if (currentDaySchedule) {
-      const isAllDone = currentDaySchedule.nodes.every(n => data.completedNodeIds.includes(n.id));
-      if (isAllDone && data.currentDay < data.schedule.length) {
-        data.currentDay += 1;
-        alert("🎉 Chúc mừng em đã hoàn thành toàn bộ bài tập của ngày hôm nay! Ngày tiếp theo đã được mở khóa.");
-      }
-    }
-
-    localStorage.setItem(getStudentRoadmapStorageKey(user.email), JSON.stringify(data));
-    renderRoadmapUI(user.email);
-  };
-
-  function renderRoadmapUI(email) {
-    const raw = localStorage.getItem(getStudentRoadmapStorageKey(email));
-    const noRoadmapBox = document.getElementById('noRoadmapBox');
-    const activeRoadmapBox = document.getElementById('activeRoadmapBox');
-
-    if (!raw) {
-      noRoadmapBox.style.display = 'block';
-      activeRoadmapBox.style.display = 'none';
-      return;
-    }
-
-    const data = JSON.parse(raw);
-    noRoadmapBox.style.display = 'none';
-    activeRoadmapBox.style.display = 'block';
-
-    const speedLabels = { fast: "HỌC NHANH ⚡", normal: "HỌC BÌNH THƯỜNG 🌱", slow: "HỌC CHẬM & KỸ 🐢" };
-    document.getElementById('roadmapSpeedBadge').innerText = speedLabels[data.speedProfile] || data.speedProfile.toUpperCase();
-    document.getElementById('roadmapDayTitle').innerText = `📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})`;
-    document.getElementById('roadmapStatsSummary').innerText = `Đã xong: ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt (${data.totals.totalCoachHours}h giáo viên)`;
-
-    const todayPlan = data.schedule.find(s => s.dayNumber === data.currentDay) || data.schedule[0];
-    const container = document.getElementById('todayTasksList');
-
-    if (!todayPlan || !todayPlan.nodes) {
-      container.innerHTML = `<div style="text-align:center; padding:15px; color:#16a34a; font-weight:bold;">🎉 Em đã hoàn thành toàn bộ lộ trình khóa học!</div>`;
-      return;
-    }
-
-    container.innerHTML = todayPlan.nodes.map(node => {
-      const isDone = data.completedNodeIds.includes(node.id);
-      return `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:${isDone ? '#f0fdf4' : 'var(--bg-subcard)'}; border:1.5px solid ${isDone ? '#16a34a' : 'var(--border-color)'}; padding:12px 16px; border-radius:8px; flex-wrap:wrap; gap:10px;">
-          <div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-family:monospace; font-weight:800; font-size:11px; background:#1e293b; color:white; padding:2px 6px; border-radius:4px;">${node.id}</span>
-              <span style="font-size:11px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:10px;">${node.domain}</span>
-              <span style="font-size:12px; color:var(--text-muted);">⏱️ Dự kiến: <b>${node.assignedDurationMinutes} phút</b></span>
-            </div>
-            <div style="font-size:14.5px; font-weight:700; color:${isDone ? '#166534' : 'var(--text-main)'}; margin-top:4px;">
-              ${isDone ? '✓ ' : ''}${node.title}
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <a href="${node.url}" target="_blank" onclick="window.completeNodeTask('${node.id}')" style="background:#0284c7; color:white; text-decoration:none; padding:7px 14px; border-radius:6px; font-weight:700; font-size:13px; display:inline-block;">
-              🚀 Làm Bài &rarr;
-            </a>
-            ${isDone ? '<span style="color:#16a34a; font-weight:800; font-size:13px;">Đã xong</span>' : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
   window.switchMainView = (view) => {
     const studentSec = document.getElementById('studentViewSection');
     const adminSec = document.getElementById('adminPanelSection');
@@ -623,7 +496,6 @@
     } catch(e) {}
 
     let cloudAttempts = [];
-
     if (CONFIG.DRIVE_STORAGE_URL) {
       try {
         const res = await fetch(CONFIG.DRIVE_STORAGE_URL, {
@@ -636,7 +508,7 @@
           cloudAttempts = data.attempts;
         }
       } catch (err) {
-        console.warn("⚠️ Không thể kết nối Cloud Apps Script, dùng dữ liệu trên máy:", err);
+        console.warn("⚠️ Dùng dữ liệu trên máy:", err);
       }
     }
 
@@ -668,6 +540,7 @@
     renderAdminStudentsList(Object.values(studentsMap));
   }
 
+  // GIAI ĐOẠN C: HIỂN THỊ TIẾN ĐỘ LỘ TRÌNH VÀ NÚT CAN THIỆP CHO ADMIN
   function renderAdminStudentsList(studentsList) {
     const container = document.getElementById('adminStudentsContainer');
     if (studentsList.length === 0) {
@@ -681,6 +554,24 @@
       const initial = (st.name || 'H').charAt(0).toUpperCase();
       const dateTreeHtml = renderStudentDateTreeHtml(st.attempts, st.email, safeEmailKey);
 
+      // Đọc tiến độ lộ trình của học sinh từ LocalStorage
+      const rKey = `ielts_roadmap_data_${st.email.toLowerCase().trim()}`;
+      const rRaw = localStorage.getItem(rKey);
+      let rBadge = '';
+      if (rRaw) {
+        try {
+          const rData = JSON.parse(rRaw);
+          const done = rData.completedNodeIds ? rData.completedNodeIds.length : 0;
+          const total = rData.totals ? rData.totals.nodeCount : 858;
+          const pct = Math.round((done / total) * 100);
+          rBadge = `<span style="font-size:11px; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:10px; font-weight:800; border:1px solid #86efac;">
+            🎯 ${done}/${total} đốt (${pct}%) • ${rData.speedProfile?.toUpperCase() || 'NORMAL'}
+          </span>`;
+        } catch(e) {}
+      } else {
+        rBadge = `<span style="font-size:11px; background:#f1f5f9; color:#64748b; padding:2px 8px; border-radius:10px; font-weight:600;">Chưa tạo lộ trình</span>`;
+      }
+
       html += `
         <div class="student-card">
           <div class="student-card-header" onclick="window.toggleStudentAccordion('${safeEmailKey}')">
@@ -688,10 +579,11 @@
               <div class="student-avatar-badge">${initial}</div>
               <div>
                 <b style="font-size: 15px; color: var(--text-main);">${st.name}</b>
-                <div style="font-size: 12.5px; color: #0284c7; margin-top: 2px;">✉️ ${st.email}</div>
+                <div style="font-size: 12px; color: #0284c7; margin-top: 2px;">✉️ ${st.email}</div>
               </div>
             </div>
-            <div style="display:flex; align-items:center; gap: 10px;">
+            <div style="display:flex; align-items:center; gap: 8px; flex-wrap:wrap;">
+              ${rBadge}
               <span style="font-size: 12px; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 12px; font-weight: 700;">
                 ${st.attempts.length} bài đã nộp
               </span>
@@ -814,7 +706,6 @@
         }
       } catch(e) {}
     }
-
     applyModuleLockUI();
   }
 
@@ -887,28 +778,6 @@
     });
   }
 
-  window.toggleDateGroup = (safeId) => {
-    const content = document.getElementById('content_' + safeId);
-    const icon = document.getElementById('icon_' + safeId);
-    if (!content) return;
-    const isHidden = content.style.display === 'none';
-    content.style.display = isHidden ? 'block' : 'none';
-    if (icon) icon.innerText = isHidden ? '▼' : '▶';
-  };
-
-  window.toggleAllDateGroups = () => {
-    const groups = document.querySelectorAll('#historyResultsList .date-group-content');
-    const icons = document.querySelectorAll('#historyResultsList .date-group-icon');
-    const btn = document.getElementById('btnToggleAllDates');
-    if (groups.length === 0) return;
-    const isFirstOpen = groups[0].style.display !== 'none';
-    const nextDisplay = isFirstOpen ? 'none' : 'block';
-    const nextIcon = isFirstOpen ? '▶' : '▼';
-    groups.forEach(g => g.style.display = nextDisplay);
-    icons.forEach(ic => ic.innerText = nextIcon);
-    if (btn) btn.innerText = isFirstOpen ? '🔽 Mở rộng tất cả' : '🔼 Thu gọn tất cả';
-  };
-
   async function syncAndRenderHistory(email) {
     const resultsBox = document.getElementById('historyResultsList');
     let localAttempts = [];
@@ -949,7 +818,7 @@
     }
   }
 
-function renderHistoryUI(attempts, email) {
+  function renderHistoryUI(attempts, email) {
     curriculumUI.renderTodayHistoryAndCalendar(attempts, email);
   }
 
