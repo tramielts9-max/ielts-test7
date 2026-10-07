@@ -1,12 +1,11 @@
 /**
  * curriculum-system/ui-system.js
- * BỘ ĐIỀU KHIỂN GIAO DIỆN LỘ TRÌNH, FULL TIMELINE & BẢNG ĐỊNH MỨC THỜI GIAN
+ * BỘ ĐIỀU KHIỂN GIAO DIỆN LỘ TRÌNH, LỊCH SỬ HÔM NAY & LỊCH THÁNG HEATMAP 5 MÀU
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
 import { MASTER_CURRICULUM_SYSTEM } from './manifest-system.js';
 
-// BẢNG ĐỊNH MỨC THỜI GIAN THEO TỪNG PHÂN HỆ ĐỂ CHÚ THÍCH CHO HỌC SINH
 const BENCHMARK_EXPLANATIONS = {
   fast: {
     label: "Học Nhanh (Fast) ⚡",
@@ -55,6 +54,8 @@ const BENCHMARK_EXPLANATIONS = {
 class CurriculumUISystem {
   constructor() {
     curriculumEngineSystem.setNodes(MASTER_CURRICULUM_SYSTEM);
+    this.calCurrentMonth = new Date().getMonth();
+    this.calCurrentYear = new Date().getFullYear();
   }
 
   getStorageKey(email) {
@@ -148,16 +149,12 @@ class CurriculumUISystem {
     this.render();
   }
 
-  // =========================================================================
-  // ADMIN ĐỔI TỐC ĐỘ HỌC CHO HỌC SINH
-  // =========================================================================
   adminChangeSpeedProfile(newSpeed) {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
     if (!data) return;
 
     data.speedProfile = newSpeed;
-    // Tái cấu trúc lại tổng thời gian và lịch theo tốc độ mới
     const currentCompleted = [...data.completedNodeIds];
     const allRetained = curriculumEngineSystem.pruneCurriculum(data.presetLevel === 'intermediate' ? ['G_NOUNS'] : []);
     data.totals = curriculumEngineSystem.calculateTotals(allRetained, newSpeed);
@@ -171,9 +168,6 @@ class CurriculumUISystem {
     this.closeModal();
   }
 
-  // =========================================================================
-  // MỞ BẢNG CHÚ THÍCH ĐỊNH MỨC THỜI GIAN
-  // =========================================================================
   showBenchmarkExplanationModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
@@ -222,9 +216,6 @@ class CurriculumUISystem {
     `);
   }
 
-  // =========================================================================
-  // MỞ MÀN HÌNH FULL LỘ TRÌNH (TẤT CẢ CÁC NGÀY TỪ 1 ĐẾN HẾT)
-  // =========================================================================
   showFullRoadmapModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
@@ -285,9 +276,197 @@ class CurriculumUISystem {
     document.getElementById('csDynamicModal')?.remove();
   }
 
-  /**
-   * VẼ GIAO DIỆN LÊN KHỐI CHÍNH
-   */
+  // =========================================================================
+  // LOGIC LỊCH SỬ CHỈ HIỆN BÀI HÔM NAY & LỊCH THÁNG HEATMAP 5 MÀU
+  // =========================================================================
+  renderTodayHistoryAndCalendar(allAttempts, email) {
+    const historyListEl = document.getElementById('historyResultsList');
+    const badgeEl = document.getElementById('totalAttemptsBadge');
+    if (!historyListEl) return;
+
+    const today = new Date();
+    const todayStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+
+    // Lọc duy nhất bài nộp hôm nay
+    const todayAttempts = allAttempts.filter(att => att.timestamp && att.timestamp.includes(todayStr));
+    if (badgeEl) badgeEl.innerText = `${todayAttempts.length} bài hôm nay`;
+
+    let historyHtml = '';
+    if (todayAttempts.length === 0) {
+      historyHtml = `
+        <div class="cs-empty-today">
+          <i class="fa-regular fa-calendar-xmark text-lg text-rose-500 mb-1"></i><br>
+          Chưa có bài tập nào đã được làm hôm nay.<br>
+          <span style="font-size:12px; color:#94a3b8;">Hãy bắt đầu làm các bài trong Lộ trình hôm nay bên trên nhé!</span>
+        </div>
+      `;
+    } else {
+      historyHtml = todayAttempts.map(att => {
+        let targetPage = att.pageUrl || 'reading/runner-reading.html';
+        if (targetPage.startsWith('runner-reading.html')) targetPage = 'reading/' + targetPage;
+        if (targetPage.startsWith('runner-listening.html')) targetPage = 'listening/' + targetPage;
+        const separator = targetPage.includes('?') ? '&' : '?';
+        const reviewLink = `${targetPage}${separator}attemptId=${att.id}&email=${encodeURIComponent(email)}`;
+
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <b style="color:#0f172a; font-size:14px;">📝 ${att.testTitle}</b>
+              <div style="font-size:12px; color:#64748b; margin-top:2px;">
+                ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="score-pill" style="background:#16a34a; color:white; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:20px;">Điểm: ${att.score}</span>
+              <a href="${reviewLink}" target="_blank" style="background:#0284c7; color:white; text-decoration:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold;">👁️ Xem lại bài</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // VẼ KHUNG LỊCH THÁNG HEATMAP BÊN DƯỚI
+    const calendarHtml = this.generateMonthCalendarHtml(allAttempts);
+    historyListEl.innerHTML = historyHtml + calendarHtml;
+  }
+
+  generateMonthCalendarHtml(allAttempts) {
+    const year = this.calCurrentYear;
+    const month = this.calCurrentMonth;
+
+    const firstDayIndex = new Date(year, month, 1).getDay(); // 0 is Sunday
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+
+    // Map số lượng bài làm theo từng ngày trong tháng
+    const dayAttemptCounts = {};
+    allAttempts.forEach(att => {
+      const m = att.timestamp?.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if (m) {
+        const d = parseInt(m[1], 10);
+        const mo = parseInt(m[2], 10) - 1;
+        const y = parseInt(m[3], 10);
+        if (mo === month && y === year) {
+          dayAttemptCounts[d] = (dayAttemptCounts[d] || 0) + 1;
+        }
+      }
+    });
+
+    // Chỉ tiêu trung bình chuẩn mỗi ngày là 2 bài
+    const dailyTarget = 2;
+
+    // Chuyển thứ CN từ 0 sang vị trí cuối cùng (T2 -> CN)
+    const shiftedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+
+    let cellsHtml = '';
+    for (let i = 0; i < shiftedFirstDay; i++) {
+      cellsHtml += `<div class="cs-cal-cell cs-cal-cell-empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isPastOrToday = (year < todayYear) || (year === todayYear && month < todayMonth) || (year === todayYear && month === todayMonth && d <= todayDate);
+      const count = dayAttemptCounts[d] || 0;
+
+      let colorClass = 'cal-color-future';
+      let statusLabel = 'Chưa tới';
+
+      if (isPastOrToday) {
+        const ratio = count / dailyTarget;
+        if (count === 0) {
+          colorClass = 'cal-color-zero'; // ĐỎ ĐẬM (0%)
+          statusLabel = '0 bài (0%)';
+        } else if (ratio < 0.5) {
+          colorClass = 'cal-color-low'; // ĐỎ NHẠT (<50%)
+          statusLabel = `${count} bài (<50%)`;
+        } else if (ratio < 1.0) {
+          colorClass = 'cal-color-mid'; // XANH NHẠT (>=50%)
+          statusLabel = `${count} bài (≥50%)`;
+        } else if (ratio === 1.0) {
+          colorClass = 'cal-color-full'; // XANH ĐẬM (100%)
+          statusLabel = `${count} bài (100%)`;
+        } else {
+          colorClass = 'cal-color-over'; // VÀNG KIM LẤP LÁNH (>100%)
+          statusLabel = `✨ ${count} bài (>100%)`;
+        }
+      }
+
+      cellsHtml += `
+        <div class="cs-cal-cell ${colorClass}" title="Ngày ${d}/${month + 1}/${year}: ${statusLabel}">
+          <span>${d}</span>
+          ${isPastOrToday ? `<span class="cs-cal-subtext">${count} bài</span>` : ''}
+        </div>
+      `;
+    }
+
+    const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+
+    return `
+      <div class="cs-calendar-wrapper">
+        <div class="cs-calendar-nav">
+          <div class="cs-calendar-title">
+            🗓️ Lịch Hoạt Động & Chuyên Cần: <b>${monthNames[month]} / ${year}</b>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(-1)">◀ Tháng trước</button>
+            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(1)">Tháng sau ▶</button>
+          </div>
+        </div>
+
+        <div class="cs-calendar-grid">
+          <div class="cs-cal-day-name">T2</div>
+          <div class="cs-cal-day-name">T3</div>
+          <div class="cs-cal-day-name">T4</div>
+          <div class="cs-cal-day-name">T5</div>
+          <div class="cs-cal-day-name">T6</div>
+          <div class="cs-cal-day-name">T7</div>
+          <div class="cs-cal-day-name" style="color:#ef4444;">CN</div>
+          ${cellsHtml}
+        </div>
+
+        <!-- Chú thích 5 dải màu -->
+        <div class="cs-legend-bar">
+          <div class="cs-legend-item">
+            <span class="cs-legend-dot" style="background:#dc2626;"></span>
+            <span>0% (Không làm)</span>
+          </div>
+          <div class="cs-legend-item">
+            <span class="cs-legend-dot" style="background:#fecdd3; border:1px solid #fda4af;"></span>
+            <span>&lt; 50%</span>
+          </div>
+          <div class="cs-legend-item">
+            <span class="cs-legend-dot" style="background:#bbf7d0; border:1px solid #86efac;"></span>
+            <span>50% - 99%</span>
+          </div>
+          <div class="cs-legend-item">
+            <span class="cs-legend-dot" style="background:#15803d;"></span>
+            <span>100% Đạt chỉ tiêu</span>
+          </div>
+          <div class="cs-legend-item">
+            <span class="cs-legend-dot" style="background:linear-gradient(135deg, #fef08a, #f59e0b); border:1px solid #d97706;"></span>
+            <span>✨ &gt; 100% (Vượt chỉ tiêu)</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  changeCalendarMonth(delta) {
+    this.calCurrentMonth += delta;
+    if (this.calCurrentMonth < 0) {
+      this.calCurrentMonth = 11;
+      this.calCurrentYear--;
+    } else if (this.calCurrentMonth > 11) {
+      this.calCurrentMonth = 0;
+      this.calCurrentYear++;
+    }
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const local = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    this.renderTodayHistoryAndCalendar(local, email);
+  }
+
   render(targetContainerId = 'roadmapSectionMount') {
     let container = document.getElementById(targetContainerId);
     if (!container) return;
@@ -320,7 +499,6 @@ class CurriculumUISystem {
       return;
     }
 
-    // ĐỒNG BỘ CÁC BÀI ĐÃ LÀM TỪ LỊCH SỬ CHUNG
     data.schedule.forEach(day => {
       day.nodes.forEach(node => {
         if (!data.completedNodeIds.includes(node.id) && this.isNodeCompletedInHistory(node)) {
@@ -330,7 +508,6 @@ class CurriculumUISystem {
     });
 
     const completedTotal = data.completedNodeIds.length;
-    // TÍNH TOÁN % TIẾN ĐỘ CHẠY THẬT CHUẨN XÁC
     const progressPercent = data.totals.nodeCount > 0 
       ? Math.min(100, Math.round((completedTotal / data.totals.nodeCount) * 100))
       : 0;
@@ -340,7 +517,6 @@ class CurriculumUISystem {
 
     container.innerHTML = `
       <div class="cs-container">
-        <!-- Header & Các Nút Hành Động -->
         <div class="cs-header">
           <div class="cs-title-group">
             <span class="cs-badge cs-badge-speed" onclick="window.curriculumUI.showBenchmarkExplanationModal()" title="Nhấp để xem bảng định mức thời gian và đổi tốc độ">
@@ -349,7 +525,6 @@ class CurriculumUISystem {
             <h3>📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})</h3>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <!-- NÚT MỞ TOÀN BỘ LỘ TRÌNH -->
             <button type="button" onclick="window.curriculumUI.showFullRoadmapModal()" style="background:#0f172a; color:white; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:6px;">
               <i class="fa-solid fa-map-location-dot text-sky-400"></i> Xem Toàn Bộ Lộ Trình
             </button>
@@ -359,7 +534,6 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- Thống kê khối lượng & Số giờ giáo viên -->
         <div class="cs-stats-grid">
           <div class="cs-stat-box">
             <div class="cs-stat-val">${completedTotal}/${data.totals.nodeCount}</div>
@@ -379,7 +553,6 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- THANH PROGRESS CHẠY ĐỘNG THEO TIẾN ĐỘ THẬT -->
         <div class="cs-progress-container">
           <div class="cs-progress-header">
             <span>Tiến độ hoàn thành lộ trình</span>
@@ -390,7 +563,6 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- Danh sách bài tập của ngày hôm nay -->
         <div class="cs-task-list">
           ${currentDayPlan.nodes.map(node => {
             const isDone = data.completedNodeIds.includes(node.id) || this.isNodeCompletedInHistory(node);
