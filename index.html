@@ -949,72 +949,8 @@
     }
   }
 
-  function renderHistoryUI(attempts, email) {
-    const resultsBox = document.getElementById('historyResultsList');
-    document.getElementById('totalAttemptsBadge').innerText = `${attempts.length} bài`;
-
-    if (attempts.length === 0) {
-      resultsBox.innerHTML = `<div style="text-align:center; padding:14px; color:var(--text-muted);">ℹ️ Em chưa có bài làm nào. Hãy chọn kỹ năng bên dưới để bắt đầu luyện tập nhé!</div>`;
-      return;
-    }
-
-    const groups = {};
-    attempts.forEach(att => {
-      let datePart = "Gần đây";
-      const m = att.timestamp?.match(/(\d{2}\/\d{2}\/\d{4})/);
-      if (m) datePart = m[1];
-      if (!groups[datePart]) groups[datePart] = [];
-      groups[datePart].push(att);
-    });
-
-    let html = '';
-    let isFirstGroup = true;
-
-    for (const date in groups) {
-      const safeId = date.replace(/[^a-zA-Z0-9]/g, '_');
-      const displayStyle = isFirstGroup ? 'block' : 'none';
-      const arrowIcon = isFirstGroup ? '▼' : '▶';
-
-      html += `
-        <div style="margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-card);">
-          <div class="date-accordion-header" onclick="window.toggleDateGroup('${safeId}')">
-            <span style="display: flex; align-items: center; gap: 8px;">
-              <span id="icon_${safeId}" class="date-group-icon" style="color: var(--primary-blue);">${arrowIcon}</span>
-              <span>📅 Ngày ${date}</span>
-            </span>
-            <span style="font-size: 12px; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 10px;">
-              ${groups[date].length} bài
-            </span>
-          </div>
-          <div id="content_${safeId}" class="date-group-content" style="display: ${displayStyle}; padding: 6px 14px; border-top: 1px solid var(--border-color);">
-      `;
-
-      groups[date].forEach(att => {
-        const targetPage = resolveReviewPageUrl(att.pageUrl);
-        const separator = targetPage.includes('?') ? '&' : '?';
-        const reviewLink = `${targetPage}${separator}attemptId=${att.id}&email=${encodeURIComponent(email)}`;
-
-        html += `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color); flex-wrap: wrap; gap: 8px;">
-            <div>
-              <b style="color: var(--text-main); font-size: 14px;">📝 ${att.testTitle}</b>
-              <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
-                ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="score-pill">Điểm: ${att.score}</span>
-              <a href="${reviewLink}" class="btn-review">👁️ Xem lại bài</a>
-            </div>
-          </div>
-        `;
-      });
-
-      html += `</div></div>`;
-      isFirstGroup = false;
-    }
-
-    resultsBox.innerHTML = html;
+function renderHistoryUI(attempts, email) {
+    curriculumUI.renderTodayHistoryAndCalendar(attempts, email);
   }
 
   checkAuthStatus();
