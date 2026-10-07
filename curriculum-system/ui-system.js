@@ -1,14 +1,61 @@
 /**
  * curriculum-system/ui-system.js
- * BỘ ĐIỀU KHIỂN GIAO DIỆN LỘ TRÌNH, MICRO STT CHẨN ĐOÁN AI & PHÂN QUYỀN ADMIN
+ * BỘ ĐIỀU KHIỂN GIAO DIỆN LỘ TRÌNH, CLOUD SYNC & BÁO CÁO ZALO PHỤ HUYNH
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
 import { MASTER_CURRICULUM_SYSTEM } from './manifest-system.js';
 import { analyzeStudentDiagnostic } from './ai-service-system.js';
 
+const CLOUD_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec";
+
 let diagRecognition = null;
 let isDiagRecording = false;
+
+const BENCHMARK_EXPLANATIONS = {
+  fast: {
+    label: "Học Nhanh (Fast) ⚡",
+    desc: "Dành cho học sinh tiếp thu nhanh, phản xạ tốt hoặc cần luyện thi gấp",
+    table: [
+      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "5 - 15 phút", coach: "0 - 0.25h" },
+      { type: "Từ vựng (1 Unit 30 từ)", time: "15 phút", coach: "0h (Tự ôn SRS)" },
+      { type: "Pre-Listening & Pre-Reading", time: "10 phút", coach: "0 - 0.25h" },
+      { type: "Pre-Writing Task 1 & 2", time: "15 - 20 phút", coach: "0.5h (Sửa câu)" },
+      { type: "Reading Cam (1 Passage)", time: "12 - 15 phút", coach: "0 - 0.25h" },
+      { type: "Listening Cam (1 Part)", time: "8 - 10 phút", coach: "0 - 0.25h" },
+      { type: "Writing Task 1 / Task 2", time: "20p / 40p (Chuẩn thi)", coach: "0.75 - 1.0h" },
+      { type: "Speaking Part 1 / 2 / 3", time: "10 - 15 phút", coach: "0.25 - 0.5h" }
+    ]
+  },
+  normal: {
+    label: "Học Bình Thường (Normal) 🌱",
+    desc: "Lộ trình chuẩn kiến thức, đảm bảo nắm chắc từng dạng bài và làm sổ note lỗi",
+    table: [
+      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "10 - 25 phút", coach: "0 - 0.5h" },
+      { type: "Từ vựng (1 Unit 30 từ)", time: "25 phút", coach: "0h (Tự ôn SRS)" },
+      { type: "Pre-Listening & Pre-Reading", time: "15 phút", coach: "0 - 0.25h" },
+      { type: "Pre-Writing Task 1 & 2", time: "20 - 30 phút", coach: "0.5h (Sửa câu)" },
+      { type: "Reading Cam (1 Passage)", time: "15 - 18 phút", coach: "0.25h" },
+      { type: "Listening Cam (1 Part)", time: "10 - 12 phút", coach: "0.25h" },
+      { type: "Writing Task 1 / Task 2", time: "30p / 50p", coach: "0.75 - 1.0h" },
+      { type: "Speaking Part 1 / 2 / 3", time: "15 - 20 phút", coach: "0.25 - 0.5h" }
+    ]
+  },
+  slow: {
+    label: "Học Kỹ & Chậm (Slow) 🐢",
+    desc: "Dành cho học sinh mất gốc, cần tua nghe nhiều lần và tra từ điển chi tiết",
+    table: [
+      { type: "Ngữ pháp (Lý thuyết / Bài tập)", time: "20 - 45 phút", coach: "0 - 0.5h" },
+      { type: "Từ vựng (1 Unit 30 từ)", time: "40 phút", coach: "0h (Tự ôn SRS)" },
+      { type: "Pre-Listening & Pre-Reading", time: "25 phút", coach: "0.25h" },
+      { type: "Pre-Writing Task 1 & 2", time: "35 - 45 phút", coach: "0.5h" },
+      { type: "Reading Cam (1 Passage)", time: "20 - 25 phút", coach: "0.5h" },
+      { type: "Listening Cam (1 Part)", time: "15 - 18 phút", coach: "0.5h" },
+      { type: "Writing Task 1 / Task 2", time: "40p / 65p", coach: "1.0h" },
+      { type: "Speaking Part 1 / 2 / 3", time: "20 - 30 phút", coach: "0.5h" }
+    ]
+  }
+};
 
 class CurriculumUISystem {
   constructor() {
@@ -57,6 +104,28 @@ class CurriculumUISystem {
 
   saveRoadmap(email, data) {
     localStorage.setItem(this.getStorageKey(email), JSON.stringify(data));
+    this.syncRoadmapToCloud(email, data);
+  }
+
+  // =========================================================================
+  // GIAI ĐOẠN C: ĐỒNG BỘ LỘ TRÌNH LÊN GOOGLE DRIVE (CLOUD SYNC)
+  // =========================================================================
+  syncRoadmapToCloud(email, roadmapData) {
+    if (!CLOUD_SCRIPT_URL) return;
+    try {
+      fetch(CLOUD_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "save_student_roadmap",
+          studentEmail: email,
+          roadmap: roadmapData
+        })
+      }).catch(() => {});
+    } catch(e) {
+      console.warn("Lỗi sync cloud lộ trình:", e);
+    }
   }
 
   checkIsAdmin() {
@@ -77,15 +146,11 @@ class CurriculumUISystem {
     }
   }
 
-  // =========================================================================
-  // BẬT / TẮT MICRO THU ÂM CHẨN ĐOÁN
-  // =========================================================================
   toggleMicrophone() {
     if (!diagRecognition) {
-      alert("⚠️ Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy gõ trực tiếp vào ô bên dưới nhé!");
+      alert("⚠️ Trình duyệt không hỗ trợ nhận diện giọng nói. Em hãy gõ trực tiếp nhé!");
       return;
     }
-
     const btn = document.getElementById('btnDiagMic');
     const status = document.getElementById('diagMicStatus');
 
@@ -95,7 +160,7 @@ class CurriculumUISystem {
         isDiagRecording = true;
         btn.classList.add('recording');
         btn.innerHTML = `<i class="fa-solid fa-stop"></i> Đang nghe... Bấm để Dừng`;
-        if (status) status.innerText = "🔴 Đang lắng nghe giọng nói của em...";
+        if (status) status.innerText = "🔴 Đang lắng nghe giọng nói...";
       } catch (e) {}
     } else {
       try {
@@ -118,16 +183,12 @@ class CurriculumUISystem {
     reader.readAsText(file);
   }
 
-  // =========================================================================
-  // GỬI CHO AI GEMINI PHÂN TÍCH & GỌT ĐỐT
-  // =========================================================================
   async runAIDiagnostic() {
     const text = document.getElementById('diagTextInput')?.value.trim();
     if (!text) {
-      alert("⚠️ Em vui lòng nói vào micro, gõ chữ hoặc tải file báo cáo trước khi bấm chẩn đoán nhé!");
+      alert("⚠️ Em vui lòng nói vào micro hoặc dán báo cáo trước khi chẩn đoán nhé!");
       return;
     }
-
     const btn = document.getElementById('btnStartAIAnalyze');
     btn.disabled = true;
     btn.innerHTML = `⏳ AI Gemini đang phân tích năng lực & gọt bài thừa...`;
@@ -140,7 +201,6 @@ class CurriculumUISystem {
       const resBox = document.getElementById('diagAIResultContainer');
       resBox.style.display = 'block';
 
-      // Tính thử số đốt gọt được
       const prunedNodes = curriculumEngineSystem.pruneCurriculum(result.mastered_tags || []);
       const savedCount = MASTER_CURRICULUM_SYSTEM.length - prunedNodes.length;
 
@@ -160,7 +220,7 @@ class CurriculumUISystem {
             <span>⚡ Tốc độ đề xuất: <b>${(result.recommended_speed || 'normal').toUpperCase()}</b></span>
             <span>⏱️ Cam kết: <b>${result.recommended_daily_hours || 1.0}h/ngày</b></span>
           </div>
-          <button type="button" onclick="window.curriculumUI.applyAIDiagnosticRoadmap(${JSON.stringify(result).replace(/"/g, '&quot;')})" style="background:#16a34a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:800; font-size:13.5px; cursor:pointer; width:100%; shadow;">
+          <button type="button" onclick="window.curriculumUI.applyAIDiagnosticRoadmap(${JSON.stringify(result).replace(/"/g, '&quot;')})" style="background:#16a34a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:800; font-size:13.5px; cursor:pointer; width:100%;">
             🚀 Phê Duyệt & Kích Hoạt Lộ Trình Này Ngay
           </button>
         </div>
@@ -199,8 +259,144 @@ class CurriculumUISystem {
     this.render();
   }
 
+  initRoadmap(presetLevel = 'beginner', dailyHours = 1.0, speed = 'normal') {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    let masteredTags = [];
+
+    if (presetLevel === 'intermediate') {
+      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'VOCAB_U01', 'VOCAB_U02'];
+    } else if (presetLevel === 'advanced') {
+      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'G_PAST_CONT', 'G_IRREG_V3', 'G_PRES_PERF', 'G_PAST_PERF', 'G_CONDITIONALS', 'G_PASSIVE_VOICE', 'G_COMPARISON', 'G_RELATIVE_CLAUSE', 'G_PREP_ADV', 'G_WORD_FORM'];
+    }
+
+    const retainedNodes = curriculumEngineSystem.pruneCurriculum(masteredTags);
+    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, speed);
+    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, speed, dailyHours);
+
+    const payload = {
+      createdAt: new Date().toISOString(),
+      studentEmail: email,
+      presetLevel,
+      speedProfile: speed,
+      dailyHours,
+      currentDay: 1,
+      totals,
+      schedule: scheduleData.dailySchedule,
+      completedNodeIds: []
+    };
+
+    this.saveRoadmap(email, payload);
+    this.render();
+  }
+
+  resetRoadmap() {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    if (confirm("⚠️ Em có chắc muốn xóa lộ trình hiện tại để thiết lập lại từ đầu không?")) {
+      localStorage.removeItem(this.getStorageKey(email));
+      this.render();
+    }
+  }
+
+  completeNode(nodeId) {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const data = this.getSavedRoadmap(email);
+    if (!data) return;
+
+    if (!data.completedNodeIds.includes(nodeId)) {
+      data.completedNodeIds.push(nodeId);
+    }
+
+    const currentDayPlan = data.schedule.find(s => s.dayNumber === data.currentDay);
+    if (currentDayPlan) {
+      const allDone = currentDayPlan.nodes.every(n => data.completedNodeIds.includes(n.id) || this.isNodeCompletedInHistory(n));
+      if (allDone && data.currentDay < data.schedule.length) {
+        data.currentDay += 1;
+        alert("🎉 Xuất sắc! Em đã hoàn thành toàn bộ bài tập của hôm nay. Ngày tiếp theo đã được mở khóa!");
+      }
+    }
+
+    this.saveRoadmap(email, data);
+    this.render();
+  }
+
   // =========================================================================
-  // ADMIN OVERRIDE PANEL
+  // GIAI ĐOẠN C: BÁO CÁO ZALO CHO PHỤ HUYNH (ZALO GUARDIAN ALERT)
+  // =========================================================================
+  showZaloReportModal() {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+    const data = this.getSavedRoadmap(email);
+    if (!data) return;
+
+    const today = new Date();
+    const todayStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+    const todayPlan = data.schedule.find(s => s.dayNumber === data.currentDay) || data.schedule[0];
+    
+    let todayDoneCount = 0;
+    todayPlan.nodes.forEach(n => {
+      if (data.completedNodeIds.includes(n.id) || this.isNodeCompletedInHistory(n)) todayDoneCount++;
+    });
+
+    const isTodayCompleted = todayDoneCount >= todayPlan.nodes.length;
+    const progressPercent = Math.round((data.completedNodeIds.length / data.totals.nodeCount) * 100);
+
+    let zaloMessage = "";
+    if (isTodayCompleted) {
+      zaloMessage = `[TRẠM IELTS - BÁO CÁO HỌC TẬP HÔM NAY]
+Kính gửi Phụ huynh em: ${sName}
+Ngày: ${todayStr}
+
+🎉 Chúc mừng em đã HOÀN THÀNH 100% bài tập hôm nay (${todayDoneCount}/${todayPlan.nodes.length} bài)!
+📊 Tiến độ lộ trình: Đã xong ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt (${progressPercent}%).
+⏱️ Tốc độ học tập: ${data.speedProfile.toUpperCase()} (${data.dailyHours}h tự cày/ngày).
+👨‍🏫 Tổng số buổi giáo viên đã đồng hành sửa bài: ${data.totals.coachSessionsEstimate} buổi.
+
+Kính nhờ Phụ huynh động viên em tiếp tục duy trì phong độ ngày mai nhé!`;
+    } else {
+      zaloMessage = `[TRẠM IELTS - THÔNG BÁO NHẮC NHỞ HỌC TẬP]
+Kính gửi Phụ huynh em: ${sName}
+Ngày: ${todayStr}
+
+⚠️ Báo động tiến độ: Tính đến 21:30 tối nay, em ${sName} mới hoàn thành ${todayDoneCount}/${todayPlan.nodes.length} bài tập theo lịch ngày.
+📌 Bài tập còn thiếu:
+${todayPlan.nodes.filter(n => !data.completedNodeIds.includes(n.id) && !this.isNodeCompletedInHistory(n)).map(n => `- ${n.title}`).join('\n')}
+
+Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để không bị dồn bài sang ngày mai ạ!`;
+    }
+
+    this.openModal(`
+      <div class="cs-modal-header" style="background:#0068ff;">
+        <div>
+          <h3 style="margin:0; font-size:16px; font-weight:bold;"><i class="fa-solid fa-paper-plane"></i> XUẤT BÁO CÁO ZALO GỬI PHỤ HUYNH</h3>
+          <span style="font-size:12px; color:#dbeafe;">Học viên: ${sName} (${email})</span>
+        </div>
+        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="cs-modal-body">
+        <div class="cs-zalo-card">
+          <div class="cs-zalo-title">
+            <i class="fa-solid fa-comment-dots"></i> Tin nhắn Zalo được soạn tự động (${isTodayCompleted ? '✅ Khen ngợi' : '⚠️ Nhắc nhở'}):
+          </div>
+          <textarea id="zaloMessageText" class="cs-zalo-textarea" readonly>${zaloMessage}</textarea>
+          <button type="button" class="cs-btn-zalo-copy" onclick="window.curriculumUI.copyZaloMessage()">
+            <i class="fa-solid fa-copy"></i> Sao chép tin nhắn (Để dán vào Zalo)
+          </button>
+        </div>
+      </div>
+    `);
+  }
+
+  copyZaloMessage() {
+    const textEl = document.getElementById('zaloMessageText');
+    if (!textEl) return;
+    textEl.select();
+    navigator.clipboard.writeText(textEl.value).then(() => {
+      alert("✅ Đã sao chép tin nhắn báo cáo! Thầy/Cô chỉ việc dán thẳng vào Zalo gửi cho Phụ huynh nhé.");
+    });
+  }
+
+  // =========================================================================
+  // ADMIN OVERRIDE MODAL
   // =========================================================================
   showAdminOverrideModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
@@ -255,18 +451,13 @@ class CurriculumUISystem {
     const data = this.getSavedRoadmap(email);
     if (!data) return;
 
-    const newSpeed = document.getElementById('admSpeedSelect').value;
-    const newHours = parseFloat(document.getElementById('admHoursSelect').value) || 1.0;
-    const isLocked = document.getElementById('admLockToggle').checked;
+    data.speedProfile = document.getElementById('admSpeedSelect').value;
+    data.dailyHours = parseFloat(document.getElementById('admHoursSelect').value) || 1.0;
+    data.isLockedByAdmin = document.getElementById('admLockToggle').checked;
 
-    data.speedProfile = newSpeed;
-    data.dailyHours = newHours;
-    data.isLockedByAdmin = isLocked;
-
-    // Tái cấu trúc lịch
     const retained = curriculumEngineSystem.pruneCurriculum(data.aiDiagnosticData?.mastered_tags || []);
-    data.totals = curriculumEngineSystem.calculateTotals(retained, newSpeed);
-    data.schedule = curriculumEngineSystem.generateDailyCalendar(retained, newSpeed, newHours).dailySchedule;
+    data.totals = curriculumEngineSystem.calculateTotals(retained, data.speedProfile);
+    data.schedule = curriculumEngineSystem.generateDailyCalendar(retained, data.speedProfile, data.dailyHours).dailySchedule;
 
     this.saveRoadmap(email, data);
     this.render();
@@ -275,7 +466,7 @@ class CurriculumUISystem {
   }
 
   // =========================================================================
-  // RENDER GIAO DIỆN CHÍNH
+  // GIAI ĐOẠN C: GIAO DIỆN CHÍNH & NÚT BÁO CÁO ZALO
   // =========================================================================
   render(targetContainerId = 'roadmapSectionMount') {
     let container = document.getElementById(targetContainerId);
@@ -285,17 +476,15 @@ class CurriculumUISystem {
     const data = this.getSavedRoadmap(email);
     const isAdmin = this.checkIsAdmin();
 
-    // CHƯA CÓ LỘ TRÌNH ➔ HIỆN CỔNG CHẨN ĐOÁN AI ĐA NĂNG
     if (!data) {
       container.innerHTML = `
         <div class="cs-container">
           <div style="text-align:center; padding:10px;">
             <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA (858 BÀI)</h3>
             <p style="margin:0 auto 16px auto; max-width:620px; font-size:13px; color:#64748b;">
-              Chọn xuất phát điểm nhanh, hoặc sử dụng <b>Trợ lý AI Gemini</b> để tự động nhận diện giọng nói và gọt bài thừa:
+              Chọn xuất phát điểm nhanh, hoặc sử dụng <b>Trợ lý AI Gemini</b> để nhận diện giọng nói và gọt bài thừa:
             </p>
 
-            <!-- LỰA CHỌN 1: PRESET NHANH -->
             <div class="cs-setup-buttons" style="margin-bottom:20px;">
               <button type="button" class="cs-btn-preset" style="background:#0284c7;" onclick="window.curriculumUI.initRoadmap('beginner', 1.0)">
                 🌱 Mất gốc hoàn toàn (Học full 858 đốt)
@@ -308,12 +497,11 @@ class CurriculumUISystem {
               </button>
             </div>
 
-            <!-- LỰA CHỌN 2: CHẨN ĐOÁN THÔNG MINH BẰNG AI GEMINI -->
             <div class="cs-diag-box">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <b style="color:#0369a1; font-size:14px;"><i class="fa-solid fa-wand-magic-sparkles"></i> CHẨN ĐOÁN TRÌNH ĐỘ BẰNG AI GEMINI (SPEECH-TO-TEXT)</b>
-                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, hoặc dán bảng điểm thi thử/báo cáo vào ô bên dưới:</div>
+                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, hoặc dán bảng điểm thi thử vào ô bên dưới:</div>
                 </div>
                 <button type="button" id="btnDiagMic" class="cs-diag-mic-btn" onclick="window.curriculumUI.toggleMicrophone()">
                   <i class="fa-solid fa-microphone"></i> Bấm để nói tự thuật trình độ
@@ -344,7 +532,6 @@ class CurriculumUISystem {
       return;
     }
 
-    // ĐÃ CÓ LỘ TRÌNH
     data.schedule.forEach(day => {
       day.nodes.forEach(node => {
         if (!data.completedNodeIds.includes(node.id) && this.isNodeCompletedInHistory(node)) {
@@ -379,6 +566,10 @@ class CurriculumUISystem {
             <h3>📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})</h3>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <!-- NÚT BÁO CÁO ZALO GIAI ĐOẠN C -->
+            <button type="button" onclick="window.curriculumUI.showZaloReportModal()" style="background:#0068ff; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:5px;">
+              <i class="fa-solid fa-paper-plane"></i> Báo Cáo Zalo
+            </button>
             <button type="button" onclick="window.curriculumUI.showFullRoadmapModal()" style="background:#0f172a; color:white; border:none; padding:6px 14px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:6px;">
               <i class="fa-solid fa-map-location-dot text-sky-400"></i> Xem Toàn Bộ Lộ Trình
             </button>
@@ -452,7 +643,234 @@ class CurriculumUISystem {
     `;
   }
 
-  // HÀM TIỆN ÍCH MODAL
+  // MODAL FULL LỘ TRÌNH & ĐỊNH MỨC THỜI GIAN
+  showFullRoadmapModal() {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const data = this.getSavedRoadmap(email);
+    if (!data) return;
+
+    this.openModal(`
+      <div class="cs-modal-header">
+        <div>
+          <h3 style="margin:0; font-size:17px; font-weight:bold;">🗺️ TOÀN CẢNH LỘ TRÌNH HỌC TẬP (${data.schedule.length} NGÀY)</h3>
+          <span style="font-size:12px; color:#94a3b8;">Đang ở Ngày ${data.currentDay} • Tiến độ: ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt</span>
+        </div>
+        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="cs-modal-body">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          ${data.schedule.map(day => {
+            const isToday = day.dayNumber === data.currentDay;
+            const isPast = day.dayNumber < data.currentDay;
+            return `
+              <div class="cs-day-timeline-box" style="${isToday ? 'border-color:#0284c7; box-shadow:0 0 0 2px rgba(2,132,199,0.2);' : ''}">
+                <div class="cs-day-timeline-header" style="${isToday ? 'background:#e0f2fe; color:#0369a1;' : ''}">
+                  <span>📅 NGÀY ${day.dayNumber} ${isToday ? '👈 (HÔM NAY)' : (isPast ? '✓ (ĐÃ QUA)' : '')}</span>
+                  <span style="font-size:12px; font-weight:normal; color:#64748b;">⏱️ ${day.totalMinutes} phút</span>
+                </div>
+                <div style="padding:10px 14px; display:flex; flex-direction:column; gap:8px;">
+                  ${day.nodes.map(n => {
+                    const done = data.completedNodeIds.includes(n.id) || this.isNodeCompletedInHistory(n);
+                    return `
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; border-bottom:1px dashed #e2e8f0; padding-bottom:6px;">
+                        <div>
+                          <span style="font-family:monospace; font-weight:bold; font-size:11px; background:#1e293b; color:white; padding:1px 5px; border-radius:3px;">${n.id}</span>
+                          <span style="font-weight:700; margin-left:6px; color:${done ? '#16a34a' : '#1e293b'};">${done ? '✓ ' : ''}${n.title}</span>
+                        </div>
+                        <span style="font-size:11.5px; color:#64748b; white-space:nowrap;">${n.assignedDurationMinutes}p</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `);
+  }
+
+  showBenchmarkExplanationModal() {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const data = this.getSavedRoadmap(email);
+    const speed = data?.speedProfile || 'normal';
+    const info = BENCHMARK_EXPLANATIONS[speed] || BENCHMARK_EXPLANATIONS.normal;
+
+    this.openModal(`
+      <div class="cs-modal-header">
+        <h3 style="margin:0; font-size:16px; font-weight:bold;">⏱️ Chú Thích Định Mức Thời Gian: ${info.label}</h3>
+        <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="cs-modal-body">
+        <p style="font-size:13px; color:#64748b; margin-top:0;">${info.desc}</p>
+        <table class="cs-benchmark-table">
+          <thead>
+            <tr>
+              <th>Phân hệ / Dạng bài tập</th>
+              <th>Thời gian làm ước tính</th>
+              <th>Giờ giáo viên sửa</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${info.table.map(r => `
+              <tr>
+                <td><b>${r.type}</b></td>
+                <td><span style="color:#0284c7; font-weight:bold;">${r.time}</span></td>
+                <td><span style="color:#dc2626; font-weight:bold;">${r.coach}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `);
+  }
+
+  renderTodayHistoryAndCalendar(allAttempts, email) {
+    const historyListEl = document.getElementById('historyResultsList');
+    const badgeEl = document.getElementById('totalAttemptsBadge');
+    if (!historyListEl) return;
+
+    const today = new Date();
+    const todayStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+    const todayAttempts = allAttempts.filter(att => att.timestamp && att.timestamp.includes(todayStr));
+    if (badgeEl) badgeEl.innerText = `${todayAttempts.length} bài hôm nay`;
+
+    let historyHtml = '';
+    if (todayAttempts.length === 0) {
+      historyHtml = `
+        <div class="cs-empty-today">
+          <i class="fa-regular fa-calendar-xmark text-lg text-rose-500 mb-1"></i><br>
+          Chưa có bài tập nào đã được làm hôm nay.<br>
+          <span style="font-size:12px; color:#94a3b8;">Hãy bắt đầu làm các bài trong Lộ trình hôm nay bên trên nhé!</span>
+        </div>
+      `;
+    } else {
+      historyHtml = todayAttempts.map(att => {
+        let targetPage = att.pageUrl || 'reading/runner-reading.html';
+        if (targetPage.startsWith('runner-reading.html')) targetPage = 'reading/' + targetPage;
+        if (targetPage.startsWith('runner-listening.html')) targetPage = 'listening/' + targetPage;
+        const separator = targetPage.includes('?') ? '&' : '?';
+        const reviewLink = `${targetPage}${separator}attemptId=${att.id}&email=${encodeURIComponent(email)}`;
+
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <b style="color:#0f172a; font-size:14px;">📝 ${att.testTitle}</b>
+              <div style="font-size:12px; color:#64748b; margin-top:2px;">
+                ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="score-pill" style="background:#16a34a; color:white; font-size:12px; font-weight:bold; padding:3px 10px; border-radius:20px;">Điểm: ${att.score}</span>
+              <a href="${reviewLink}" target="_blank" style="background:#0284c7; color:white; text-decoration:none; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:bold;">👁️ Xem lại bài</a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const calendarHtml = this.generateMonthCalendarHtml(allAttempts);
+    historyListEl.innerHTML = historyHtml + calendarHtml;
+  }
+
+  generateMonthCalendarHtml(allAttempts) {
+    const year = this.calCurrentYear;
+    const month = this.calCurrentMonth;
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+
+    const dayAttemptCounts = {};
+    allAttempts.forEach(att => {
+      const m = att.timestamp?.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if (m) {
+        const d = parseInt(m[1], 10);
+        const mo = parseInt(m[2], 10) - 1;
+        const y = parseInt(m[3], 10);
+        if (mo === month && y === year) dayAttemptCounts[d] = (dayAttemptCounts[d] || 0) + 1;
+      }
+    });
+
+    const dailyTarget = 2;
+    const shiftedFirstDay = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+
+    let cellsHtml = '';
+    for (let i = 0; i < shiftedFirstDay; i++) {
+      cellsHtml += `<div class="cs-cal-cell cs-cal-cell-empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const isPastOrToday = (year < todayYear) || (year === todayYear && month < todayMonth) || (year === todayYear && month === todayMonth && d <= todayDate);
+      const count = dayAttemptCounts[d] || 0;
+
+      let colorClass = 'cal-color-future';
+      let statusLabel = 'Chưa tới';
+
+      if (isPastOrToday) {
+        const ratio = count / dailyTarget;
+        if (count === 0) { colorClass = 'cal-color-zero'; statusLabel = '0 bài (0%)'; }
+        else if (ratio < 0.5) { colorClass = 'cal-color-low'; statusLabel = `${count} bài (<50%)`; }
+        else if (ratio < 1.0) { colorClass = 'cal-color-mid'; statusLabel = `${count} bài (≥50%)`; }
+        else if (ratio === 1.0) { colorClass = 'cal-color-full'; statusLabel = `${count} bài (100%)`; }
+        else { colorClass = 'cal-color-over'; statusLabel = `✨ ${count} bài (>100%)`; }
+      }
+
+      cellsHtml += `
+        <div class="cs-cal-cell ${colorClass}" title="Ngày ${d}/${month + 1}/${year}: ${statusLabel}">
+          <span>${d}</span>
+          ${isPastOrToday ? `<span class="cs-cal-subtext">${count} bài</span>` : ''}
+        </div>
+      `;
+    }
+
+    const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+
+    return `
+      <div class="cs-calendar-wrapper">
+        <div class="cs-calendar-nav">
+          <div class="cs-calendar-title">
+            🗓️ Lịch Hoạt Động & Chuyên Cần: <b>${monthNames[month]} / ${year}</b>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(-1)">◀ Tháng trước</button>
+            <button type="button" class="cs-cal-btn" onclick="window.curriculumUI.changeCalendarMonth(1)">Tháng sau ▶</button>
+          </div>
+        </div>
+
+        <div class="cs-calendar-grid">
+          <div class="cs-cal-day-name">T2</div>
+          <div class="cs-cal-day-name">T3</div>
+          <div class="cs-cal-day-name">T4</div>
+          <div class="cs-cal-day-name">T5</div>
+          <div class="cs-cal-day-name">T6</div>
+          <div class="cs-cal-day-name">T7</div>
+          <div class="cs-cal-day-name" style="color:#ef4444;">CN</div>
+          ${cellsHtml}
+        </div>
+
+        <div class="cs-legend-bar">
+          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#dc2626;"></span><span>0% (Không làm)</span></div>
+          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#fecdd3; border:1px solid #fda4af;"></span><span>&lt; 50%</span></div>
+          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#bbf7d0; border:1px solid #86efac;"></span><span>50% - 99%</span></div>
+          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:#15803d;"></span><span>100% Đạt chỉ tiêu</span></div>
+          <div class="cs-legend-item"><span class="cs-legend-dot" style="background:linear-gradient(135deg, #fef08a, #f59e0b); border:1px solid #d97706;"></span><span>✨ &gt; 100% (Vượt chỉ tiêu)</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  changeCalendarMonth(delta) {
+    this.calCurrentMonth += delta;
+    if (this.calCurrentMonth < 0) { this.calCurrentMonth = 11; this.calCurrentYear--; }
+    else if (this.calCurrentMonth > 11) { this.calCurrentMonth = 0; this.calCurrentYear++; }
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const local = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    this.renderTodayHistoryAndCalendar(local, email);
+  }
+
   openModal(htmlContent) {
     this.closeModal();
     const modal = document.createElement('div');
