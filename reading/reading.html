@@ -55,6 +55,14 @@
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .test-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+    
+    /* STYLE KHI ĐÃ HOÀN THÀNH (ĐỔI VIỀN XANH LÁ) */
+    .test-card.is-completed {
+      border-color: #10b981 !important;
+      background: #f0fdf4 !important;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12) !important;
+    }
+
     .badge-reading {
       display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px;
       font-size: 12px; font-weight: 700; background: #fee2e2; color: #8B1518; margin-bottom: 6px; width: fit-content;
@@ -62,6 +70,11 @@
     .badge-reading.badge-vol {
       background: #e0e7ff; color: #4338ca;
     }
+    .badge-done {
+      display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+    }
+
     .card-title { color: #8B1518; font-size: 15px; font-weight: 800; margin: 0 0 4px 0; line-height: 1.4; }
     .card-title.vol-title { color: #4338ca; }
     .card-desc { font-size: 13px; color: #64748b; margin: 0 0 14px 0; line-height: 1.4; }
@@ -73,6 +86,8 @@
     .btn-play:hover { background: #6b0f11; }
     .btn-play.btn-vol { background: #4338ca; }
     .btn-play.btn-vol:hover { background: #3730a3; }
+    .btn-play.btn-done { background: #16a34a !important; }
+    .btn-play.btn-done:hover { background: #15803d !important; }
   </style>
 </head>
 <body>
@@ -178,6 +193,20 @@
     }
   } catch(e) {}
 
+  // HÀM KIỂM TRA BÀI ĐÃ LÀM TRONG LỊCH SỬ CHUNG
+  function getCompletedRecord(keyString, titleString) {
+    try {
+      const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+      return list.find(item => {
+        const matchUrl = item.pageUrl && keyString && item.pageUrl.includes(keyString);
+        const matchTitle = item.testTitle && titleString && item.testTitle.toLowerCase().includes(titleString.toLowerCase());
+        return matchUrl || matchTitle;
+      });
+    } catch(e) {
+      return null;
+    }
+  }
+
   window.switchSeries = (series, val) => {
     currentSeries = series;
     currentVal = val;
@@ -210,19 +239,26 @@
         test.passages.forEach(psg => {
           const standardId = `READ_CAM${camItem.cam}_T${test.testNum}_P${psg.p}`;
           const tagsHtml = renderTagsHtml(standardId);
-          // Đường dẫn đề thi trong thư mục data-r/ mới
-          const testUrl = `runner-reading.html?test=data-r/cam${camItem.cam}-test${test.testNum}/cam${camItem.cam}-test${test.testNum}-p${psg.p}.json`;
+          const fileKey = `cam${camItem.cam}-test${test.testNum}-p${psg.p}`;
+          const testUrl = `runner-reading.html?test=data-r/cam${camItem.cam}-test${test.testNum}/${fileKey}.json`;
+
+          // Kiểm tra xem bài đã nộp hay chưa
+          const rec = getCompletedRecord(fileKey, psg.title);
+          const isDone = !!rec;
 
           html += `
-            <div class="test-card">
+            <div class="test-card ${isDone ? 'is-completed' : ''}">
               <div>
-                <span class="badge-reading">📖 Passage ${psg.p}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="badge-reading">📖 Passage ${psg.p}</span>
+                  ${isDone ? `<span class="badge-done">✓ Đã nộp (${rec.score})</span>` : ''}
+                </div>
                 <h4 class="card-title">${psg.title}</h4>
                 ${tagsHtml}
                 <div class="card-desc">${psg.desc}</div>
               </div>
-              <a href="${testUrl}" class="btn-play">
-                <span>▶</span> Làm Bài Đọc
+              <a href="${testUrl}" class="btn-play ${isDone ? 'btn-done' : ''}">
+                <span>${isDone ? '✓' : '▶'}</span> ${isDone ? 'Xem Lại / Làm Lại' : 'Làm Bài Đọc'}
               </a>
             </div>
           `;
@@ -241,17 +277,25 @@
         for (let p = 1; p <= 3; p++) {
           const standardId = `READ_VOL${volNum}_T${t}_P${p}`;
           const tagsHtml = renderTagsHtml(standardId);
-          const testUrl = `runner-reading.html?test=vol${volNum}-test${t}-p${p}`;
+          const fileKey = `vol${volNum}-test${t}-p${p}`;
+          const testUrl = `runner-reading.html?test=${fileKey}`;
+
+          const rec = getCompletedRecord(fileKey, `Vol ${volNum} Test ${t} - Passage ${p}`);
+          const isDone = !!rec;
+
           html += `
-            <div class="test-card">
+            <div class="test-card ${isDone ? 'is-completed' : ''}">
               <div>
-                <span class="badge-reading badge-vol">📄 Passage ${p}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span class="badge-reading badge-vol">📄 Passage ${p}</span>
+                  ${isDone ? `<span class="badge-done">✓ Đã nộp (${rec.score})</span>` : ''}
+                </div>
                 <h4 class="card-title vol-title">Vol ${volNum} Test ${t} - Passage ${p}</h4>
                 ${tagsHtml}
                 <div class="card-desc">IELTS Reading Practice Passage ${p}</div>
               </div>
-              <a href="${testUrl}" class="btn-play btn-vol">
-                <span>▶</span> Vào Làm Passage ${p}
+              <a href="${testUrl}" class="btn-play ${isDone ? 'btn-done' : 'btn-vol'}">
+                <span>${isDone ? '✓' : '▶'}</span> ${isDone ? 'Xem Lại / Làm Lại' : `Vào Làm Passage ${p}`}
               </a>
             </div>
           `;
