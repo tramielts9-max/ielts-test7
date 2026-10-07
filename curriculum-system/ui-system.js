@@ -107,9 +107,6 @@ class CurriculumUISystem {
     this.syncRoadmapToCloud(email, data);
   }
 
-  // =========================================================================
-  // GIAI ĐOẠN C: ĐỒNG BỘ LỘ TRÌNH LÊN GOOGLE DRIVE (CLOUD SYNC)
-  // =========================================================================
   syncRoadmapToCloud(email, roadmapData) {
     if (!CLOUD_SCRIPT_URL) return;
     try {
@@ -264,9 +261,9 @@ class CurriculumUISystem {
     let masteredTags = [];
 
     if (presetLevel === 'intermediate') {
-      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'VOCAB_U01', 'VOCAB_U02'];
+      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'VOCAB_300_U01', 'VOCAB_300_U02', 'PRE_LIS_A1', 'PRE_READ_A1', 'PRE_SPK_A1'];
     } else if (presetLevel === 'advanced') {
-      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'G_PAST_CONT', 'G_IRREG_V3', 'G_PRES_PERF', 'G_PAST_PERF', 'G_CONDITIONALS', 'G_PASSIVE_VOICE', 'G_COMPARISON', 'G_RELATIVE_CLAUSE', 'G_PREP_ADV', 'G_WORD_FORM'];
+      masteredTags = ['G_NOUNS', 'G_PRES_SIMPLE', 'G_PRES_CONT', 'G_PAST_SIMPLE', 'G_FUTURE_SIMPLE', 'G_ARTICLES', 'G_PREP_BASIC', 'G_PAST_CONT', 'G_IRREG_V3', 'G_PRES_PERF', 'G_PAST_PERF', 'G_CONDITIONALS', 'G_PASSIVE_VOICE', 'G_COMPARISON', 'G_RELATIVE_CLAUSE', 'G_PREP_ADV', 'G_WORD_FORM', 'PWT1_CORE', 'PWT2_CORE', 'PRE_LIS_INTER', 'PRE_READ_INTER', 'PRE_SPK_INTER'];
     }
 
     const retainedNodes = curriculumEngineSystem.pruneCurriculum(masteredTags);
@@ -319,9 +316,6 @@ class CurriculumUISystem {
     this.render();
   }
 
-  // =========================================================================
-  // GIAI ĐOẠN C: BÁO CÁO ZALO CHO PHỤ HUYNH (ZALO GUARDIAN ALERT)
-  // =========================================================================
   showZaloReportModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
@@ -349,7 +343,7 @@ Ngày: ${todayStr}
 🎉 Chúc mừng em đã HOÀN THÀNH 100% bài tập hôm nay (${todayDoneCount}/${todayPlan.nodes.length} bài)!
 📊 Tiến độ lộ trình: Đã xong ${data.completedNodeIds.length}/${data.totals.nodeCount} đốt (${progressPercent}%).
 ⏱️ Tốc độ học tập: ${data.speedProfile.toUpperCase()} (${data.dailyHours}h tự cày/ngày).
-👨‍🏫 Tổng số buổi giáo viên đã đồng hành sửa bài: ${data.totals.coachSessionsEstimate} buổi.
+👨‍🏫 Tổng số buổi giáo viên đồng hành sửa bài: ${data.totals.coachSessionsEstimate} buổi.
 
 Kính nhờ Phụ huynh động viên em tiếp tục duy trì phong độ ngày mai nhé!`;
     } else {
@@ -395,9 +389,6 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     });
   }
 
-  // =========================================================================
-  // ADMIN OVERRIDE MODAL
-  // =========================================================================
   showAdminOverrideModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
@@ -465,9 +456,6 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     alert("👑 Admin đã cập nhật lộ trình thành công!");
   }
 
-  // =========================================================================
-  // GIAI ĐOẠN C: GIAO DIỆN CHÍNH & NÚT BÁO CÁO ZALO
-  // =========================================================================
   render(targetContainerId = 'roadmapSectionMount') {
     let container = document.getElementById(targetContainerId);
     if (!container) return;
@@ -566,7 +554,6 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
             <h3>📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})</h3>
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <!-- NÚT BÁO CÁO ZALO GIAI ĐOẠN C -->
             <button type="button" onclick="window.curriculumUI.showZaloReportModal()" style="background:#0068ff; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:5px;">
               <i class="fa-solid fa-paper-plane"></i> Báo Cáo Zalo
             </button>
@@ -643,7 +630,6 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
     `;
   }
 
-  // MODAL FULL LỘ TRÌNH & ĐỊNH MỨC THỜI GIAN
   showFullRoadmapModal() {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
