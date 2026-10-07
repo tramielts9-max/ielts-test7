@@ -1,6 +1,6 @@
 /**
  * curriculum-system/ui-system.js
- * BỘ ĐIỀU KHIỂN GIAO DIỆN LỘ TRÌNH, CLOUD SYNC & BÁO CÁO ZALO PHỤ HUYNH
+ * HIỂN THỊ LỘ TRÌNH, DÒNG CHÚ THÍCH LỢI ÍCH HỌC TẬP VÀ CLOUD SYNC
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
@@ -609,6 +609,9 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
                   <div class="cs-task-title">
                     ${isDone ? '✓ ' : ''}${node.title}
                   </div>
+                  <div style="font-size:12px; color:#0369a1; background:#f0f9ff; border:1px solid #bae6fd; padding:4px 8px; border-radius:6px; margin-top:5px; line-height:1.4;">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> <b>Lợi ích:</b> ${node.benefit || 'Củng cố phản xạ và độ chính xác ngữ liệu.'}
+                  </div>
                 </div>
 
                 <div>
@@ -658,12 +661,17 @@ Kính nhờ Phụ huynh nhắc nhở em vào web cày xong trước 23:30 để 
                   ${day.nodes.map(n => {
                     const done = data.completedNodeIds.includes(n.id) || this.isNodeCompletedInHistory(n);
                     return `
-                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; border-bottom:1px dashed #e2e8f0; padding-bottom:6px;">
-                        <div>
-                          <span style="font-family:monospace; font-weight:bold; font-size:11px; background:#1e293b; color:white; padding:1px 5px; border-radius:3px;">${n.id}</span>
-                          <span style="font-weight:700; margin-left:6px; color:${done ? '#16a34a' : '#1e293b'};">${done ? '✓ ' : ''}${n.title}</span>
+                      <div style="display:flex; justify-content:space-between; align-items:flex-start; font-size:13px; border-bottom:1px dashed #e2e8f0; padding-bottom:8px; gap:10px;">
+                        <div style="flex:1;">
+                          <div>
+                            <span style="font-family:monospace; font-weight:bold; font-size:11px; background:#1e293b; color:white; padding:1px 5px; border-radius:3px;">${n.id}</span>
+                            <span style="font-weight:700; margin-left:6px; color:${done ? '#16a34a' : '#1e293b'};">${done ? '✓ ' : ''}${n.title}</span>
+                          </div>
+                          <div style="font-size:11.5px; color:#0369a1; margin-top:3px;">
+                            💡 ${n.benefit || 'Tăng cường phản xạ ngôn ngữ.'}
+                          </div>
                         </div>
-                        <span style="font-size:11.5px; color:#64748b; white-space:nowrap;">${n.assignedDurationMinutes}p</span>
+                        <span style="font-size:11.5px; color:#64748b; white-space:nowrap; font-weight:bold;">${n.assignedDurationMinutes}p</span>
                       </div>
                     `;
                   }).join('')}
