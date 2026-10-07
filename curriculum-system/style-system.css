@@ -1,6 +1,6 @@
 /* =========================================================================
    curriculum-system/style-system.css
-   GIAO DIỆN LỘ TRÌNH, MICRO STT CHẨN ĐOÁN AI, LỊCH THÁNG & BẢNG ADMIN
+   GIAO DIỆN LỘ TRÌNH, AI DIAGNOSTIC, LỊCH THÁNG & BÁO CÁO ZALO PHỤ HUYNH
    ========================================================================= */
 
 .cs-container {
@@ -96,7 +96,7 @@
 .cs-btn-start:hover { background: #0369a1; }
 .cs-btn-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; cursor: default; }
 
-/* MODAL FULL LỘ TRÌNH & BẢNG ĐỊNH MỨC */
+/* MODAL CHUNG */
 .cs-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .cs-modal-card { background: #ffffff; border-radius: 16px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #e2e8f0; }
 .cs-modal-header { padding: 16px 20px; background: #0f172a; color: white; display: flex; justify-content: space-between; align-items: center; }
@@ -107,69 +107,13 @@
 .cs-benchmark-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-weight: 700; border: 1px solid #e2e8f0; }
 .cs-benchmark-table td { padding: 8px 10px; border: 1px solid #e2e8f0; }
 
-/* =========================================================================
-   CỔNG CHẨN ĐOÁN THÔNG MINH BẰNG AI & MICRO STT
-   ========================================================================= */
-.cs-diag-box {
-  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
-  border: 2px dashed #0284c7;
-  border-radius: 14px;
-  padding: 20px;
-  margin-top: 20px;
-  text-align: left;
-}
-
-.cs-diag-mic-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-.cs-diag-mic-btn.recording {
-  background: #16a34a;
-  animation: csPulse 1.2s infinite;
-}
-
-@keyframes csPulse {
-  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); }
-  70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
-}
-
-.cs-diag-textarea {
-  width: 100%;
-  height: 90px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 13.5px;
-  font-family: inherit;
-  outline: none;
-  resize: vertical;
-  background: #ffffff;
-  margin: 10px 0;
-  box-sizing: border-box;
-}
-.cs-diag-textarea:focus { border-color: #0284c7; ring: 2px #0284c7; }
-
-.cs-ai-report-card {
-  background: #ffffff;
-  border: 1.5px solid #86efac;
-  border-left: 5px solid #16a34a;
-  border-radius: 10px;
-  padding: 16px;
-  margin-top: 14px;
-  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.1);
-}
+/* CỔNG CHẨN ĐOÁN MICRO STT */
+.cs-diag-box { background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); border: 2px dashed #0284c7; border-radius: 14px; padding: 20px; margin-top: 20px; text-align: left; }
+.cs-diag-mic-btn { background: #ef4444; color: white; border: none; padding: 10px 18px; border-radius: 25px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
+.cs-diag-mic-btn.recording { background: #16a34a; animation: csPulse 1.2s infinite; }
+@keyframes csPulse { 0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); } 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); } }
+.cs-diag-textarea { width: 100%; height: 90px; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; font-family: inherit; outline: none; resize: vertical; background: #ffffff; margin: 10px 0; box-sizing: border-box; }
+.cs-ai-report-card { background: #ffffff; border: 1.5px solid #86efac; border-left: 5px solid #16a34a; border-radius: 10px; padding: 16px; margin-top: 14px; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.1); }
 
 /* LỊCH SỬ HÔM NAY & LỊCH HEATMAP 5 MÀU */
 .cs-empty-today { background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 24px 16px; text-align: center; color: #64748b; font-size: 14px; font-weight: 600; margin: 10px 0; }
@@ -178,14 +122,9 @@
 .cs-calendar-title { font-size: 16px; font-weight: 800; color: var(--text-main, #0f172a); }
 .cs-cal-btn { background: var(--bg-subcard, #f8fafc); border: 1px solid var(--border-color, #cbd5e1); padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
 .cs-cal-btn:hover { background: #e2e8f0; }
-
 .cs-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .cs-cal-day-name { text-align: center; font-size: 12px; font-weight: 800; color: #64748b; padding-bottom: 6px; }
-
-.cs-cal-cell {
-  aspect-ratio: 1 / 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  position: relative; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; user-select: none;
-}
+.cs-cal-cell { aspect-ratio: 1 / 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; user-select: none; }
 .cs-cal-cell:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 .cs-cal-cell-empty { opacity: 0; pointer-events: none; }
 .cs-cal-subtext { font-size: 10px; font-weight: 700; margin-top: 2px; }
@@ -194,17 +133,58 @@
 .cal-color-low { background: #fecdd3 !important; color: #9f1239 !important; border: 1.5px solid #fda4af !important; }
 .cal-color-mid { background: #bbf7d0 !important; color: #14532d !important; border: 1.5px solid #86efac !important; }
 .cal-color-full { background: #15803d !important; color: #ffffff !important; border: 1.5px solid #166534 !important; }
-.cal-color-over {
-  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #fbbf24 100%) !important;
-  color: #78350f !important; border: 2px solid #d97706 !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
-  animation: csGoldShimmer 2s infinite alternate ease-in-out;
-}
-@keyframes csGoldShimmer {
-  0% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); transform: scale(1); }
-  100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.9), 0 0 25px rgba(251, 191, 36, 0.5); transform: scale(1.03); }
-}
+.cal-color-over { background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #fbbf24 100%) !important; color: #78350f !important; border: 2px solid #d97706 !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.7); animation: csGoldShimmer 2s infinite alternate ease-in-out; }
+@keyframes csGoldShimmer { 0% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); transform: scale(1); } 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.9), 0 0 25px rgba(251, 191, 36, 0.5); transform: scale(1.03); } }
 .cal-color-future { background: #f8fafc !important; color: #94a3b8 !important; border: 1px dashed #cbd5e1 !important; cursor: default; }
 
 .cs-legend-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-color, #e2e8f0); font-size: 11.5px; font-weight: 700; }
 .cs-legend-item { display: flex; align-items: center; gap: 5px; }
 .cs-legend-dot { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+/* =========================================================================
+   GIAI ĐOẠN C: BÁO CÁO ZALO PHỤ HUYNH & ADMIN ADVANCED
+   ========================================================================= */
+.cs-zalo-card {
+  background: #f0f7ff;
+  border: 1.5px solid #0068ff;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 12px;
+}
+.cs-zalo-title {
+  color: #0068ff;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cs-zalo-textarea {
+  width: 100%;
+  height: 140px;
+  background: #ffffff;
+  border: 1px solid #b9d5ff;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.cs-btn-zalo-copy {
+  background: #0068ff;
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  transition: background 0.15s;
+}
+.cs-btn-zalo-copy:hover { background: #0054cf; }
