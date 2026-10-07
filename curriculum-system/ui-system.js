@@ -1,7 +1,6 @@
 /**
  * curriculum-system/ui-system.js
- * GIAO DIỆN CHỌN MA TRẬN 2 ĐẦU (START ➔ TARGET BAND), HIỂN THỊ 4 THÔNG SỐ VÀNG:
- * ĐỐT ĐÃ XONG | GIỜ TỰ CÀY (1.5H/NGÀY) | SỐ BUỔI HỌC VỚI GV (3 BUỔI/TUẦN) | THỜI GIAN VỀ ĐÍCH
+ * GIAO DIỆN CHỌN MA TRẬN 2 ĐẦU - BẢNG ĐIỀU KHIỂN & HIỂN THỊ SỐ BUỔI HỌC VỚI GV
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
@@ -153,9 +152,10 @@ class CurriculumUISystem {
       resBox.style.display = 'block';
 
       const startB = parseFloat(result.estimated_band) || 2.0;
-      const targetB = 7.0; // Trần cao nhất là 7.0
+      const targetB = Math.min(7.0, parseFloat(result.target_band) || 6.5);
       const pruned = curriculumEngineSystem.pruneCurriculumByBands(startB, targetB, result.weak_tags || []);
       const savedCount = MASTER_CURRICULUM_SYSTEM.length - pruned.length;
+      const stats = curriculumEngineSystem.calculateSessionsByBands(startB, targetB);
 
       resBox.innerHTML = `
         <div class="cs-ai-report-card">
@@ -169,9 +169,9 @@ class CurriculumUISystem {
             <b>Nhận xét:</b> ${result.academic_summary}
           </p>
           <div style="display:flex; gap:12px; font-size:12px; color:#64748b; flex-wrap:wrap; margin-bottom:12px;">
-            <span>✂️ Đã gọt bỏ: <b>${savedCount} bài</b></span>
-            <span>⏱️ BTVN: <b>1.5h/ngày</b></span>
-            <span>🏫 Lớp học: <b>3 buổi/tuần (2h/buổi)</b></span>
+            <span>✂️ Gọt bỏ: <b>${savedCount} bài thừa</b></span>
+            <span>🏫 Lớp học: <b>${stats.sessions} buổi</b> (${stats.months} tháng)</span>
+            <span>⏱️ BTVN: <b>1.5h/ngày</b> (${stats.hours}h tự cày)</span>
           </div>
           <button type="button" onclick="window.curriculumUI.applyBandRoadmap(${startB}, ${targetB}, ${JSON.stringify(result).replace(/"/g, '&quot;')})" style="background:#16a34a; color:white; border:none; padding:10px 18px; border-radius:8px; font-weight:800; font-size:13.5px; cursor:pointer; width:100%;">
             🚀 Phê Duyệt & Kích Hoạt Lộ Trình Này Ngay
@@ -189,11 +189,16 @@ class CurriculumUISystem {
   applyBandRoadmap(startBand, targetBand, aiData = null) {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const sBand = parseFloat(startBand) || 0.0;
-    const tBand = parseFloat(targetBand) || 7.0;
+    const tBand = Math.min(7.0, parseFloat(targetBand) || 7.0);
+
+    if (sBand >= tBand) {
+      alert("⚠️ Điểm mục tiêu mong muốn (Target Band) phải lớn hơn Điểm hiện tại của em ít nhất 0.5 Band nhé!");
+      return;
+    }
 
     const retainedNodes = curriculumEngineSystem.pruneCurriculumByBands(sBand, tBand, aiData?.weak_tags || []);
-    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, 'normal', 1.5);
-    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, 'normal', 1.5);
+    const totals = curriculumEngineSystem.calculateTotals(retainedNodes, 'normal', 1.5, sBand, tBand);
+    const scheduleData = curriculumEngineSystem.generateDailyCalendar(retainedNodes, 'normal', 1.5, sBand, tBand);
 
     const payload = {
       createdAt: new Date().toISOString(),
@@ -250,31 +255,29 @@ class CurriculumUISystem {
 
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
-    const isAdmin = this.checkIsAdmin();
 
-    // 1. MÀN HÌNH CHƯA CÓ LỘ TRÌNH ➔ CHỌN MA TRẬN 2 ĐẦU (CÓ Ô 2.0)
+    // 1. MÀN HÌNH CHƯA CÓ LỘ TRÌNH ➔ CHỌN MA TRẬN 2 ĐẦU
     if (!data) {
       container.innerHTML = `
         <div class="cs-container">
           <div style="text-align:center; padding:10px;">
-            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH CÁ NHÂN HÓA (MỌI MỐC BAND)</h3>
+            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA</h3>
             <p style="margin:0 auto 16px auto; max-width:650px; font-size:13px; color:#64748b;">
-              Chọn Điểm xuất phát và Điểm mục tiêu mong muốn, hệ thống sẽ tự động băm lộ trình và tính chuẩn xác số buổi học:
+              Chọn Điểm xuất phát và Mục tiêu mong muốn, hệ thống sẽ tự động băm lộ trình theo số buổi học (12 buổi/0.5 band + hệ số):
             </p>
 
-            <!-- KHUNG CHỌN MA TRẬN 2 ĐẦU (BỔ SUNG Ô 2.0) -->
             <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:18px; max-width:620px; margin:0 auto 20px auto; display:flex; flex-direction:column; gap:12px;">
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:left;">
                 <div>
                   <label style="font-size:12.5px; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 1. Điểm hiện tại của em:</label>
                   <select id="matrixStartBandSelect" class="border border-slate-300 rounded p-2 text-sm w-full font-semibold">
                     <option value="0.0">0.0 (Mất gốc hoàn toàn)</option>
-                    <option value="2.0" selected>2.0 (Biết bập bõm, mất gốc)</option>
+                    <option value="2.0">2.0 (Biết bập bõm, mất gốc)</option>
                     <option value="3.0">3.0 (Nhớ từ vựng căn bản)</option>
                     <option value="3.5">3.5 (Ngữ pháp câu đơn)</option>
                     <option value="4.0">4.0 (Đã học tiếng Anh cơ bản)</option>
                     <option value="4.5">4.5 (Có gốc, chưa làm đề)</option>
-                    <option value="5.0">5.0 (Bắt đầu làm quen đề)</option>
+                    <option value="5.0" selected>5.0 (Bắt đầu làm quen đề)</option>
                     <option value="5.5">5.5 (Đã thi thử 5.0 - 5.5)</option>
                     <option value="6.0">6.0 (Cần lên 6.5 - 7.0)</option>
                     <option value="6.5">6.5 (Nước rút chạm trần 7.0)</option>
@@ -286,15 +289,15 @@ class CurriculumUISystem {
                   <select id="matrixTargetBandSelect" class="border border-slate-300 rounded p-2 text-sm w-full font-semibold">
                     <option value="5.0">Band 5.0 (Tốt nghiệp cơ bản / Định cư)</option>
                     <option value="5.5">Band 5.5 (Chuẩn đầu ra Cao đẳng / ĐH)</option>
-                    <option value="6.0">Band 6.0 (Xét tuyển Đại học Top đầu)</option>
-                    <option value="6.5" selected>Band 6.5 (Chuẩn vàng Du học & Việc làm)</option>
+                    <option value="6.0" selected>Band 6.0 (Xét tuyển Đại học Top đầu)</option>
+                    <option value="6.5">Band 6.5 (Chuẩn vàng Du học & Việc làm)</option>
                     <option value="7.0">Band 7.0 (TRẦN CAO NHẤT KHÓA HỌC)</option>
                   </select>
                 </div>
               </div>
 
               <div style="font-size:12px; color:#64748b; text-align:left;">
-                ⏱️ Quy chuẩn: <b>1.5h BTVN tự cày/ngày</b> • Lớp học: <b>3 buổi/tuần (2h/buổi = 12 buổi/tháng)</b>.
+                🏫 Lớp học: <b>3 buổi/tuần (2h/buổi = 12 buổi/tháng)</b> • BTVN: <b>1.5h tự cày/ngày</b>.
               </div>
 
               <button type="button" onclick="window.curriculumUI.applyBandRoadmap(document.getElementById('matrixStartBandSelect').value, document.getElementById('matrixTargetBandSelect').value)" style="background:#0284c7; color:white; border:none; padding:11px; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; shadow;">
@@ -307,14 +310,14 @@ class CurriculumUISystem {
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
                   <b style="color:#0369a1; font-size:14px;"><i class="fa-solid fa-wand-magic-sparkles"></i> HOẶC CHẨN ĐOÁN TỰ ĐỘNG BẰNG AI (SPEECH-TO-TEXT)</b>
-                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, AI sẽ tự động đoán điểm và tạo lộ trình:</div>
+                  <div style="font-size:12px; color:#64748b; margin-top:2px;">Bấm Micro để nói tự thuật trình độ, AI sẽ tự động tính toán lộ trình:</div>
                 </div>
                 <button type="button" id="btnDiagMic" class="cs-diag-mic-btn" onclick="window.curriculumUI.toggleMicrophone()">
                   <i class="fa-solid fa-microphone"></i> Bấm để nói tự thuật trình độ
                 </button>
               </div>
 
-              <textarea id="diagTextInput" class="cs-diag-textarea" placeholder="Ví dụ: Em đang ở band 2.0 bập bõm, muốn học lên 6.5..."></textarea>
+              <textarea id="diagTextInput" class="cs-diag-textarea" placeholder="Ví dụ: Em đang ở band 5.0 muốn học lên 6.5..."></textarea>
 
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -326,7 +329,7 @@ class CurriculumUISystem {
                 </div>
 
                 <button type="button" id="btnStartAIAnalyze" onclick="window.curriculumUI.runAIDiagnostic()" style="background:#0284c7; color:white; border:none; padding:9px 18px; border-radius:8px; font-weight:800; font-size:13px; cursor:pointer;">
-                  ⚡ Gửi AI Phân Tích & Gọt Lộ Trình
+                  ⚡ Gửi AI Phân Tích & Băm Lộ Trình
                 </button>
               </div>
 
@@ -386,7 +389,7 @@ class CurriculumUISystem {
           </div>
           <div class="cs-stat-box">
             <div class="cs-stat-val" style="color:#8B1518;">${data.totals.totalLiveSessions} buổi</div>
-            <div class="cs-stat-lbl">Lớp học với GV (${data.totals.totalTeacherHours}h trực tiếp)</div>
+            <div class="cs-stat-lbl">Lớp học GV (${data.totals.totalTeacherHours}h - HP: ${data.totals.tuitionVND})</div>
           </div>
           <div class="cs-stat-box">
             <div class="cs-stat-val" style="color:#d97706;">${data.totals.estimatedMonths} tháng</div>
@@ -451,7 +454,7 @@ class CurriculumUISystem {
       <div class="cs-modal-header">
         <div>
           <h3 style="margin:0; font-size:17px; font-weight:bold;">🗺️ TOÀN CẢNH LỘ TRÌNH: BAND ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0}</h3>
-          <span style="font-size:12px; color:#94a3b8;">Thời gian: ${data.totals.estimatedMonths} tháng (${data.totals.totalLiveSessions} buổi học với GV) • ${data.schedule.length} ngày BTVN</span>
+          <span style="font-size:12px; color:#94a3b8;">Học phí: ${data.totals.tuitionVND} (${data.totals.totalLiveSessions} buổi học với GV) • ${data.totals.estimatedMonths} tháng (${data.schedule.length} ngày BTVN)</span>
         </div>
         <button onclick="window.curriculumUI.closeModal()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
       </div>
