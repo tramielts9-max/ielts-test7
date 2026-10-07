@@ -1,6 +1,7 @@
 /**
  * curriculum-system/engine-system.js
- * BỘ MÁY ĐIỀU PHỐI ĐA KỸ NĂNG: TRỘN 2-3 MÔN KHÁC NHAU / NGÀY & GÁN CHÚ THÍCH LỢI ÍCH
+ * BỘ MÁY ĐIỀU PHỐI MA TRẬN 2 ĐẦU (START BAND ➔ TARGET BAND),
+ * CHUẨN 1.5H/NGÀY & TỰ ĐỘNG TÍNH BUỔI HỌC (3 BUỔI/TUẦN × 2H)
  */
 
 export class CurriculumEngineSystem {
@@ -15,7 +16,6 @@ export class CurriculumEngineSystem {
     }));
   }
 
-  // TỰ ĐỘNG GÁN CHÚ THÍCH LỢI ÍCH THỰC CHIẾN CHO TỪNG BÀI
   generateBenefit(node) {
     const d = (node.domain || '').toUpperCase();
     const t = (node.title || '').toLowerCase();
@@ -35,51 +35,86 @@ export class CurriculumEngineSystem {
     }
     if (d === 'LISTENING') return "Rèn độ nhạy bắt từ khóa chuyển ý (Signposting) và bẫy đổi ý (actually, but).";
     if (d === 'WRITING_T1') return "Tự viết bài mô tả biểu đồ 150 từ hoàn chỉnh trong đúng 20 phút (Overview & Grouping).";
-    if (d === 'WRITING_T2') return "Viết bài luận học thuật 250 từ chuẩn 4 đoạn PEEL, nâng cấp từ vựng C1-C2.";
+    if (d === 'WRITING_T2') return "Viết bài luận học thuật 250 từ chuẩn 4 đoạn PEEL, nâng cấp từ vựng C1 chuẩn xác.";
     if (d === 'SPEAKING') return "Phản xạ trả lời trôi chảy theo cấu trúc AREA, không bị khựng quá 3 giây.";
     if (d === 'MOCK_TEST') return "Rèn luyện thể lực và tâm lý phòng thi dưới áp lực làm bài liên tục 3 tiếng.";
     return "Củng cố phản xạ và độ chính xác ngôn ngữ học thuật.";
   }
 
-  pruneCurriculum(masteredTags = []) {
-    if (!masteredTags || masteredTags.length === 0) return [...this.allNodes];
-    return this.allNodes.filter(node => {
-      if (!node.tags || node.tags.length === 0) return true;
-      const isMastered = node.tags.every(tag => masteredTags.includes(tag));
-      return !isMastered;
+  /**
+   * MA TRẬN CẮT 2 ĐẦU DỰA VÀO START BAND & TARGET BAND
+   */
+  pruneCurriculumByBands(startBand = 0.0, targetBand = 7.0, weakTags = []) {
+    const sBand = parseFloat(startBand) || 0.0;
+    const tBand = Math.min(7.0, parseFloat(targetBand) || 7.0); // Trần cao nhất là 7.0
+
+    return this.allNodes.filter((node, idx) => {
+      // Nếu bài này chữa đúng lỗ hổng học sinh khai báo ➔ Giữ lại 100%
+      if (weakTags.length > 0 && node.tags && node.tags.some(tag => weakTags.includes(tag))) {
+        return true;
+      }
+
+      const stg = node.stage || 'S1';
+      const d = (node.domain || '').toUpperCase();
+
+      // 1. CẮT ĐẦU (HEAD-CUT) THEO START BAND
+      if (sBand >= 2.0 && stg === 'S1' && (d === 'GRAMMAR' && idx % 3 === 0)) return false; // Cắt bớt bài vỡ lòng quá dễ
+      if (sBand >= 3.5 && stg === 'S1') return false; // 3.5 trở lên: Cắt 100% Giai đoạn 1
+      if (sBand >= 4.5 && stg === 'S2' && d === 'GRAMMAR') return false; // 4.5 trở lên: Bỏ ngữ pháp câu phức
+      if (sBand >= 5.0 && stg === 'S2' && !d.includes('PRE_WRITING')) return false; // 5.0 trở lên: Bỏ hết S2 trừ Pre-Writing
+      if (sBand >= 5.5 && stg === 'S2') return false; // 5.5 trở lên: Cắt sạch 100% Giai đoạn 2
+      if (sBand >= 6.0 && stg === 'S3' && (t.includes('có mớm') || d.includes('PRE_'))) return false; // 6.0 trở lên: Bỏ bài có mớm
+
+      // 2. CẮT ĐUÔI (TAIL-CUT) THEO TARGET BAND
+      if (tBand <= 5.0 && (stg === 'S3' || stg === 'S4')) return false; // Chỉ cần 5.0: Cắt sạch S3 & S4
+      if (tBand <= 5.5 && stg === 'S4') return false; // Chỉ cần 5.5: Cắt sạch S4
+      if (tBand <= 5.5 && stg === 'S3' && (d === 'WRITING_T2' || d === 'MOCK_TEST')) return false;
+      if (tBand <= 6.0 && stg === 'S4') return false; // Chỉ cần 6.0: Cắt sạch S4
+      if (tBand <= 6.5 && stg === 'S4' && (idx % 2 === 0)) return false; // 6.5: Lọc mỏng 50% đề khó của S4
+
+      // 3. LỌC MỎNG TRÙNG DẠNG (THINNING 20%) ĐỂ TRÁNH QUÁ TẢI
+      if ((d === 'WRITING_T1' || d === 'WRITING_T2') && idx % 5 === 0) return false;
+
+      return true;
     });
   }
 
-  calculateTotals(retainedNodes, speedProfile = 'normal') {
+  /**
+   * TÍNH TOÁN THỜI LƯỢNG & SỐ BUỔI HỌC VỚI GIÁO VIÊN (1 TUẦN 3 BUỔI × 2H)
+   */
+  calculateTotals(retainedNodes, speedProfile = 'normal', dailyHours = 1.5) {
     let totalMinutes = 0;
-    let totalCoachHours = 0;
 
     retainedNodes.forEach(node => {
       const dur = node.duration?.[speedProfile] || node.duration?.normal || 20;
       totalMinutes += dur;
-      totalCoachHours += (node.coachHours || 0);
     });
 
     const totalSelfStudyHours = Math.round((totalMinutes / 60) * 10) / 10;
-    const totalCoachHoursRounded = Math.round(totalCoachHours * 10) / 10;
-    const coachSessionsEstimate = Math.ceil(totalCoachHoursRounded / 2.0);
+    const totalDays = Math.max(1, Math.ceil(totalMinutes / (dailyHours * 60))); // Chia cho 1.5h/ngày (90p)
+    const estimatedMonths = Math.round((totalDays / 26) * 10) / 10; // 26 ngày học thực tế/tháng
+    const totalWeeks = Math.round(estimatedMonths * 4); // 1 tháng = 4 tuần
+    const totalLiveSessions = totalWeeks * 3; // 1 tuần = 3 buổi
+    const totalTeacherHours = totalLiveSessions * 2; // 1 buổi = 2 tiếng
 
     return {
       totalSelfStudyHours,
-      totalCoachHours: totalCoachHoursRounded,
-      coachSessionsEstimate,
+      totalDays,
+      estimatedMonths,
+      totalWeeks,
+      totalLiveSessions,
+      totalTeacherHours,
       nodeCount: retainedNodes.length
     };
   }
 
   /**
-   * THUẬT TOÁN TRỘN 2 - 3 KỸ NĂNG KHÁC NHAU / NGÀY (KHÔNG BAO GIỜ TRÙNG MÔN)
+   * XẾP LỊCH HỌC BTVN: 1.5 TIẾNG (90 PHÚT) / NGÀY, TRỘN 2-3 KỸ NĂNG, KHÔNG LẶP MÔN
    */
-  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHoursCommitment = 1.0) {
-    const dailyTargetMinutes = Math.round(dailyHoursCommitment * 60); // 60 phút/ngày
+  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHours = 1.5) {
+    const dailyTargetMinutes = Math.round(dailyHours * 60); // 90 phút/ngày
     const calendarDays = [];
 
-    // PHÂN LOẠI CÁC NHÁNH BÀI TẬP VÀO CÁC HÀNG ĐỢI
     const qGrammar = [];
     const qVocab = [];
     const qPreLis = [];
@@ -125,13 +160,11 @@ export class CurriculumEngineSystem {
       );
     };
 
-    // HÀM TIỆN ÍCH BỐC 1 BÀI TỪ QUEUE (CHỈ BỐC NẾU CHƯA CÓ KỸ NĂNG ĐÓ TRONG NGÀY)
     const pickUniqueDomainTask = (queue, dayNodes, usedDomains, currentMinutes, maxAllowed) => {
       if (!queue || queue.length === 0) return 0;
       const candidate = queue[0];
       const domainKey = (candidate.domain || '').toUpperCase().replace('PRE_', '').replace('_T1', '').replace('_T2', '');
 
-      // Nếu môn này ĐÃ CÓ trong ngày ➔ Không bốc để chống trùng môn
       if (usedDomains.has(domainKey)) return 0;
 
       const dur = candidate.duration?.[speedProfile] || candidate.duration?.normal || 20;
@@ -148,13 +181,12 @@ export class CurriculumEngineSystem {
       return 0;
     };
 
-    // VÒNG LẶP XẾP LỊCH TỪNG NGÀY
     while (hasPendingTasks() && currentDayIndex <= 600) {
       let dayMinutes = 0;
       const dayNodes = [];
-      const usedDomainsThisDay = new Set(); // Bộ nhớ chống trùng môn trong ngày
+      const usedDomainsThisDay = new Set();
 
-      // KIỂM TRA ĐIỀU KIỆN ÔN TẬP DUY TRÌ (KHI LISTENING & READING ĐÃ XONG SẠCH)
+      // VÒNG LẶP DUY TRÌ (CỨ 2-3 NGÀY KHI LISTENING & READING ĐÃ XONG)
       const isLisReadDone = (qPreLis.length === 0 && qOffLis.length === 0 && qPreRead.length === 0 && qOffRead.length === 0);
 
       if (isLisReadDone && (qOffWrite.length > 0 || qOffSpk.length > 0)) {
@@ -165,40 +197,30 @@ export class CurriculumEngineSystem {
           reviewTypeToggle++;
 
           if (reviewTypeToggle % 2 === 1) {
-            // NGÀY ÔN READING: CHIẾM ÍT NHẤT 60 PHÚT (FULL DAY ĐỂ LÀM 1 ĐỀ 3 PASSAGE)
+            // NGÀY ÔN READING: CHIẾM TRỌN 60 PHÚT
             const readReview = {
               id: `S4_REV_READ_${String(reviewCount).padStart(2, '0')}`,
-              stage: "S4",
-              domain: "READING",
-              type: "TEST",
-              title: `[ÔN TẬP DUY TRÌ #${reviewCount}] Giải Đề Reading Cambridge Cũ (Bấm giờ nghiêm ngặt 60 phút)`,
+              stage: "S4", domain: "READING", type: "TEST",
+              title: `[ÔN TẬP DUY TRÌ #${reviewCount}] Giải Đề Reading Cambridge Cũ (Bấm giờ 60 phút full test)`,
               benefit: "Giải trọn vẹn 1 đề Reading 3 Passage dưới áp lực 60 phút để giữ phong độ phòng thi.",
               url: "reading/reading.html",
               duration: { fast: 50, normal: 60, slow: 70 },
-              coachHours: 0.5,
-              tags: ["READ_MAINTENANCE"]
+              coachHours: 0.5, tags: ["READ_MAINTENANCE"]
             };
-            calendarDays.push({
-              dayNumber: currentDayIndex,
-              totalMinutes: 60,
-              nodes: [{ ...readReview, assignedDurationMinutes: 60 }]
-            });
-            currentDayIndex++;
+            dayNodes.push({ ...readReview, assignedDurationMinutes: 60 });
+            dayMinutes += 60;
+            usedDomainsThisDay.add('READING');
             reviewCount++;
-            continue;
           } else {
             // NGÀY ÔN LISTENING: CHIẾM ĐÚNG 30 PHÚT
             const lisReview = {
               id: `S4_REV_LIS_${String(reviewCount).padStart(2, '0')}`,
-              stage: "S4",
-              domain: "LISTENING",
-              type: "TEST",
+              stage: "S4", domain: "LISTENING", type: "TEST",
               title: `[ÔN TẬP DUY TRÌ #${reviewCount}] Nghe lại 1 Đề Listening Cambridge Cũ (Bấm giờ 30 phút)`,
               benefit: "Nghe liên tục 40 câu không tạm dừng để duy trì độ nhạy phản xạ âm thanh.",
               url: "listening/listening.html",
               duration: { fast: 25, normal: 30, slow: 35 },
-              coachHours: 0.25,
-              tags: ["LIS_MAINTENANCE"]
+              coachHours: 0.25, tags: ["LIS_MAINTENANCE"]
             };
             dayNodes.push({ ...lisReview, assignedDurationMinutes: 30 });
             dayMinutes += 30;
@@ -208,16 +230,12 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // =====================================================================
-      // 1. MỤC BẮT BUỘC SỐ 1: NGỮ PHÁP (MỖI NGÀY ĐÚNG 1 BÀI LIÊN TỤC ĐẾN KHI HẾT)
-      // =====================================================================
+      // 1. NGỮ PHÁP (MỖI NGÀY 1 BÀI LIÊN TỤC ĐẾN KHI HẾT)
       if (qGrammar.length > 0) {
         dayMinutes += pickUniqueDomainTask(qGrammar, dayNodes, usedDomainsThisDay, dayMinutes, 30);
       }
 
-      // =====================================================================
-      // 2. MỤC BẮT BUỘC SỐ 2: NHÁNH NGHE (PRE-LIS ➔ XONG THÌ LÊN ĐỀ LISTENING NGAY)
-      // =====================================================================
+      // 2. NHÁNH NGHE (PRE-LIS ➔ XONG THÌ LÊN ĐỀ CHÍNH THỨC)
       if (dayMinutes < dailyTargetMinutes && !usedDomainsThisDay.has('LISTENING')) {
         if (qPreLis.length > 0) {
           dayMinutes += pickUniqueDomainTask(qPreLis, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 5);
@@ -226,11 +244,8 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // =====================================================================
-      // 3. MỤC SỐ 3: TỪ VỰNG HOẶC NHÁNH ĐỌC (PRE-READ ➔ XONG LÊN ĐỀ READING NGAY)
-      // =====================================================================
+      // 3. TỪ VỰNG HOẶC NHÁNH ĐỌC (PRE-READ ➔ XONG LÊN ĐỀ CHÍNH THỨC)
       if (dayMinutes < dailyTargetMinutes) {
-        // Luân phiên ngày chẵn ngày lẻ giữa Từ vựng và Đọc để không bị dồn cục
         if (currentDayIndex % 2 === 1 && qVocab.length > 0 && !usedDomainsThisDay.has('VOCABULARY')) {
           dayMinutes += pickUniqueDomainTask(qVocab, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
         } else if (!usedDomainsThisDay.has('READING')) {
@@ -242,9 +257,7 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // =====================================================================
-      // 4. MỤC BỔ TRỢ: PRE-WRITING (56 BÀI) HOẶC PRE-SPEAKING (SHADOWING)
-      // =====================================================================
+      // 4. BỔ TRỢ: PRE-WRITING HOẶC PRE-SPEAKING
       if (dayMinutes < dailyTargetMinutes) {
         if (qPreWrite.length > 0 && !usedDomainsThisDay.has('WRITING')) {
           dayMinutes += pickUniqueDomainTask(qPreWrite, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
@@ -253,9 +266,7 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // =====================================================================
-      // 5. GIAI ĐOẠN VIẾT & NÓI CHÍNH THỨC (KHI PRE TƯƠNG ỨNG ĐÃ XONG SẠCH)
-      // =====================================================================
+      // 5. VIẾT & NÓI CHÍNH THỨC
       if (dayMinutes < dailyTargetMinutes) {
         if (qPreWrite.length === 0 && qOffWrite.length > 0 && !usedDomainsThisDay.has('WRITING')) {
           dayMinutes += pickUniqueDomainTask(qOffWrite, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 15);
@@ -264,27 +275,23 @@ export class CurriculumEngineSystem {
         }
       }
 
-      // =====================================================================
       // 6. MOCK TESTS GIAI ĐOẠN CUỐI
-      // =====================================================================
       if (dayMinutes < dailyTargetMinutes && qMock.length > 0 && !usedDomainsThisDay.has('MOCK_TEST')) {
         dayMinutes += pickUniqueDomainTask(qMock, dayNodes, usedDomainsThisDay, dayMinutes, 180);
       }
 
-      // NẾU VẪN CÒN DƯ THỜI GIAN TRONG NGÀY MÀ CÁC QUEUE ƯU TIÊN ĐÃ HẾT:
-      // Bốc tiếp từ bất kỳ queue nào còn bài (miễn là không trùng môn)
-      if (dayMinutes < 45) {
-        const remainingQueues = [qVocab, qPreSpk, qPreWrite, qOffWrite, qOffSpk, qOffRead, qOffLis];
-        for (const rq of remainingQueues) {
-          if (rq.length > 0) {
-            const added = pickUniqueDomainTask(rq, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
+      // BỐC THÊM NẾU CHƯA ĐỦ 70 PHÚT TRONG NGÀY
+      if (dayMinutes < 70) {
+        const fallbackQueues = [qVocab, qPreSpk, qPreWrite, qOffWrite, qOffSpk, qOffRead, qOffLis];
+        for (const fq of fallbackQueues) {
+          if (fq.length > 0) {
+            const added = pickUniqueDomainTask(fq, dayNodes, usedDomainsThisDay, dayMinutes, dailyTargetMinutes + 10);
             dayMinutes += added;
-            if (dayMinutes >= 50) break;
+            if (dayMinutes >= 80) break;
           }
         }
       }
 
-      // ĐẨY NGÀY VÀO LỊCH NẾU CÓ BÀI
       if (dayNodes.length > 0) {
         calendarDays.push({
           dayNumber: currentDayIndex,
@@ -293,7 +300,6 @@ export class CurriculumEngineSystem {
         });
         currentDayIndex++;
       } else {
-        // Thoát an toàn nếu đã hết sạch bài
         break;
       }
     }
