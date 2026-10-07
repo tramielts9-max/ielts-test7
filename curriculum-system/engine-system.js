@@ -1,12 +1,12 @@
 /**
  * curriculum-system/engine-system.js
- * BỘ NÃO ĐIỀU PHỐI LỘ TRÌNH ĐỘC LẬP & TÍNH TOÁN THỜI LƯỢNG HỌC PHÍ
- * Cung cấp API mở cho AI can thiệp (Pruning, Re-ordering, Injection)
+ * BỘ MÁY ĐIỀU PHỐI ĐA KỸ NĂNG (MULTI-BUCKET INTERLEAVING SCHEDULER)
+ * Tự động phân tầng Tiền đề nghiêm ngặt & Trộn 2-3 kỹ năng mỗi ngày (Chuẩn 60p/ngày)
  */
 
 export class CurriculumEngineSystem {
-  constructor(allNodes = []) {
-    this.allNodes = [...allNodes];
+  constructor() {
+    this.allNodes = [];
   }
 
   setNodes(nodes) {
@@ -14,151 +14,167 @@ export class CurriculumEngineSystem {
   }
 
   /**
-   * 1. PHÂN LOẠI TỐC ĐỘ HỌC VIÊN QUA BÀI TEST ĐẦU VÀO
-   * @param {number} actualSecondsSpent - Thời gian học sinh hoàn thành bài test
-   * @param {number} benchmarkSeconds - Thời gian chuẩn
-   * @returns {'fast' | 'normal' | 'slow'}
-   */
-  determineSpeedProfile(actualSecondsSpent, benchmarkSeconds = 1200) {
-    const ratio = actualSecondsSpent / (benchmarkSeconds || 1);
-    if (ratio <= 0.8) return 'fast';
-    if (ratio <= 1.25) return 'normal';
-    return 'slow';
-  }
-
-  /**
-   * 2. THUẬT TOÁN GỌT ĐỐT (PRUNING) CHO AI
-   * Cắt bỏ các đốt mà học sinh đã đạt điểm tối đa ở bài test đầu vào
-   * @param {Array<string>} masteredTags - Danh sách tag học sinh làm đúng hoàn toàn
-   * @returns {Array} Danh sách các đốt giữ lại
+   * 1. GỌT ĐỐT (PRUNING) DỰA TRÊN TAGS NĂNG LỰC
    */
   pruneCurriculum(masteredTags = []) {
-    if (!masteredTags || masteredTags.length === 0) {
-      return this.allNodes;
-    }
-
+    if (!masteredTags || masteredTags.length === 0) return [...this.allNodes];
     return this.allNodes.filter(node => {
       if (!node.tags || node.tags.length === 0) return true;
-      // Nếu tất cả tags của bài này nằm trong danh sách đã giỏi -> CẮT BỎ
       const isMastered = node.tags.every(tag => masteredTags.includes(tag));
       return !isMastered;
     });
   }
 
   /**
-   * 3. TÍNH TOÁN TỔNG KHỐI LƯỢNG CÔNG VIỆC & GIỜ HỌC GIÁO VIÊN (THU HỌC PHÍ)
-   * @param {Array} retainedNodes - Danh sách đốt sau khi gọt
-   * @param {'fast' | 'normal' | 'slow'} speedProfile - Tốc độ học
+   * 2. TÍNH TOÁN TỔNG THỜI LƯỢNG TỰ CÀY & GIỜ GIÁO VIÊN
    */
   calculateTotals(retainedNodes, speedProfile = 'normal') {
     let totalMinutes = 0;
     let totalCoachHours = 0;
 
     retainedNodes.forEach(node => {
-      const dur = node.duration[speedProfile] || node.duration.normal || 20;
+      const dur = node.duration?.[speedProfile] || node.duration?.normal || 20;
       totalMinutes += dur;
       totalCoachHours += (node.coachHours || 0);
     });
 
+    const totalSelfStudyHours = Math.round((totalMinutes / 60) * 10) / 10;
+    const totalCoachHoursRounded = Math.round(totalCoachHours * 10) / 10;
+    const coachSessionsEstimate = Math.ceil(totalCoachHoursRounded / 2.0);
+
     return {
-      totalSelfStudyHours: Math.round((totalMinutes / 60) * 10) / 10,
-      totalCoachHours: Math.round(totalCoachHours * 10) / 10,
-      coachSessionsEstimate: Math.ceil(totalCoachHours / 2), // Giả sử mỗi buổi học 2 tiếng
+      totalSelfStudyHours,
+      totalCoachHours: totalCoachHoursRounded,
+      coachSessionsEstimate,
       nodeCount: retainedNodes.length
     };
   }
 
   /**
-   * 4. BỘ MÁY TỰ ĐỘNG SINH LỊCH HỌC TỪNG NGÀY (DAILY CALENDAR GENERATOR)
-   * @param {Array} retainedNodes - Các đốt cần học
-   * @param {'fast' | 'normal' | 'slow'} speedProfile - Tốc độ học
-   * @param {number} dailyHoursCommitment - Số giờ học sinh cam kết học mỗi ngày (VD: 1.5 tiếng)
+   * 3. BỘ MÁY TRỘN ĐA KỸ NĂNG THEO CHUẨN GIÁO TRÌNH 7 THÁNG TRẠM IELTS
+   * Phân 4 Tầng Tiền đề (Tiers). Trong mỗi Tầng, bốc xen kẽ Output + Input + Support vào mỗi ngày
    */
-  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHoursCommitment = 1.5) {
-    const dailyTargetMinutes = dailyHoursCommitment * 60;
+  generateDailyCalendar(retainedNodes, speedProfile = 'normal', dailyHoursCommitment = 1.0) {
+    const dailyTargetMinutes = Math.round(dailyHoursCommitment * 60);
     const calendarDays = [];
 
-    let currentDayIndex = 1;
-    let currentDayNodes = [];
-    let currentDayMinutes = 0;
+    // PHÂN CHIA 4 TẦNG TIỀN ĐỀ TUYỆT ĐỐI (STRICT PREREQUISITE TIERS)
+    const tiers = {
+      T1: [], // Tầng 1: Gốc (Grammar, Vocab 300, Pre-Lis A1, Pre-Read A1, Shadow A1)
+      T2: [], // Tầng 2: Chuyển giao (Cam có mớm, Pre-Writing T1/T2, Shadow A2/B1, Pre-skills B2)
+      T3: [], // Tầng 3: Sản sinh (Writing T1/T2 chính thức, Speaking P1/P2, Cam nâng cao)
+      T4: []  // Tầng 4: Về đích (Cam không mớm, Writing chuyên sâu, Speaking P3, 12 Mock Tests)
+    };
 
     retainedNodes.forEach(node => {
-      const nodeMinutes = node.duration[speedProfile] || node.duration.normal || 20;
-
-      // Nếu cộng thêm bài này mà vượt quá chỉ tiêu trong ngày và ngày đó đã có ít nhất 1 bài
-      if (currentDayMinutes + nodeMinutes > dailyTargetMinutes && currentDayNodes.length > 0) {
-        calendarDays.push({
-          dayNumber: currentDayIndex,
-          totalMinutes: currentDayMinutes,
-          nodes: currentDayNodes
-        });
-
-        currentDayIndex++;
-        currentDayNodes = [];
-        currentDayMinutes = 0;
-      }
-
-      currentDayNodes.push({
-        ...node,
-        assignedDurationMinutes: nodeMinutes
-      });
-      currentDayMinutes += nodeMinutes;
+      const stage = node.stage || 'S1';
+      if (stage === 'S1') tiers.T1.push(node);
+      else if (stage === 'S2') tiers.T2.push(node);
+      else if (stage === 'S3') tiers.T3.push(node);
+      else tiers.T4.push(node);
     });
 
-    if (currentDayNodes.length > 0) {
-      calendarDays.push({
-        dayNumber: currentDayIndex,
-        totalMinutes: currentDayMinutes,
-        nodes: currentDayNodes
-      });
-    }
+    let currentDayIndex = 1;
 
-    const totalDays = calendarDays.length;
-    const estimatedMonths = Math.round((totalDays / 30) * 10) / 10;
+    // HÀM ĐÓNG GÓI NGÀY XEN KẼ (MULTI-BUCKET ROUND-ROBIN) CHO TỪNG TẦNG
+    const processTier = (tierNodes) => {
+      if (!tierNodes || tierNodes.length === 0) return;
+
+      // Phân vào 3 Xô chức năng để đan xen:
+      // Xô 1: Tiếp nhận Input (Listening, Reading, Pre-Listening, Pre-Reading)
+      // Xô 2: Sản sinh Output (Writing, Speaking, Pre-Writing, Ngữ pháp tạo câu)
+      // Xô 3: Bổ trợ Support (Từ vựng, Shadowing phát âm, Note lỗi)
+      const inputBucket = [];
+      const outputBucket = [];
+      const supportBucket = [];
+
+      tierNodes.forEach(n => {
+        const d = (n.domain || '').toUpperCase();
+        if (d.includes('READ') || d.includes('LIS')) {
+          inputBucket.push(n);
+        } else if (d.includes('WRIT') || d.includes('SPEAK') || d.includes('GRAM')) {
+          outputBucket.push(n);
+        } else {
+          supportBucket.push(n);
+        }
+      });
+
+      // Lần lượt bốc đan xen 3 xô cho từng ngày đến khi hết sạch bài của Tầng này
+      while (inputBucket.length > 0 || outputBucket.length > 0 || supportBucket.length > 0) {
+        let dayMinutes = 0;
+        const dayNodes = [];
+
+        const tryPick = (bucket) => {
+          if (bucket.length === 0) return;
+          const node = bucket[0];
+          const nodeDur = node.duration?.[speedProfile] || node.duration?.normal || 20;
+
+          // Nếu cộng vào mà không vượt quá thời gian chỉ tiêu ngày
+          if (dayMinutes + nodeDur <= dailyTargetMinutes + 10 || dayNodes.length === 0) {
+            bucket.shift();
+            dayNodes.push({
+              ...node,
+              assignedDurationMinutes: nodeDur
+            });
+            dayMinutes += nodeDur;
+          }
+        };
+
+        // Bốc Vòng 1: 1 bài Output (Ngữ pháp / Viết / Nói ~20p)
+        tryPick(outputBucket);
+
+        // Bốc Vòng 2: 1 bài Input (Nghe / Đọc hiểu ~20p)
+        tryPick(inputBucket);
+
+        // Bốc Vòng 3: 1 bài Bổ trợ (Từ vựng / Shadowing ~20p)
+        tryPick(supportBucket);
+
+        // Nếu còn dư thì bốc nốt từ xô còn bài để làm đầy mốc 60p
+        let safety = 0;
+        while (dayMinutes < dailyTargetMinutes - 10 && safety < 4) {
+          safety++;
+          const prevMin = dayMinutes;
+          if (outputBucket.length > 0) tryPick(outputBucket);
+          else if (inputBucket.length > 0) tryPick(inputBucket);
+          else if (supportBucket.length > 0) tryPick(supportBucket);
+          if (dayMinutes === prevMin) break;
+        }
+
+        if (dayNodes.length > 0) {
+          calendarDays.push({
+            dayNumber: currentDayIndex,
+            totalMinutes: dayMinutes,
+            nodes: dayNodes
+          });
+          currentDayIndex++;
+        } else {
+          // Xử lý bài thi lớn ngoại lệ (ví dụ Mock Test 120-150 phút)
+          const fallbackBucket = outputBucket.length > 0 ? outputBucket : (inputBucket.length > 0 ? inputBucket : supportBucket);
+          if (fallbackBucket.length > 0) {
+            const bigNode = fallbackBucket.shift();
+            const bigDur = bigNode.duration?.[speedProfile] || bigNode.duration?.normal || 60;
+            calendarDays.push({
+              dayNumber: currentDayIndex,
+              totalMinutes: bigDur,
+              nodes: [{ ...bigNode, assignedDurationMinutes: bigDur }]
+            });
+            currentDayIndex++;
+          }
+        }
+      }
+    };
+
+    // TUÂN THỦ NGUYÊN TẮC: TẦNG 1 XONG HẾT ➔ MỚI SANG TẦNG 2 ➔ TẦNG 3 ➔ TẦNG 4
+    processTier(tiers.T1);
+    processTier(tiers.T2);
+    processTier(tiers.T3);
+    processTier(tiers.T4);
 
     return {
-      totalDays,
-      estimatedMonths,
+      totalDays: calendarDays.length,
+      estimatedMonths: Math.round((calendarDays.length / 26) * 10) / 10,
       dailySchedule: calendarDays
     };
-  }
-
-  // =========================================================================
-  // 5. CỔNG KẾT NỐI CHO CON AI CAN THIỆP TRONG TƯƠNG LAI (AI INTERVENTION HOOKS)
-  // =========================================================================
-
-  /**
-   * AI CHÈN ĐỐT BỔ TRỢ VÀO GIỮA LỘ TRÌNH KHI HỌC SINH LÀM SAI NHIỀU
-   * @param {Array} currentSchedule - Lịch học hiện tại
-   * @param {string} targetNodeId - Mã bài vừa làm sai
-   * @param {Array} remedialNodes - Danh sách bài bổ trợ AI tạo ra
-   */
-  aiInjectRemedialNodes(currentSchedule, targetNodeId, remedialNodes = []) {
-    return currentSchedule.map(day => {
-      const targetIndex = day.nodes.findIndex(n => n.id === targetNodeId);
-      if (targetIndex !== -1) {
-        const updatedNodes = [...day.nodes];
-        updatedNodes.splice(targetIndex + 1, 0, ...remedialNodes);
-        return { ...day, nodes: updatedNodes };
-      }
-      return day;
-    });
-  }
-
-  /**
-   * AI ĐIỀU CHỈNH LẠI THỨ TỰ ƯU TIÊN THEO KẾT QUẢ ĐẦU VÀO
-   * @param {Array} nodes - Danh sách đốt
-   * @param {Array<string>} weakTags - Những kỹ năng học sinh yếu nhất cần ưu tiên kéo lên trước
-   */
-  aiPrioritizeWeaknesses(nodes, weakTags = []) {
-    if (!weakTags.length) return nodes;
-    return [...nodes].sort((a, b) => {
-      const aHasWeak = (a.tags || []).some(t => weakTags.includes(t));
-      const bHasWeak = (b.tags || []).some(t => weakTags.includes(t));
-      if (aHasWeak && !bHasWeak) return -1;
-      if (!aHasWeak && bHasWeak) return 1;
-      return 0;
-    });
   }
 }
 
