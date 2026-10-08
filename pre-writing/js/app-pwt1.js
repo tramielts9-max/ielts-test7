@@ -1,3 +1,8 @@
+/**
+ * pre-writing/js/app-pwt1.js - Điều khiển Pre-Writing Task 1 Duolingo 3D
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
+ */
+
 import { streamGeminiPWT1 } from './api-pwt1.js';
 
 let manifestData = [];
@@ -14,7 +19,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btnGrading')?.addEventListener('click', runEvaluation);
 });
 
-// ==================== LẤY LỊCH SỬ LÀM BÀI ====================
 function getCompletedRecord(fileOrTitle) {
   try {
     const list = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
@@ -24,7 +28,6 @@ function getCompletedRecord(fileOrTitle) {
   }
 }
 
-// ==================== MÀN HÌNH PORTAL CARD ====================
 async function loadManifestAndInitPortal() {
   try {
     const res = await fetch('data/pwt1-manifest.json');
@@ -42,9 +45,7 @@ function renderTabs() {
   container.innerHTML = CATEGORIES.map(cat => {
     const isActive = cat === currentCategory;
     return `
-      <button onclick="window.switchPWT1Category('${cat}')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
-        isActive ? 'bg-sky-600 text-white shadow-sm ring-2 ring-sky-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-      }">
+      <button onclick="window.switchPWT1Category('${cat}')" class="pwt1-tab-btn ${isActive ? 'active' : ''}">
         ${cat === 'ALL' ? 'Tất cả dạng bài' : cat}
       </button>
     `;
@@ -75,7 +76,7 @@ function renderCards() {
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">Không tìm thấy bài tập nào!</div>`;
+    container.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 16px; background: #FFFFFF; border-radius: 22px; border: 2.5px dashed var(--border-color);">Không tìm thấy bài tập nào!</div>`;
     return;
   }
 
@@ -84,28 +85,24 @@ function renderCards() {
     const isDone = !!rec;
 
     return `
-      <div class="bg-white rounded-xl border ${
-        isDone ? 'border-emerald-400 bg-emerald-50/20 shadow-emerald-100 ring-1 ring-emerald-300' : 'border-slate-200 shadow-sm hover:border-sky-300'
-      } p-4 transition flex flex-col justify-between hover:shadow-md">
+      <div class="pwt1-card-item ${isDone ? 'is-done' : ''}">
         <div>
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-700'}">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span class="pwt1-tag-id" style="background: ${isDone ? '#DCFCE7' : '#DBEAFE'}; color: ${isDone ? '#166534' : '#1E40AF'};">
               ID: ${item.id}
             </span>
             ${isDone 
-              ? `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã nộp'}</span>` 
-              : `<span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Chưa làm</span>`
+              ? `<span style="font-size: 13.5px; font-weight: 900; color: #166534;">✓ ${rec.score || 'Đã nộp'}</span>` 
+              : `<span style="font-size: 13px; font-weight: 800; color: var(--text-muted);">● Chưa làm</span>`
             }
           </div>
-          <h4 class="font-bold text-slate-800 text-sm mb-3 line-clamp-2 leading-snug" title="${item.title}">
+          <h4 class="pwt1-card-title" title="${item.title}">
             ${item.title}
           </h4>
         </div>
 
-        <button onclick="window.startLessonPWT1('${item.file}', '${item.title.replace(/'/g, "\\'")}')" class="w-full py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
-          isDone ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-sky-600 hover:bg-sky-700 text-white'
-        }">
-          <i class="fa-solid fa-pen-nib text-[11px]"></i> ${isDone ? 'Xem lại & Dịch lại' : 'Vào làm bài &rarr;'}
+        <button onclick="window.startLessonPWT1('${item.file}', '${item.title.replace(/'/g, "\\'")}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-blue'}" style="width: 100%; padding: 11px 16px; font-size: 13.5px;">
+          ${isDone ? '✓ Xem lại & Dịch lại' : 'Vào làm bài →'}
         </button>
       </div>
     `;
@@ -114,7 +111,6 @@ function renderCards() {
 
 window.filterPWT1Cards = () => renderCards();
 
-// ==================== CHUYỂN QUA LẠI WORKSPACE ====================
 window.startLessonPWT1 = async (filePath, title) => {
   document.getElementById('portalScreen').classList.add('hidden');
   document.getElementById('workspaceScreen').classList.remove('hidden');
@@ -141,7 +137,7 @@ function updateExerciseView() {
   const targetBand = document.getElementById('bandTargetSelect').value;
 
   document.getElementById('chartTypeBadge').innerText = currentExercise.type || 'Task 1';
-  const promptText = `📌 ĐỀ BÀI (ENGLISH PROMPT):\n${currentExercise.prompt}\n\n--- BẢN MẪU TIẾNG VIỆT ĐỐI ỨNG (${targetBand.toUpperCase()}): ---\n\n${currentExercise[targetBand] || currentExercise.band8}`;
+  const promptText = `ĐỀ BÀI (ENGLISH PROMPT):\n${currentExercise.prompt}\n\n--- BẢN MẪU TIẾNG VIỆT ĐỐI ỨNG (${targetBand.toUpperCase()}): ---\n\n${currentExercise[targetBand] || currentExercise.band8}`;
   document.getElementById('vietnameseSourceText').innerText = promptText;
 
   const imgElement = document.getElementById('chartImage');
@@ -174,7 +170,6 @@ function updateWordCount() {
   document.getElementById('wordCountDisplay').innerText = `${words} từ`;
 }
 
-// ==================== CHẤM BÀI & LƯU CLOUD DRIVE ====================
 async function runEvaluation() {
   const studentText = document.getElementById('studentEnglishInput').value.trim();
   const sourceVN = document.getElementById('vietnameseSourceText').innerText.trim();
@@ -192,7 +187,7 @@ async function runEvaluation() {
   btn.disabled = true;
   resultBox.style.display = 'block';
   resultContent.innerHTML = '';
-  statusBar.innerHTML = "⏳ Thầy đang đối chiếu số liệu biểu đồ & dịch thuật 2 tầng cho em...";
+  statusBar.innerHTML = "⏳ Thầy đang đối chiếu số liệu biểu đồ & sửa bài 2 tầng cho em...";
 
   const systemInstruction = `
 Bạn là Giám khảo IELTS Writing Task 1 cự phách và là Thầy dạy dịch thuật học thuật.
@@ -206,17 +201,17 @@ QUY TẮC ĐỊNH DẠNG: Dùng cú pháp Markdown chuẩn (#, ##, ###, ####). D
 XUẤT THEO CẤU TRÚC:
 # PHẦN 1: MỔ XẺ TỪNG CÂU DỊCH (SỬA BÀI 2 TẦNG TASK 1)
 ---
-### 📌 Câu [Số]: "[Câu học sinh]"
+### Câu [Số]: "[Câu học sinh]"
 *Đối chiếu tiếng Việt: "[Câu tiếng Việt]"*
-#### 🛠️ TẦNG 1: SỬA LỖI NGỮ PHÁP, SỐ LIỆU & DIỄN ĐẠT (Band 6.5 - 7.0)
+#### TẦNG 1: SỬA LỖI NGỮ PHÁP, SỐ LIỆU & DIỄN ĐẠT (Band 6.5 - 7.0)
 - **Anh sửa trực tiếp:** [Câu sửa]
-- **🔄 Các điểm cần sửa ngay:** [Lỗi sai]
-- **👉 Bản sửa sạch lỗi:** "[Câu hoàn chỉnh]"
+- **Các điểm cần sửa ngay:** [Lỗi sai]
+- **Bản sửa sạch lỗi:** "[Câu hoàn chỉnh]"
 
-#### ✨ TẦNG 2: NÂNG TẦM ACADEMIC TASK 1 (Band 8.0 - 8.5)
+#### TẦNG 2: NÂNG TẦM ACADEMIC TASK 1 (Band 8.0 - 8.5)
 - **Biến hóa với cấu trúc và Collocations học thuật:** [Câu Band 8+]
-- **🚀 Từ vựng & cấu trúc ăn điểm:** [Cụm tầng 1 ➔ Cụm Band 8]
-- **👉 Bản nâng cấp:** "[Câu đỉnh cao]"
+- **Từ vựng & cấu trúc ăn điểm:** [Cụm tầng 1 ➔ Cụm Band 8]
+- **Bản nâng cấp:** "[Câu đỉnh cao]"
 ---
 
 # PHẦN 2: BẢNG ĐÁNH GIÁ 4 TIÊU CHÍ TASK 1
@@ -224,7 +219,7 @@ XUẤT THEO CẤU TRÚC:
 |---|---|---|---|
 | Band [X] | Band [X] | Band [X] | Band [X] |
 
-> ### 🎯 OVERALL BAND DỰ KIẾN: [X]/9.0
+> ### OVERALL BAND DỰ KIẾN: [X]/9.0
 
 # PHẦN 3: LỜI DẶN DÒ CHIẾN LƯỢC CỦA ANH
 [Nêu 2-3 lỗi cố hữu cần khắc phục]
@@ -249,7 +244,6 @@ XUẤT THEO CẤU TRÚC:
     statusBar.innerHTML = `✅ Thầy đã chấm xong bằng model [${usedModel}]. Em học kỹ các cấu trúc Tầng 2 nhé!`;
     btn.disabled = false;
 
-    // --- LƯU VÀO LOCALSTORAGE VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
