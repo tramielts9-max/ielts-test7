@@ -1,10 +1,10 @@
 /**
  * PRE-SPEAKING CONTROLLER (-ps)
  * Tích hợp Màn hình Portal Danh sách Card + Chuyển phòng Luyện Nói
- * Lưu trữ tiến độ bài học & đổi màu Card theo ngày hoàn thành
+ * DUOLINGO X TRẠM IELTS - ĐÃ BỎ 100% ICON GÂY LỖI Ô VUÔNG
  */
 
-// 1. MÃ HÓA RUNTIME AUTH KEY GỐC TỪ SPEAKING.JS
+// 1. MÃ HÓA RUNTIME AUTH KEY GỐC
 const _AUTH_SEEDS = [
   65, 81, 46, 65, 98, 56, 82, 78, 54, 75, 116, 80, 107, 51, 45, 50,
   75, 103, 117, 114, 119, 117, 116, 65, 115, 55, 95, 118, 82, 66,
@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   initSpeechRecognition();
 });
 
-// ================== QUẢN LÝ TIẾN ĐỘ LÀM BÀI (LOCALSTORAGE) ==================
+// ================== QUẢN LÝ TIẾN ĐỘ LÀM BÀI ==================
 function getCompletedHistory() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY_PS_HISTORY) || '{}');
@@ -81,14 +81,13 @@ function saveCompletedLesson(lessonId) {
   localStorage.setItem(STORAGE_KEY_PS_HISTORY, JSON.stringify(history));
 }
 
-// ================== KHỞI TẠO HỆ THỐNG TỪ MANIFEST ==================
+// ================== KHỞI TẠO TỪ MANIFEST ==================
 async function loadManifestAndInit() {
   try {
     const res = await fetch('data/manifest-ps.json');
     if (!res.ok) throw new Error("Chưa có manifest");
     manifestData = await res.json();
   } catch (err) {
-    console.warn("⚠️ Dùng fallback danh mục manifest:", err.message);
     manifestData = {
       catalogs: [
         { id: "shadow_a1", name: "Level A1: Shadow Speaking Foundation", dataFile: "data/shadow_a1/lessons-ps.json" },
@@ -106,7 +105,7 @@ async function loadManifestAndInit() {
   await switchPortalLevel(activePortalLevelId);
 }
 
-// ================== MÀN HÌNH 1: PORTAL DASHBOARD LOGIC ==================
+// ================== MÀN HÌNH 1: PORTAL DASHBOARD ==================
 function renderLevelPills() {
   const container = document.getElementById('levelPillsContainer');
   if (!container) return;
@@ -115,13 +114,8 @@ function renderLevelPills() {
   manifestData.catalogs.forEach((cat) => {
     const btn = document.createElement('button');
     const isActive = cat.id === activePortalLevelId;
-    btn.className = `px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
-      isActive 
-        ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30' 
-        : 'bg-slate-900/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700'
-    }`;
+    btn.className = `ps-level-btn ${isActive ? 'active' : ''}`;
     
-    // Rút gọn tên hiển thị trên nút: "Level A1", "Level A2"...
     const shortLabel = cat.name.split(':')[0] || cat.id;
     btn.innerText = shortLabel;
 
@@ -142,7 +136,6 @@ async function switchPortalLevel(levelId) {
     if (!res.ok) throw new Error("Chưa tải được dữ liệu");
     const levelCategories = await res.json();
 
-    // Làm phẳng danh sách bài học để hiển thị dạng lưới Card
     portalAllLessonsFlat = [];
     levelCategories.forEach(cat => {
       (cat.lessons || []).forEach(lesson => {
@@ -159,7 +152,7 @@ async function switchPortalLevel(levelId) {
   } catch (err) {
     console.error("Lỗi tải bài học cho Portal:", err);
     document.getElementById('portalCardsGrid').innerHTML = `
-      <div class="col-span-full text-center py-10 text-rose-400">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #DC2626; font-weight: 800;">
         Không thể tải bài học của cấp độ này (${catalog.dataFile}).
       </div>
     `;
@@ -181,7 +174,11 @@ function renderPortalCards(lessonsList) {
   }
 
   if (lessonsList.length === 0) {
-    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">Không tìm thấy bài học nào phù hợp.</div>`;
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 800; background: #FFFFFF; border-radius: 20px; border: 2.5px dashed var(--border-color);">
+        Không tìm thấy bài học nào phù hợp.
+      </div>
+    `;
     return;
   }
 
@@ -189,46 +186,38 @@ function renderPortalCards(lessonsList) {
     const record = history[l.id];
     const isDone = !!record;
 
-    // Trạng thái đổi màu: Nếu đã làm một lần rồi thì viền xanh lá, nền ánh ngọc lục bảo
-    const cardBorderClass = isDone 
-      ? 'border-emerald-500/60 bg-emerald-950/20 hover:border-emerald-400' 
-      : 'border-slate-700 bg-slate-800 hover:border-violet-500/60';
-
     const statusBadge = isDone
-      ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-900/60 text-emerald-300 border border-emerald-700">
-           <i class="fa-solid fa-check"></i> Đã làm ${record.count} lần (${record.lastDate})
+      ? `<span class="ps-pill-tag" style="background: #DCFCE7; color: #166534; border-color: #86EFAC;">
+           ✓ Đã làm ${record.count} lần (${record.lastDate})
          </span>`
-      : `<span class="text-[11px] font-semibold text-slate-400">
-           <i class="fa-regular fa-circle"></i> Chưa làm
+      : `<span style="font-size: 12.5px; font-weight: 800; color: var(--text-muted);">
+           ● Chưa làm
          </span>`;
 
     return `
-      <div class="rounded-xl border p-4 transition-all duration-200 shadow-sm hover:shadow-lg flex flex-col justify-between gap-3 ${cardBorderClass}">
+      <div class="ps-lesson-card ${isDone ? 'is-done' : ''}">
         <div>
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800 uppercase">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span class="ps-card-tag" style="background: #FAF5FF; color: var(--ps-purple); border: 1.5px solid #E9D5FF;">
               ${l.id} • ${l.levelName}
             </span>
             ${statusBadge}
           </div>
-          <h3 class="text-sm font-bold text-slate-100 line-clamp-2 mt-1 leading-snug" title="${l.title}">
+          <h3 style="font-size: 16.5px; font-weight: 900; color: var(--text-main); margin: 6px 0; line-height: 1.4;" title="${l.title}">
             ${l.title}
           </h3>
-          <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
-            <span class="truncate max-w-[180px] text-slate-400" title="${l.categoryName}">📁 ${l.categoryName}</span>
-            <span class="text-sky-300 font-semibold whitespace-nowrap">⏱️ ${l.duration}</span>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 700; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;" title="${l.categoryName}">📁 ${l.categoryName}</span>
+            <span style="color: #0284C7; font-weight: 800; white-space: nowrap;">⏱️ ${l.duration}</span>
           </div>
         </div>
 
         <button 
           onclick="window.startLessonFromPortal('${l.levelId}', '${l.id}')"
-          class="w-full py-2.5 mt-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md ${
-            isDone 
-              ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-700/20' 
-              : 'bg-violet-600 hover:bg-violet-500 text-white shadow-violet-700/20'
-          }"
+          class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-purple'}"
+          style="width: 100%; margin-top: 16px; padding: 11px; font-size: 13.5px;"
         >
-          <i class="fa-solid fa-play text-[10px]"></i> Vào làm bài &rarr;
+          ${isDone ? 'Luyện lại bài này →' : 'Vào luyện nói →'}
         </button>
       </div>
     `;
@@ -245,13 +234,12 @@ window.filterPortalLessons = () => {
   renderPortalCards(filtered);
 };
 
-// ================== CHUYỂN ĐỔI MÀN HÌNH (PORTAL <-> WORKSPACE) ==================
+// ================== CHUYỂN ĐỔI MÀN HÌNH ==================
 window.startLessonFromPortal = async (levelId, lessonId) => {
   document.getElementById('portalScreen').classList.add('hidden');
   document.getElementById('workspaceScreen').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Đồng bộ chọn đúng bài trên 3 thanh dropdown của Workspace
   const levelSel = document.getElementById('levelSelect');
   if (levelSel) {
     levelSel.value = levelId;
@@ -260,24 +248,21 @@ window.startLessonFromPortal = async (levelId, lessonId) => {
 };
 
 window.backToPortal = () => {
-  // Dừng phát YouTube
   if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
   clearInterval(timerInterval);
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
-  // Tắt micro
   if (recognition) { try { recognition.stop(); } catch (e) {} }
   if (audioStream) audioStream.getTracks().forEach(t => t.stop());
   if (audioContext && audioContext.state !== 'closed') audioContext.close();
 
-  // Trở về Portal & làm mới lại danh sách bài
   document.getElementById('workspaceScreen').classList.add('hidden');
   document.getElementById('portalScreen').classList.remove('hidden');
 
   switchPortalLevel(activePortalLevelId);
 };
 
-// ================== LOGIC 3 THANH CHỌN TRONG WORKSPACE ==================
+// ================== LOGIC 3 THANH CHỌN WORKSPACE ==================
 function populateLevelDropdown() {
   const levelSel = document.getElementById('levelSelect');
   if (!levelSel) return;
@@ -319,8 +304,6 @@ function populateCategoryDropdown(targetLessonId = null) {
   }
 
   let selectedCatIndex = 0;
-
-  // Nếu chuyển từ Portal sang, tìm nhóm chứa đúng bài đó
   if (targetLessonId) {
     categoriesData.forEach((group, idx) => {
       if ((group.lessons || []).some(l => l.id === targetLessonId)) {
@@ -462,7 +445,7 @@ async function startAudioMeter() {
       let avg = sum / data.length;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = avg > 80 ? '#22c55e' : (avg > 30 ? '#7c3aed' : '#475569');
+      ctx.fillStyle = avg > 80 ? '#22C55E' : (avg > 30 ? '#9333EA' : '#CBD5E1');
       ctx.fillRect(0, 0, (avg / 255) * canvas.width, canvas.height);
     }
     render();
@@ -489,7 +472,9 @@ window.toggleShadowRecording = async () => {
     try { recognition.start(); } catch (e) {}
     if (badge) {
       badge.innerText = "🔴 Đang nghe & ký âm...";
-      badge.className = "text-[11px] font-semibold text-rose-300 bg-rose-950 px-2 py-0.5 rounded border border-rose-800 animate-pulse";
+      badge.style.background = "#FEE2E2";
+      badge.style.color = "#991B1B";
+      badge.style.borderColor = "#FCA5A5";
     }
   }
 
@@ -523,8 +508,10 @@ window.stopAndSubmitRecording = async () => {
   if (recognition) {
     try { recognition.stop(); } catch (e) {}
     if (badge) {
-      badge.innerText = "✅ Đã ký âm xong";
-      badge.className = "text-[11px] font-semibold text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800";
+      badge.innerText = "✓ Đã ký âm xong";
+      badge.style.background = "#DCFCE7";
+      badge.style.color = "#166534";
+      badge.style.borderColor = "#86EFAC";
     }
   }
   if (audioStream) audioStream.getTracks().forEach(t => t.stop());
@@ -637,29 +624,33 @@ function renderGradingResult(data, durationSec) {
   if (data.missed_words && data.missed_words.length > 0) {
     data.missed_words.forEach(w => {
       const sp = document.createElement('span');
-      sp.className = "px-2 py-0.5 bg-red-950 text-red-300 border border-red-800 rounded font-mono text-xs";
+      sp.style.cssText = "padding: 3px 8px; background: #FEE2E2; color: #991B1B; border: 1.5px solid #FCA5A5; border-radius: 8px; font-weight: 800; font-size: 12.5px;";
       sp.innerText = w;
       missedBox.appendChild(sp);
     });
   } else {
-    missedBox.innerHTML = '<span class="text-emerald-400 text-xs">🎉 Phát âm rất chuẩn xác, không bị nuốt từ!</span>';
+    missedBox.innerHTML = '<span style="color: #166534; font-weight: 800; font-size: 13px;">🎉 Phát âm rất chuẩn xác, không bị nuốt từ!</span>';
   }
 
   const isDurationPassed = durationSec >= MIN_REQUIRED_DURATION;
   const isScorePassed = (data.overall_score || 0) >= 60;
 
-  document.getElementById('valPacingText').innerHTML = `<b class="${isDurationPassed ? 'text-emerald-400' : 'text-rose-400'}">${durationSec}s</b> / ${MIN_REQUIRED_DURATION}s`;
-  document.getElementById('valScoreText').innerHTML = `<b class="${isScorePassed ? 'text-emerald-400' : 'text-rose-400'}">${data.overall_score}%</b> (≥60%)`;
+  document.getElementById('valPacingText').innerHTML = `<b style="color: ${isDurationPassed ? '#166534' : '#DC2626'};">${durationSec}s</b> / ${MIN_REQUIRED_DURATION}s`;
+  document.getElementById('valScoreText').innerHTML = `<b style="color: ${isScorePassed ? '#166534' : '#DC2626'};">${data.overall_score}%</b> (≥60%)`;
 
   const badge = document.getElementById('validationBadge');
   const completeBtn = document.getElementById('btnComplete');
 
   if (isDurationPassed && isScorePassed) {
-    badge.className = "text-xs font-bold px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-700";
+    badge.style.background = "#DCFCE7";
+    badge.style.color = "#166534";
+    badge.style.borderColor = "#86EFAC";
     badge.innerText = "✓ ĐẠT YÊU CẦU";
     completeBtn.disabled = false;
   } else {
-    badge.className = "text-xs font-bold px-2.5 py-1 rounded bg-rose-950 text-rose-300 border border-rose-700";
+    badge.style.background = "#FEE2E2";
+    badge.style.color = "#991B1B";
+    badge.style.borderColor = "#FCA5A5";
     badge.innerText = "✕ CHƯA ĐẠT";
     completeBtn.disabled = true;
   }
@@ -670,56 +661,61 @@ function resetUI() {
   document.getElementById('resOverall').innerText = "--";
   document.getElementById('resFluency').innerText = "--";
   document.getElementById('resPronun').innerText = "--";
-  document.getElementById('resMissedWords').innerHTML = '<span class="text-slate-500 italic">Không có dữ liệu</span>';
+  document.getElementById('resMissedWords').innerHTML = '<span style="color: var(--text-muted); font-style: italic; font-size: 13px;">Không có dữ liệu</span>';
   document.getElementById('resFeedback').innerText = "Bấm 'Bắt đầu Shadow & Nói' để nhận đánh giá tức thì.";
-  document.getElementById('validationBadge').className = "text-xs font-bold px-2.5 py-1 rounded bg-slate-700 text-slate-400";
-  document.getElementById('validationBadge').innerText = "Chờ nộp bài";
+  
+  const badge = document.getElementById('validationBadge');
+  badge.style.background = "#FAF7F2";
+  badge.style.color = "var(--text-muted)";
+  badge.style.borderColor = "var(--border-color)";
+  badge.innerText = "Chờ nộp bài";
+
   document.getElementById('btnComplete').disabled = true;
 }
 
-// XÁC NHẬN HOÀN THÀNH -> LƯU TIẾN ĐỘ & ĐỔI MÀU CARD TRONG PORTAL
+// XÁC NHẬN HOÀN THÀNH -> LƯU TIẾN ĐỘ & BẮN GOOGLE DRIVE
 window.completeLessonSubmission = () => {
   if (currentLesson) {
     saveCompletedLesson(currentLesson.id);
   }
-  // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
-    try {
-      const now = new Date();
-      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-      const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
-      const sEmail = localStorage.getItem('ielts_student_email') || '';
-      const sc = document.getElementById('resOverall')?.innerText || '60';
 
-      const attemptSnapshot = {
-        id: "attempt_ps_" + Date.now(),
-        timestamp: timeStr,
-        testTitle: `Pre-Speaking: [${currentLesson.id}] ${currentLesson.title}`,
-        studentName: sName,
-        studentEmail: sEmail,
-        score: `${sc}%`,
-        timeSpent: `${secondsRecorded}s`,
-        details: `Fluency: ${document.getElementById('resFluency')?.innerText || 0}% | Pronunciation: ${document.getElementById('resPronun')?.innerText || 0}%\nNhận xét: ${document.getElementById('resFeedback')?.innerText || ''}`,
-        pageUrl: "pre-speaking/index-ps.html"
-      };
+  try {
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+    const sName = localStorage.getItem('ielts_student_name') || 'Học viên';
+    const sEmail = localStorage.getItem('ielts_student_email') || '';
+    const sc = document.getElementById('resOverall')?.innerText || '60';
 
-      // 1. Lưu LocalStorage
-      const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
-      localHist.unshift(attemptSnapshot);
-      localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+    const attemptSnapshot = {
+      id: "attempt_ps_" + Date.now(),
+      timestamp: timeStr,
+      testTitle: `Pre-Speaking: [${currentLesson.id}] ${currentLesson.title}`,
+      studentName: sName,
+      studentEmail: sEmail,
+      score: `${sc}%`,
+      timeSpent: `${secondsRecorded}s`,
+      details: `Fluency: ${document.getElementById('resFluency')?.innerText || 0}% | Pronunciation: ${document.getElementById('resPronun')?.innerText || 0}%\nNhận xét: ${document.getElementById('resFeedback')?.innerText || ''}`,
+      pageUrl: "pre-speaking/index-ps.html"
+    };
 
-      // 2. Bắn lên Google Drive
-      fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
-      }).catch(() => {});
-    } catch(errHist) {
-      console.warn("Lỗi lưu Pre-Speaking:", errHist);
-    }
-    // ------------------------------------------------
+    // 1. Lưu LocalStorage
+    const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
+    localHist.unshift(attemptSnapshot);
+    localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
+
+    // 2. Bắn lên Google Drive
+    fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "save_attempt", attempt: attemptSnapshot })
+    }).catch(() => {});
+  } catch(errHist) {
+    console.warn("Lỗi lưu Pre-Speaking:", errHist);
+  }
+
   alert(`🎉 Chúc mừng em đã hoàn thành bài tập [${currentLesson.id}]! Hệ thống đã ghi nhận tiến độ.`);
-  window.backToPortal(); // Tự động quay về Portal và Card đã làm sẽ đổi sang màu xanh lá
+  window.backToPortal();
 };
 
 function showOverlay(txt) {
