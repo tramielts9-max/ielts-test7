@@ -1,6 +1,9 @@
 /* ==========================================================================
    pre-listening/style-pl.css
    DUOLINGO X TRẠM IELTS THEME SYSTEM (PRE-LISTENING MODULE)
+   - Đồng bộ Banner 3: Xanh Cyan / Teal (#0891B2 -> #06B6D4)
+   - Bảng màu CEFR Duolingo đa sắc rực rỡ
+   - Bỏ 100% biểu tượng icon bị lỗi ô vuông
    ========================================================================== */
 
 :root {
@@ -8,19 +11,19 @@
   --bg-card: #FFFFFF;
   --bg-subcard: #F7F4EE;
 
-  --tram-red: #8B1518;
-  --tram-red-hover: #A01B20;
-  --tram-red-shadow: #5E0C0E;
+  /* Màu chủ đạo Banner 3 (Pre-Listening) */
+  --cyan-primary: #0891B2;
+  --cyan-hover: #06B6D4;
+  --cyan-dark: #0E7490;
+  --cyan-shadow: #155E75;
 
+  /* Màu Duolingo 3D */
   --duo-green: #22C55E;
   --duo-green-hover: #16A34A;
   --duo-green-shadow: #15803D;
 
   --duo-gold: #FFC800;
   --duo-gold-shadow: #CC8800;
-
-  --duo-blue: #0284C7;
-  --duo-blue-shadow: #0369A1;
 
   --border-color: #E8E2D8;
   --border-shadow: #D3CBC0;
@@ -29,7 +32,7 @@
   --text-muted: #756D68;
 }
 
-/* ÉP 100% CÁC THẺ DÙNG CHUNG FONT PLUS JAKARTA SANS */
+/* ÉP 100% THẺ DÙNG CHUNG FONT PLUS JAKARTA SANS */
 *, select, option, input, button, textarea {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
   box-sizing: border-box;
@@ -39,8 +42,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--bg-cream) !important;
-  /* Watermark logo Trạm IELTS mờ chìm phủ đều nền trang */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%238B1518" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%238B1518" opacity="0.045"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%230891B2" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%230891B2" opacity="0.045"/></svg>');
   background-repeat: repeat;
   background-size: 130px 130px;
   color: var(--text-main);
@@ -48,19 +50,19 @@ body {
   min-height: 100vh;
 }
 
-/* TOPBAR */
+/* TOPBAR ĐỒNG BỘ THEO BANNER 3 TRANG CHỦ */
 .pl-topbar {
-  background: #FFFFFF;
-  border-bottom: 5px solid var(--border-shadow);
-  padding: 14px 20px;
+  background: linear-gradient(135deg, #0891B2 0%, #06B6D4 100%);
+  border-bottom: 5px solid #0E7490;
+  padding: 16px 22px;
   position: sticky;
   top: 0;
   z-index: 40;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 14px rgba(8, 145, 178, 0.2);
+  color: #FFFFFF;
 }
 
 .pl-topbar-content {
-  max-w: 1200px;
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -80,12 +82,12 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 6px solid var(--tram-red);
+  border: 6px solid #FFFFFF;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
+  background: transparent;
   flex-shrink: 0;
 }
 .tram-roundel-pl::after {
@@ -93,35 +95,32 @@ body {
   position: absolute;
   width: 52px;
   height: 9px;
-  background: var(--tram-red);
+  background: #FFFFFF;
   border-radius: 2px;
 }
 
 .pl-brand-title {
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 900;
-  color: var(--tram-red);
+  color: #FFFFFF;
   margin: 0;
   line-height: 1.1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  letter-spacing: -0.3px;
 }
 .pl-brand-sub {
-  margin: 3px 0 0 0;
-  font-size: 13px;
+  margin: 4px 0 0 0;
+  font-size: 13.5px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.92);
 }
 
-/* CONTAINER CHÍNH */
 .pl-main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 18px 80px 18px;
+  padding: 26px 18px 80px 18px;
 }
 
-/* CÁC NÚT BẤM DUOLINGO 3D CHUNKY */
+/* CÁC NÚT BẤM 3D CHUNKY */
 .btn-3d {
   font-family: inherit;
   font-weight: 900;
@@ -145,12 +144,12 @@ body {
   box-shadow: none !important;
 }
 
-.btn-3d-red {
-  background: var(--tram-red);
+.btn-3d-cyan {
+  background: var(--cyan-primary);
   color: #FFFFFF !important;
-  border-bottom: 5px solid var(--tram-red-shadow);
+  border-bottom: 5px solid var(--cyan-shadow);
 }
-.btn-3d-red:hover { background: var(--tram-red-hover); }
+.btn-3d-cyan:hover { background: var(--cyan-hover); }
 
 .btn-3d-green {
   background: var(--duo-green);
@@ -167,7 +166,7 @@ body {
 }
 .btn-3d-white:hover { background: #FAF7F2; }
 
-/* CARD CHỌN LEVEL CEFR */
+/* KHUNG CHỌN LEVEL CEFR */
 .pl-level-card {
   background: #FFFFFF;
   border: 2.5px solid var(--border-color);
@@ -179,11 +178,11 @@ body {
 .pl-level-header {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 .pl-level-label {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 900;
   color: var(--text-muted);
   letter-spacing: 0.5px;
@@ -194,12 +193,12 @@ body {
   flex-wrap: wrap;
 }
 
-/* NÚT LEVEL DUOLINGO */
+/* NÚT LEVEL DUOLINGO ĐA SẮC MÀU */
 .pl-level-btn {
-  padding: 8px 20px;
-  border-radius: 14px;
+  padding: 9px 22px;
+  border-radius: 16px;
   font-weight: 900;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.08s ease;
   border: 2px solid var(--border-color);
@@ -212,24 +211,25 @@ body {
   transform: translateY(2px);
   border-bottom-width: 2px;
 }
-.pl-level-btn.active {
-  background: var(--tram-red) !important;
-  color: #FFFFFF !important;
-  border-color: var(--tram-red-shadow) !important;
-  border-bottom: 4px solid var(--tram-red-shadow) !important;
-}
+
+/* ĐỔ MÀU SẮC RIÊNG CHO TỪNG LEVEL KHI ACTIVE */
+.pl-level-btn.active.lvl-A1 { background: #0891B2 !important; color: #FFFFFF !important; border-color: #0E7490 !important; border-bottom: 4px solid #155E75 !important; }
+.pl-level-btn.active.lvl-A2 { background: #059669 !important; color: #FFFFFF !important; border-color: #047857 !important; border-bottom: 4px solid #065F46 !important; }
+.pl-level-btn.active.lvl-B1 { background: #7C3AED !important; color: #FFFFFF !important; border-color: #6D28D9 !important; border-bottom: 4px solid #5B21B6 !important; }
+.pl-level-btn.active.lvl-B2 { background: #EA580C !important; color: #FFFFFF !important; border-color: #C2410C !important; border-bottom: 4px solid #9A3412 !important; }
+.pl-level-btn.active.lvl-C1 { background: #8B1518 !important; color: #FFFFFF !important; border-color: #630D10 !important; border-bottom: 4px solid #45080A !important; }
 
 /* THANH LỌC & TÌM KIẾM */
 .pl-filter-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   flex-wrap: wrap;
   gap: 14px;
 }
 .pl-progress-badge-wrap {
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 800;
   color: var(--text-main);
   display: flex;
@@ -242,40 +242,39 @@ body {
   border: 1.5px solid #86EFAC;
   padding: 5px 14px;
   border-radius: 14px;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 900;
 }
 .pl-search-input {
-  padding: 11px 18px;
+  padding: 12px 18px;
   border: 2px solid var(--border-color);
   border-bottom: 4px solid var(--border-shadow);
   border-radius: 16px;
   font-size: 14.5px;
   font-weight: 700;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   outline: none;
   background: #FFFFFF;
 }
 .pl-search-input:focus {
-  border-color: var(--tram-red);
+  border-color: var(--cyan-primary);
   background: #FFFDF0;
 }
 
-/* GRID DANH SÁCH BÀI HỌC */
+/* LƯỚI CARD BÀI HỌC */
 .pl-lesson-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
 }
 
-/* THẺ BÀI HỌC DUOLINGO 3D */
 .pl-lesson-card {
   background: #FFFFFF;
   border: 2.5px solid var(--border-color);
   border-bottom: 5.5px solid var(--border-shadow);
   border-radius: 22px;
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -283,26 +282,27 @@ body {
 }
 .pl-lesson-card:hover { transform: translateY(-2px); }
 .pl-lesson-card.is-done {
+  background: #F0FDF4;
   border-color: #86EFAC;
   border-bottom-color: #22C55E;
 }
 
 .pl-card-tag {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 900;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 10px;
   text-transform: uppercase;
 }
 .pl-card-title {
-  font-size: 16.5px;
+  font-size: 17px;
   font-weight: 900;
   color: var(--text-main);
-  margin: 10px 0 16px 0;
+  margin: 12px 0 18px 0;
   line-height: 1.4;
 }
 
-/* MODAL NỘP BÀI */
+/* MODAL */
 .pl-modal-overlay {
   position: fixed;
   inset: 0;
@@ -338,16 +338,16 @@ body {
   align-items: center;
 }
 .pl-modal-level-tag {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 900;
-  background: #FDEDEE;
-  color: var(--tram-red);
+  background: #E0F2FE;
+  color: #0369A1;
   padding: 3px 10px;
   border-radius: 10px;
 }
 .pl-modal-title {
   margin: 6px 0 0 0;
-  font-size: 17.5px;
+  font-size: 18px;
   font-weight: 900;
   color: var(--text-main);
 }
@@ -376,7 +376,7 @@ body {
 
 .pl-input-label {
   display: block;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 900;
   color: var(--text-main);
   text-transform: uppercase;
@@ -384,26 +384,25 @@ body {
 }
 .pl-input-field {
   width: 100%;
-  padding: 10px 14px;
+  padding: 11px 16px;
   border: 2px solid var(--border-color);
   border-bottom: 3.5px solid var(--border-shadow);
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: 14px;
+  font-size: 15.5px;
   font-weight: 800;
   outline: none;
   background: #FAF7F2;
 }
 .pl-input-field:focus {
   background: #FFFFFF;
-  border-color: var(--tram-red);
+  border-color: var(--cyan-primary);
 }
 
-/* KHUNG DÁN ẢNH PASTE ZONE */
 .paste-zone {
   border: 2.5px dashed var(--border-color);
   background-color: #FAF7F2;
   border-radius: 16px;
-  padding: 16px;
+  padding: 18px;
   text-align: center;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -411,28 +410,28 @@ body {
   margin-bottom: 10px;
 }
 .paste-zone:hover {
-  border-color: var(--tram-red);
-  background-color: #FDEDEE;
+  border-color: var(--cyan-primary);
+  background-color: #ECFEFF;
 }
 .paste-zone.active-paste {
-  border-color: var(--tram-red);
-  background-color: #FDEDEE;
-  box-shadow: 0 0 0 3px rgba(139, 21, 24, 0.15);
+  border-color: var(--cyan-primary);
+  background-color: #ECFEFF;
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
 }
 
 .pl-kbd {
-  padding: 2px 7px;
+  padding: 3px 8px;
   background: #FFFFFF;
   border: 1.5px solid #CBD5E1;
   border-bottom: 3px solid #94A3B8;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 900;
 }
 
 .pl-file-input {
   width: 100%;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-muted);
 }
@@ -443,5 +442,5 @@ body {
   border-top: 2px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
