@@ -1,3 +1,9 @@
+/**
+ * writing task 2/js/app-t2.js
+ * BỘ ĐIỀU KHIỂN TASK 2 THEO PHONG CÁCH DUOLINGO X TRẠM IELTS
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
+ */
+
 import { streamGeminiTask2 } from './api-t2.js';
 
 let manifestData = [];
@@ -58,9 +64,7 @@ function renderTabs() {
   container.innerHTML = CATEGORIES.map(cat => {
     const isActive = cat === currentCategory;
     return `
-      <button onclick="window.switchTask2Category('${cat}')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap ${
-        isActive ? 'bg-indigo-900 text-white shadow-sm ring-2 ring-indigo-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-      }">
+      <button onclick="window.switchTask2Category('${cat}')" class="t2-tab-btn ${isActive ? 'active' : ''}">
         ${labels[cat] || cat}
       </button>
     `;
@@ -91,7 +95,11 @@ function renderCards() {
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">Không tìm thấy bài luận phù hợp!</div>`;
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 16px; background: #FFFFFF; border-radius: 22px; border: 2.5px dashed var(--border-color);">
+        Không tìm thấy bài luận phù hợp!
+      </div>
+    `;
     return;
   }
 
@@ -100,28 +108,28 @@ function renderCards() {
     const isDone = !!rec;
 
     return `
-      <div class="bg-white rounded-xl border ${
-        isDone ? 'border-emerald-400 bg-emerald-50/20 shadow-emerald-100 ring-1 ring-emerald-300' : 'border-slate-200 shadow-sm hover:border-indigo-400'
-      } p-4 transition flex flex-col justify-between hover:shadow-md">
+      <div class="t2-lesson-card ${isDone ? 'is-done' : ''}">
         <div>
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-indigo-100 text-indigo-800'}">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span class="badge" style="background: ${isDone ? '#DCFCE7' : '#F3E8FF'}; color: ${isDone ? '#166534' : '#7E22CE'};">
               ${item.type.split(' ')[0]}
             </span>
             ${isDone 
-              ? `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã viết'}</span>` 
-              : `<span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Chưa làm</span>`
+              ? `<span style="font-size: 13px; font-weight: 900; color: #166534;">
+                   ✓ ${rec.score || 'Đã viết'}
+                 </span>` 
+              : `<span style="font-size: 12.5px; font-weight: 800; color: var(--text-muted);">
+                   ● Chưa làm
+                 </span>`
             }
           </div>
-          <h4 class="font-bold text-slate-800 text-sm mb-3 line-clamp-2 leading-snug" title="${item.title}">
+          <h4 style="font-size: 16.5px; font-weight: 900; color: var(--text-main); margin: 6px 0 16px 0; line-height: 1.4;" title="${item.title}">
             ${item.title}
           </h4>
         </div>
 
-        <button onclick="window.startLessonTask2('${item.file}', '${item.type}')" class="w-full py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
-          isDone ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-indigo-900 hover:bg-indigo-800 text-white'
-        }">
-          <i class="fa-solid fa-pen-fancy text-[11px]"></i> ${isDone ? 'Xem lại & Viết lại' : 'Vào phòng luyện viết &rarr;'}
+        <button onclick="window.startLessonTask2('${item.file}', '${item.type}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-violet'}" style="width: 100%; padding: 11px; font-size: 13.5px;">
+          ${isDone ? 'Xem lại & Viết lại →' : 'Vào phòng luyện viết →'}
         </button>
       </div>
     `;
@@ -231,7 +239,7 @@ function toggleGuide() {
   if (isGuideOpen) {
     box.style.display = 'block';
     toggleText.innerText = 'THU GỌN HƯỚNG DẪN VIẾT';
-    icon.innerText = '🔼';
+    icon.innerText = '▲';
     startGuideTimer();
   } else {
     box.style.display = 'none';
