@@ -3,62 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pre-Writing Task 1 Portal & AI Translation Coach</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Pre-Writing Task 1 Portal & AI Translation Coach - Trạm IELTS</title>
+  
+  <!-- Font Plus Jakarta Sans chuẩn Duolingo, hỗ trợ tiếng Việt 100% -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style-pwt1.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+<body>
 
   <!-- ==================== MÀN HÌNH 1: PORTAL CHỌN ĐỀ BÀI ==================== -->
   <div id="portalScreen">
-    <header class="bg-gradient-to-r from-sky-700 to-sky-600 text-white shadow-lg sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <a href="../index.html" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-            <i class="fa-solid fa-chevron-left"></i> Trang Chủ
+    <header class="pwt1-topbar">
+      <div class="pwt1-topbar-content">
+        <div class="pwt1-brand-group">
+          <a href="../index.html" class="btn-3d btn-3d-white" style="padding: 10px 18px; font-size: 14px;">
+            ← Trang Chủ
           </a>
+          <div class="tram-roundel-pwt1"></div>
           <div>
-            <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
-              <i class="fa-solid fa-chart-line text-sky-200"></i> Pre-Writing Task 1 Coach
+            <h1 class="pwt1-brand-title">
+              PRE-WRITING TASK 1 COACH
             </h1>
-            <p class="text-sky-100 text-xs">Luyện dịch tư duy số liệu song ngữ 3 Band (6.0 - 7.0 - 8.0)</p>
+            <p class="pwt1-brand-sub">Luyện dịch tư duy số liệu song ngữ 3 Band (6.0 - 7.0 - 8.0)</p>
           </div>
         </div>
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-6">
-      <!-- Tabs Lọc Dạng Biểu Đồ -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
-        <div class="flex items-center gap-2 overflow-x-auto pb-1" id="categoryTabsContainer"></div>
+    <main class="pwt1-main-container">
+      <!-- Tabs Lọc Dạng Biểu Đồ Duolingo 3D -->
+      <div class="pwt1-tabs-card">
+        <div class="pwt1-tabs-scroll" id="categoryTabsContainer"></div>
       </div>
 
       <!-- Thanh Tìm Kiếm & Tiến Độ -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <div class="text-sm font-medium text-slate-600 flex items-center gap-2">
+      <div class="pwt1-filter-bar">
+        <div class="pwt1-progress-wrap">
           <span>Tiến độ hoàn thành:</span>
-          <span id="portalProgressBadge" class="bg-sky-100 text-sky-800 text-xs px-2.5 py-1 rounded-full font-bold">0/0 Đã xong</span>
+          <span id="portalProgressBadge" class="pwt1-pill-progress">0/0 Đã xong</span>
         </div>
-        <input type="text" id="portalSearchInput" oninput="window.filterPWT1Cards()" placeholder="🔍 Tìm kiếm đề bài..." class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-400 outline-none w-full sm:w-72">
+        <input type="text" id="portalSearchInput" oninput="window.filterPWT1Cards()" placeholder="Tìm kiếm tên đề bài..." class="pwt1-search-input">
       </div>
 
       <!-- Lưới Card Bài Tập -->
-      <div id="portalCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="portalCardsGrid" class="pwt1-cards-grid"></div>
     </main>
   </div>
 
   <!-- ==================== MÀN HÌNH 2: WORKSPACE PHÒNG LÀM BÀI ==================== -->
   <div id="workspaceScreen" class="hidden">
-    <div class="container py-4">
-      <header class="flex items-center justify-between mb-4">
-        <button type="button" onclick="window.backToPortalPWT1()" class="bg-slate-700 hover:bg-slate-800 text-white px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow">
-          <i class="fa-solid fa-arrow-left"></i> Quay lại danh mục bài
+    <div class="pwt1-workspace-container">
+      <header class="pwt1-workspace-nav">
+        <button type="button" onclick="window.backToPortalPWT1()" class="btn-3d btn-3d-white" style="padding: 10px 18px; font-size: 14px;">
+          ← Quay lại danh mục bài
         </button>
-        <div class="control-group" style="margin: 0;">
-          <label for="bandTargetSelect" style="font-size: 12px; font-weight: bold; margin-right: 6px;">🎯 Mục tiêu đối chiếu:</label>
-          <select id="bandTargetSelect" class="border border-slate-300 rounded px-2 py-1 text-xs">
+        <div class="pwt1-band-select-group">
+          <label for="bandTargetSelect">Mục tiêu đối chiếu:</label>
+          <select id="bandTargetSelect" class="pwt1-select-picker">
             <option value="band8">Mẫu chuẩn Band 8.0 (Học thuật sắc bén)</option>
             <option value="band7">Mẫu chuẩn Band 7.0 (Rõ ràng, đủ ý)</option>
             <option value="band6">Mẫu chuẩn Band 6.0 (Cơ bản)</option>
@@ -66,41 +71,43 @@
         </div>
       </header>
 
-      <div class="workspace">
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">🖼️ Biểu đồ gốc & Bản dịch đối chiếu</span>
-            <span id="chartTypeBadge" style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Line Graph</span>
+      <div class="pwt1-workspace-grid">
+        <div class="pwt1-card">
+          <div class="pwt1-card-header">
+            <span class="pwt1-card-title">Biểu đồ gốc & Bản dịch đối chiếu</span>
+            <span id="chartTypeBadge" class="pwt1-badge-type">Line Graph</span>
           </div>
           
           <div class="image-preview-container" id="imageBox">
             <img id="chartImage" src="" alt="Biểu đồ Task 1" style="display: none;" onclick="window.open(this.src, '_blank')">
             <div id="imageFallback">
-              <p>📌 Tìm ảnh: <strong id="expectedImgName">...</strong></p>
+              <p style="margin: 0; font-weight: 800;">Tìm ảnh: <strong id="expectedImgName">...</strong></p>
               <input type="file" id="localImgPicker" accept="image/*" style="display: none;" onchange="handleManualImage(this)">
-              <button style="margin-top:6px; font-size:12px; padding:4px 8px; cursor:pointer;" onclick="document.getElementById('localImgPicker').click()">📂 Chọn ảnh từ máy</button>
+              <button class="btn-3d btn-3d-white" style="margin-top: 10px; padding: 6px 14px; font-size: 12.5px;" onclick="document.getElementById('localImgPicker').click()">Chọn ảnh từ máy</button>
             </div>
           </div>
 
           <div id="vietnameseSourceText" class="vietnamese-box">Đang tải đề bài...</div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">🇬🇧 Bản dịch tiếng Anh của em</span>
-            <span id="wordCountDisplay" style="font-size: 0.85rem; color: var(--text-muted);">0 từ</span>
+        <div class="pwt1-card">
+          <div class="pwt1-card-header">
+            <span class="pwt1-card-title">Bản dịch tiếng Anh của em</span>
+            <span id="wordCountDisplay" style="font-size: 13.5px; font-weight: 900; color: var(--text-muted);">0 từ</span>
           </div>
-          <textarea id="studentEnglishInput" placeholder="Nhìn biểu đồ và bản tiếng Việt bên trái rồi gõ bài dịch/viết tiếng Anh của em vào đây (viết từng câu, từng đoạn hoặc cả bài)..."></textarea>
+          <textarea id="studentEnglishInput" placeholder="Nhìn biểu đồ và bản tiếng Việt bên trái rồi gõ bài dịch tiếng Anh của em vào đây (viết từng câu, từng đoạn hoặc cả bài)..."></textarea>
           
-          <div class="action-bar">
-            <span style="font-size: 0.8rem; color: var(--text-muted);">💡 Click vào ảnh để phóng to xem chi tiết số liệu.</span>
-            <button id="btnGrading" class="btn-submit">⚡ Chấm & Sửa bài 2 tầng</button>
+          <div class="pwt1-action-bar">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Bấm vào ảnh để phóng to xem số liệu</span>
+            <button id="btnGrading" class="btn-3d btn-3d-blue" style="padding: 12px 24px; font-size: 14.5px;">
+              Chấm & Sửa bài 2 tầng &rarr;
+            </button>
           </div>
         </div>
       </div>
 
       <div id="result-box" style="display: none;">
-        <div id="status-bar">⏳ Sẵn sàng hỗ trợ học sinh...</div>
+        <div id="status-bar">Sẵn sàng hỗ trợ học sinh...</div>
         <div id="result-content"></div>
       </div>
     </div>
