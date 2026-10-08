@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bản Đồ Toàn Cảnh Lộ Trình - Trạm IELTS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="curriculum-system/style-system.css">
+
+  <style>
+    body {
+      background-color: #FAF7F2 !important;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%238B1518" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%238B1518" opacity="0.045"/></svg>');
+      background-repeat: repeat;
+      background-size: 130px 130px;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+      margin: 0; padding: 20px 16px 80px 16px;
+    }
+    .roadmap-wrapper { max-width: 960px; margin: 0 auto; }
+    
+    .top-nav {
+      background: #FFFFFF; border: 2.5px solid #E8E2D8; border-bottom: 5px solid #D3CBC0;
+      border-radius: 20px; padding: 14px 22px; margin-bottom: 24px; display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .btn-back {
+      background: #FFFFFF; color: #8B1518; text-decoration: none; font-weight: 900;
+      font-size: 14px; padding: 8px 16px; border: 2px solid #E8E2D8; border-bottom: 4px solid #D3CBC0;
+      border-radius: 12px; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-back:hover { background: #FAF7F2; }
+
+    .day-card {
+      background: #FFFFFF; border: 2.5px solid #E8E2D8; border-bottom: 5px solid #D3CBC0;
+      border-radius: 18px; margin-bottom: 18px; overflow: hidden;
+    }
+    .day-card-header {
+      padding: 12px 20px; background: #FAF7F2; display: flex; justify-content: space-between;
+      align-items: center; font-weight: 900; font-size: 15px; border-bottom: 1.5px solid #E8E2D8;
+    }
+    .day-card-header.is-today { background: #FDEDEE; color: #8B1518; }
+    
+    .node-row {
+      padding: 14px 20px; border-bottom: 1px dashed #E8E2D8; display: flex;
+      justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .node-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<div class="roadmap-wrapper">
+
+  <div class="top-nav">
+    <a href="index.html" class="btn-back">⬅ Quay lại Màn hình chính</a>
+    <div style="font-size: 18px; font-weight: 900; color: #8B1518;">
+      🗺️ BẢN ĐỒ TOÀN CẢNH LỘ TRÌNH CHI TIẾT
+    </div>
+    <div id="roadmapTargetBadge" style="font-size: 13px; font-weight: 900; background: #FFF4E5; color: #D97706; padding: 4px 12px; border-radius: 12px; border: 1px solid #FCD34D;">
+      Đang tải...
+    </div>
+  </div>
+
+  <div id="fullRoadmapMount">
+    <div style="text-align: center; padding: 40px; font-weight: 800; color: #756D68;">
+      ⏳ Đang tải toàn bộ dữ liệu 70 ngày học tập...
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { curriculumUI } from './curriculum-system/ui-system.js';
+
+  function renderFullPageRoadmap() {
+    const email = localStorage.getItem('ielts_student_email') || 'guest';
+    const data = curriculumUI.getSavedRoadmap(email);
+    const container = document.getElementById('fullRoadmapMount');
+    const badge = document.getElementById('roadmapTargetBadge');
+
+    if (!data || !data.schedule) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 50px 20px; background: #FFFFFF; border-radius: 20px; border: 2.5px solid #E8E2D8;">
+          <h3 style="color: #8B1518; font-size: 20px;">⚠️ Em chưa tạo lộ trình học tập!</h3>
+          <p style="color: #756D68; font-size: 14px; margin-bottom: 20px;">Hãy quay lại trang chủ và chọn mốc điểm mục tiêu để tạo lộ trình nhé.</p>
+          <a href="index.html" class="btn-back">Quay lại trang chủ</a>
+        </div>
+      `;
+      return;
+    }
+
+    badge.innerText = `Chặng: Band ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0} (${data.schedule.length} ngày)`;
+
+    let html = '';
+    data.schedule.forEach(day => {
+      const isToday = day.dayNumber === data.currentDay;
+      const isPast = day.dayNumber < data.currentDay;
+
+      html += `
+        <div class="day-card" style="${isToday ? 'border-color: #8B1518; box-shadow: 0 4px 0 #5E0C0E;' : ''}">
+          <div class="day-card-header ${isToday ? 'is-today' : ''}">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📅 NGÀY ${day.dayNumber} ${isToday ? '👈 (HÔM NAY)' : (isPast ? '✓ (ĐÃ QUA)' : '')}</span>
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: #756D68;">⏱️ Dự kiến: ${day.totalMinutes} phút</span>
+          </div>
+
+          <div>
+      `;
+
+      day.nodes.forEach(node => {
+        const compInfo = curriculumUI.getNodeCompletionInfo(node);
+        const isDone = compInfo.isCompleted;
+
+        html += `
+          <div class="node-row" style="background: ${isDone ? '#F0FDF4' : '#FFFFFF'};">
+            <div style="flex: 1; min-width: 260px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span style="font-family: monospace; font-size: 11px; font-weight: 800; background: #1E293B; color: white; padding: 2px 6px; border-radius: 4px;">${node.id}</span>
+                <span style="font-size: 11px; font-weight: 800; background: #FDEDEE; color: #8B1518; padding: 2px 8px; border-radius: 8px;">${node.domain}</span>
+                <span style="font-size: 12px; color: #756D68;">⏱️ ${node.assignedDurationMinutes}p</span>
+              </div>
+              <b style="font-size: 14.5px; color: ${isDone ? '#166534' : '#261F1D'};">
+                ${isDone ? '✓ ' : ''}${node.title}
+              </b>
+              ${isDone ? `
+                <div style="font-size: 12px; font-weight: 800; color: #166534; margin-top: 4px;">
+                  🎯 Điểm: <b>${compInfo.score}</b> • ⏱️ Thời gian: <b>${compInfo.timeSpent}</b> • 📅 Nộp: ${compInfo.timestamp}
+                </div>
+              ` : `
+                <div style="font-size: 12px; color: #756D68; margin-top: 4px;">
+                  💡 ${node.benefit || 'Củng cố phản xạ ngôn ngữ.'}
+                </div>
+              `}
+            </div>
+
+            <div>
+              ${isDone ? `
+                <span style="background: #DCFCE7; color: #166534; border: 1.5px solid #86EFAC; padding: 6px 14px; border-radius: 10px; font-weight: 900; font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px;">
+                  <i class="fa-solid fa-check"></i> Đã xong
+                </span>
+              ` : `
+                <a href="${node.url}" target="_blank" style="background: #8B1518; color: white; text-decoration: none; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-size: 13px; display: inline-block;">
+                  🚀 Vào học &rarr;
+                </a>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      html += `</div></div>`;
+    });
+
+    container.innerHTML = html;
+  }
+
+  renderFullPageRoadmap();
+</script>
+</body>
+</html>
