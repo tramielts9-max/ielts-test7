@@ -1,3 +1,9 @@
+/**
+ * pre-reading/app-pr.js
+ * BỘ ĐIỀU KHIỂN DANH SÁCH BÀI ĐỌC THEO LEVEL CEFR DUOLINGO 3D
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
+ */
+
 import { initDB, getAllSubmissions } from './db-pr.js';
 import { initModal, openModal } from './modal-pr.js';
 import { exportReport } from './export-pr.js';
@@ -30,11 +36,8 @@ function buildLevelTabs() {
   LEVELS.forEach(lvl => {
     const btn = document.createElement('button');
     const isActive = lvl === currentLevel;
-    btn.className = `px-4 py-1.5 rounded-full text-xs font-bold transition whitespace-nowrap ${
-      isActive 
-        ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300' 
-        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-    }`;
+    const lvlClass = lvl.replace('+', 'plus'); // Đổi B1+ thành lvl-B1plus
+    btn.className = `pr-level-btn lvl-${lvlClass} ${isActive ? 'active' : ''}`;
     btn.innerText = lvl;
     btn.onclick = () => {
       currentLevel = lvl;
@@ -69,7 +72,11 @@ async function renderLessons() {
   document.getElementById('progress-badge').innerText = `${completedCount}/${lessons.length} Đã nộp`;
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">Không tìm thấy bài tập nào!</div>`;
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 16px; background: #FFFFFF; border-radius: 22px; border: 2.5px dashed var(--border-color);">
+        Không tìm thấy bài tập nào phù hợp!
+      </div>
+    `;
     return;
   }
 
@@ -78,29 +85,33 @@ async function renderLessons() {
     const scorePct = isDone && item.sub.total > 0 ? Math.round((item.sub.correct / item.sub.total) * 100) : 0;
     
     return `
-      <div class="bg-white rounded-xl border ${isDone ? 'border-emerald-300 ring-1 ring-emerald-200' : 'border-slate-200'} p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+      <div class="pr-lesson-card ${isDone ? 'is-done' : ''}">
         <div>
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <span class="pr-card-tag" style="background: ${isDone ? '#DCFCE7' : '#F1ECE6'}; color: ${isDone ? '#166534' : '#475569'};">
               Bài ${item.index} • ${currentLevel}
             </span>
             ${isDone 
-              ? `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Đã nộp: ${item.sub.correct}/${item.sub.total} (${scorePct}%)</span>` 
-              : `<span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock"></i> Chưa làm</span>`
+              ? `<span style="font-size: 13.5px; font-weight: 900; color: #166534;">
+                   ✓ ${item.sub.correct}/${item.sub.total} (${scorePct}%)
+                 </span>` 
+              : `<span style="font-size: 13px; font-weight: 800; color: var(--text-muted);">
+                   ● Chưa làm
+                 </span>`
             }
           </div>
 
-          <h4 class="font-bold text-slate-800 text-sm mb-3 line-clamp-2 leading-snug">
+          <h4 class="pr-card-title">
             ${item.title}
           </h4>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
-          <a href="${item.url}" target="_blank" class="flex-1 text-center py-2 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1">
-            Làm bài <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        <div style="padding-top: 16px; border-top: 2px dashed var(--border-color); display: flex; gap: 10px; align-items: center;">
+          <a href="${item.url}" target="_blank" class="btn-3d btn-3d-white" style="flex: 1; padding: 11px 14px; font-size: 13.5px;">
+            Làm bài →
           </a>
-          <button onclick="window.openSubmitModalPR('${item.id}', '${item.title.replace(/'/g, "\\'")}')" class="flex-1 py-2 px-3 rounded-lg ${isDone ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-600 hover:bg-amber-700'} text-white text-xs font-bold shadow transition flex items-center justify-center gap-1">
-            <i class="fa-solid ${isDone ? 'fa-pen-to-square' : 'fa-upload'}"></i> ${isDone ? 'Sửa điểm & ảnh' : 'Nộp kết quả'}
+          <button onclick="window.openSubmitModalPR('${item.id}', '${item.title.replace(/'/g, "\\'")}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-amber'}" style="flex: 1; padding: 11px 14px; font-size: 13.5px;">
+            ${isDone ? 'Sửa điểm' : 'Nộp bài'}
           </button>
         </div>
       </div>
