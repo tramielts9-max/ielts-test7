@@ -370,7 +370,7 @@ class CurriculumUISystem {
               <span style="background: #FEF08A; color: #854D0E; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 20px;">CHẶNG: BAND ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0}</span>
               <span style="font-size: 13px; opacity: 0.9;">(1.5h BTVN/ngày)</span>
             </div>
-            <h3 style="margin: 6px 0 0 0; font-size: 20px; font-weight: 900; color: #FFFFFF;">🗺️ BẢN ĐỒ TOÀN CẢNH LỘ TRÌNH (70 NGÀY)</h3>
+            <h3 style="margin: 6px 0 0 0; font-size: 20px; font-weight: 900; color: #FFFFFF;">🗺️ BẢN ĐỒ TOÀN CẢNH LỘ TRÌNH</h3>
             <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.92;">Xem chi tiết từng ngày học, các dạng đề Cam 17-21 và bài giảng được phân bổ</p>
           </div>
           
