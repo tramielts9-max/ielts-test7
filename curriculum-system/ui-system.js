@@ -1,6 +1,6 @@
 /**
  * curriculum-system/ui-system.js
- * GIAO DIỆN CHỌN MA TRẬN 2 ĐẦU - BẢNG ĐIỀU KHIỂN & HIỂN THỊ SỐ BUỔI HỌC VỚI GV
+ * GIAO DIỆN CHỌN MA TRẬN 2 ĐẦU - BẢNG ĐIỀU KHIỂN & LỊCH CHUYÊN CẦN DUOLINGO
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
@@ -17,6 +17,8 @@ class CurriculumUISystem {
     curriculumEngineSystem.setNodes(MASTER_CURRICULUM_SYSTEM);
     this.calCurrentMonth = new Date().getMonth();
     this.calCurrentYear = new Date().getFullYear();
+    this.cachedAttempts = [];
+    this.cachedEmail = '';
     this.initSpeechSTT();
   }
 
@@ -185,7 +187,6 @@ class CurriculumUISystem {
     }
   }
 
-  // ÁP DỤNG LỘ TRÌNH THEO 2 MỐC BAND BẤT KỲ
   applyBandRoadmap(startBand, targetBand, aiData = null) {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const sBand = parseFloat(startBand) || 0.0;
@@ -256,17 +257,16 @@ class CurriculumUISystem {
     const email = localStorage.getItem('ielts_student_email') || 'guest';
     const data = this.getSavedRoadmap(email);
 
-    // 1. MÀN HÌNH CHƯA CÓ LỘ TRÌNH ➔ CHỌN MA TRẬN 2 ĐẦU
     if (!data) {
       container.innerHTML = `
         <div class="cs-container">
           <div style="text-align:center; padding:10px;">
-            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#0284c7;">🎯 THIẾT LẬP LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA</h3>
+            <h3 style="margin:0 0 6px 0; font-size:21px; font-weight:800; color:#8B1518;">🎯 THIẾT LẬP LỘ TRÌNH HỌC TẬP CÁ NHÂN HÓA</h3>
             <p style="margin:0 auto 16px auto; max-width:650px; font-size:13px; color:#64748b;">
               Chọn Điểm xuất phát và Mục tiêu mong muốn, hệ thống sẽ tự động băm lộ trình theo số buổi học (12 buổi/0.5 band + hệ số):
             </p>
 
-            <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:18px; max-width:620px; margin:0 auto 20px auto; display:flex; flex-direction:column; gap:12px;">
+            <div style="background:#FAF7F2; border:2px solid #E8E2D8; border-radius:16px; padding:18px; max-width:620px; margin:0 auto 20px auto; display:flex; flex-direction:column; gap:12px;">
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; text-align:left;">
                 <div>
                   <label style="font-size:12.5px; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 1. Điểm hiện tại của em:</label>
@@ -300,7 +300,7 @@ class CurriculumUISystem {
                 🏫 Lớp học: <b>3 buổi/tuần (2h/buổi = 12 buổi/tháng)</b> • BTVN: <b>1.5h tự cày/ngày</b>.
               </div>
 
-              <button type="button" onclick="window.curriculumUI.applyBandRoadmap(document.getElementById('matrixStartBandSelect').value, document.getElementById('matrixTargetBandSelect').value)" style="background:#0284c7; color:white; border:none; padding:11px; border-radius:8px; font-weight:800; font-size:14px; cursor:pointer; shadow;">
+              <button type="button" onclick="window.curriculumUI.applyBandRoadmap(document.getElementById('matrixStartBandSelect').value, document.getElementById('matrixTargetBandSelect').value)" style="background:#8B1518; color:white; border:none; padding:12px; border-radius:12px; font-weight:900; font-size:14px; cursor:pointer;">
                 🚀 BẮT ĐẦU TẠO LỘ TRÌNH RIÊNG
               </button>
             </div>
@@ -341,7 +341,6 @@ class CurriculumUISystem {
       return;
     }
 
-    // 2. MÀN HÌNH ĐÃ CÓ LỘ TRÌNH ➔ 4 THÔNG SỐ VÀNG CHUẨN XÁC
     data.schedule.forEach(day => {
       day.nodes.forEach(node => {
         if (!data.completedNodeIds.includes(node.id) && this.isNodeCompletedInHistory(node)) {
@@ -364,7 +363,7 @@ class CurriculumUISystem {
       <div class="cs-container">
         <div class="cs-header">
           <div class="cs-title-group">
-            <span class="cs-badge cs-badge-speed">
+            <span class="cs-badge cs-badge-speed" style="background:#FFF4E5; color:#D97706; border:1.5px solid #FCD34D;">
               CHẶNG: BAND ${data.startBand || 0.0} ➔ ${data.targetBand || 7.0} (1.5h BTVN/NGÀY)
             </span>
             <h3>📅 NHIỆM VỤ HỌC HÔM NAY (NGÀY ${data.currentDay}/${data.schedule.length})</h3>
@@ -377,7 +376,6 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- 4 Ô THỐNG KÊ VÀNG CHUẨN TOÁN HỌC -->
         <div class="cs-stats-grid">
           <div class="cs-stat-box">
             <div class="cs-stat-val">${completedTotal}/${data.totals.nodeCount}</div>
@@ -403,7 +401,7 @@ class CurriculumUISystem {
             <span><b>${progressPercent}%</b> (${completedTotal}/${data.totals.nodeCount} bài)</span>
           </div>
           <div class="cs-progress-bar-bg">
-            <div class="cs-progress-bar-fill" style="width: ${progressPercent}%;"></div>
+            <div class="cs-progress-bar-fill" style="width: ${progressPercent}%; background: #8B1518;"></div>
           </div>
         </div>
 
@@ -464,8 +462,8 @@ class CurriculumUISystem {
             const isToday = day.dayNumber === data.currentDay;
             const isPast = day.dayNumber < data.currentDay;
             return `
-              <div class="cs-day-timeline-box" style="${isToday ? 'border-color:#0284c7; box-shadow:0 0 0 2px rgba(2,132,199,0.2);' : ''}">
-                <div class="cs-day-timeline-header" style="${isToday ? 'background:#e0f2fe; color:#0369a1;' : ''}">
+              <div class="cs-day-timeline-box" style="${isToday ? 'border-color:#8B1518; box-shadow:0 0 0 2px rgba(139,21,24,0.2);' : ''}">
+                <div class="cs-day-timeline-header" style="${isToday ? 'background:#FDF2F2; color:#8B1518;' : ''}">
                   <span>📅 NGÀY ${day.dayNumber} ${isToday ? '👈 (HÔM NAY)' : (isPast ? '✓ (ĐÃ QUA)' : '')}</span>
                   <span style="font-size:12px; font-weight:normal; color:#64748b;">⏱️ ${day.totalMinutes} phút</span>
                 </div>
@@ -494,6 +492,179 @@ class CurriculumUISystem {
         </div>
       </div>
     `);
+  }
+
+  // =========================================================================
+  // PHƯƠNG THỨC RENDER LỊCH CHUYÊN CẦN DUOLINGO (ĐÃ KHÔI PHỤC VÀ HOÀN THIỆN)
+  // =========================================================================
+  renderTodayHistoryAndCalendar(attempts = [], email = '') {
+    this.cachedAttempts = attempts;
+    this.cachedEmail = email;
+
+    const container = document.getElementById('historyResultsList');
+    if (!container) return;
+
+    const todayStr = this.getFormattedDate(new Date());
+    const todayAttempts = attempts.filter(att => (att.timestamp || '').includes(todayStr));
+
+    // Cập nhật huy hiệu số bài hôm nay
+    const badge = document.getElementById('totalAttemptsBadge');
+    if (badge) badge.innerText = `${todayAttempts.length} bài hôm nay`;
+
+    // Tính chuỗi Streak 🔥
+    const uniqueDates = new Set();
+    attempts.forEach(att => {
+      const m = att.timestamp?.match(/(\d{2}\/\d{2}\/\d{4})/);
+      if (m) uniqueDates.add(m[1]);
+    });
+    const streakCount = this.calculateStreak(uniqueDates);
+    const streakBadge = document.getElementById('streakCounterBadge');
+    if (streakBadge) {
+      streakBadge.innerHTML = `<i class="fa-solid fa-fire"></i> ${streakCount} NGÀY`;
+    }
+
+    // 1. Khung lịch tháng heatmap
+    const calHtml = this.generateMonthCalendarHtml(attempts);
+
+    // 2. Khung danh sách bài tập hôm nay
+    let todayListHtml = '';
+    if (todayAttempts.length === 0) {
+      todayListHtml = `
+        <div style="text-align:center; padding:18px 12px; background:#FAF7F2; border-radius:14px; border:2px dashed #E8E2D8; margin-top:14px;">
+          <div style="font-size:24px; margin-bottom:4px;">🔥</div>
+          <b style="color:#261F1D; font-size:14.5px;">Hôm nay em chưa làm bài tập nào!</b>
+          <div style="font-size:12.5px; color:#756D68; margin-top:2px;">Hãy hoàn thành 1 nhiệm vụ bên dưới để thắp sáng ngọn lửa Streak nhé.</div>
+        </div>
+      `;
+    } else {
+      todayListHtml = `<div style="margin-top:14px;">
+        <b style="font-size:13.5px; color:#8B1518; display:block; margin-bottom:8px;">🎯 Chi tiết bài nộp trong ngày (${todayAttempts.length} bài):</b>
+      `;
+      todayAttempts.forEach(att => {
+        const reviewLink = this.resolveReviewPageUrl(att.pageUrl, att.id, email);
+        todayListHtml += `
+          <div class="attempt-item-card">
+            <div>
+              <b style="font-size:14px; color:#261F1D;">📝 ${att.testTitle}</b>
+              <div style="font-size:12px; font-weight:700; color:#756D68; margin-top:2px;">
+                ⏱️ Nộp lúc: <b>${att.timestamp}</b> • Làm trong: <b>${att.timeSpent || 'N/A'}</b>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="score-pill">Điểm: ${att.score}</span>
+              <a href="${reviewLink}" target="_blank" class="btn-review">👁️ Xem bài</a>
+            </div>
+          </div>
+        `;
+      });
+      todayListHtml += `</div>`;
+    }
+
+    container.innerHTML = calHtml + todayListHtml;
+  }
+
+  generateMonthCalendarHtml(attempts) {
+    const year = this.calCurrentYear;
+    const month = this.calCurrentMonth;
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+
+    const activeDates = new Set();
+    attempts.forEach(att => {
+      const m = att.timestamp?.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if (m && parseInt(m[2], 10) === (month + 1) && parseInt(m[3], 10) === year) {
+        activeDates.add(parseInt(m[1], 10));
+      }
+    });
+
+    const now = new Date();
+    const isCurrentMonthNow = now.getFullYear() === year && now.getMonth() === month;
+    const todayDateNum = now.getDate();
+
+    let gridHtml = '';
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      gridHtml += `<div class="duo-cal-day-cell" style="opacity:0; border:none; background:transparent;"></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const hasDone = activeDates.has(day);
+      const isToday = isCurrentMonthNow && (day === todayDateNum);
+
+      let classes = ['duo-cal-day-cell'];
+      if (hasDone) classes.push('has-done');
+      if (isToday) classes.push('is-today');
+
+      gridHtml += `<div class="${classes.join(' ')}">${day}</div>`;
+    }
+
+    return `
+      <div class="duo-cal-box">
+        <div class="duo-cal-top">
+          <b style="font-size:14.5px; color:#261F1D;"><i class="fa-solid fa-fire text-amber-500"></i> LỊCH CHUYÊN CẦN: THÁNG ${month + 1}/${year}</b>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="duo-cal-nav-btn" onclick="window.curriculumUI.changeCalMonth(-1)">◀ Tháng trước</button>
+            <button type="button" class="duo-cal-nav-btn" onclick="window.curriculumUI.changeCalMonth(1)">Tháng sau ▶</button>
+          </div>
+        </div>
+        <div class="duo-cal-weekdays">
+          <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div>T7</div><div>CN</div>
+        </div>
+        <div class="duo-cal-days-grid">${gridHtml}</div>
+      </div>
+    `;
+  }
+
+  changeCalMonth(delta) {
+    this.calCurrentMonth += delta;
+    if (this.calCurrentMonth > 11) {
+      this.calCurrentMonth = 0;
+      this.calCurrentYear += 1;
+    } else if (this.calCurrentMonth < 0) {
+      this.calCurrentMonth = 11;
+      this.calCurrentYear -= 1;
+    }
+    this.renderTodayHistoryAndCalendar(this.cachedAttempts, this.cachedEmail);
+  }
+
+  getFormattedDate(d) {
+    const day = String(d.getDate()).padStart(2, '0');
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const y = d.getFullYear();
+    return `${day}/${m}/${y}`;
+  }
+
+  calculateStreak(uniqueDatesSet) {
+    let streak = 0;
+    const checkDate = new Date();
+    while (true) {
+      const str = this.getFormattedDate(checkDate);
+      if (uniqueDatesSet.has(str)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        if (streak === 0) {
+          checkDate.setDate(checkDate.getDate() - 1);
+          const yesterdayStr = this.getFormattedDate(checkDate);
+          if (uniqueDatesSet.has(yesterdayStr)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+            continue;
+          }
+        }
+        break;
+      }
+    }
+    return streak;
+  }
+
+  resolveReviewPageUrl(pageUrl, id, email) {
+    let target = pageUrl || 'reading/runner-reading.html';
+    if (target.startsWith('runner-reading.html')) target = 'reading/' + target;
+    if (target.startsWith('runner-listening.html')) target = 'listening/' + target;
+    const sep = target.includes('?') ? '&' : '?';
+    return `${target}${sep}attemptId=${id}&email=${encodeURIComponent(email)}`;
   }
 
   openModal(htmlContent) {
