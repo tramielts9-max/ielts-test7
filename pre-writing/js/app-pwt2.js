@@ -1,3 +1,8 @@
+/**
+ * pre-writing/js/app-pwt2.js - Điều khiển Pre-Writing Task 2 Duolingo 3D
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
+ */
+
 import { streamGeminiPWT2 } from './api-pwt2.js';
 
 let manifestData = [];
@@ -54,7 +59,7 @@ function updateEssayView() {
 
   document.getElementById('essayTypeBadge').innerText = currentEssay.type || 'Task 2 Essay';
 
-  const promptText = `📌 TOPIC:\n${currentEssay.prompt}\n\n--- BẢN MẪU DỊCH Ý TƯỞNG (${targetBand.toUpperCase()}): ---\n\n${currentEssay[targetBand] || currentEssay.band8}`;
+  const promptText = `TOPIC:\n${currentEssay.prompt}\n\n--- BẢN MẪU DỊCH Ý TƯỞNG (${targetBand.toUpperCase()}): ---\n\n${currentEssay[targetBand] || currentEssay.band8}`;
   document.getElementById('vietnameseSourceText').innerText = promptText;
 }
 
@@ -95,17 +100,17 @@ QUY TẮC ĐỊNH DẠNG: Dùng cú pháp Markdown chuẩn (#, ##, ###, ####). D
 XUẤT THEO CẤU TRÚC:
 # PHẦN 1: SỬA TỪNG CÂU THEO NGUYÊN LÝ 2 TẦNG (TASK 2 ESSAY)
 ---
-### 📌 Câu [Số]: "[Câu học sinh]"
+### Câu [Số]: "[Câu học sinh]"
 *Đối chiếu ý tưởng: "[Ý tưởng tiếng Việt]"*
-#### 🛠️ TẦNG 1: SỬA LỖI NGỮ PHÁP, VĂN PHONG VÀ CHINGLISH (Band 6.5 - 7.0)
+#### TẦNG 1: SỬA LỖI NGỮ PHÁP, VĂN PHONG VÀ CHINGLISH (Band 6.5 - 7.0)
 - **Anh sửa trực tiếp:** [Câu sửa]
-- **🔄 Giải thích lỗi sai:** [Word-by-word, collocation chưa tự nhiên, sai mệnh đề quan hệ...]
-- **👉 Bản sạch lỗi:** "[Câu chuẩn xác]"
+- **Giải thích lỗi sai:** [Word-by-word, collocation chưa tự nhiên, sai mệnh đề quan hệ...]
+- **Bản sạch lỗi:** "[Câu chuẩn xác]"
 
-#### ✨ TẦNG 2: NÂNG TẦM ACADEMIC BAND 8.0+
+#### TẦNG 2: NÂNG TẦM ACADEMIC BAND 8.0+
 - **Biến hóa với lập luận đanh thép & Collocations C1-C2:** [Câu Band 8.0+]
-- **🚀 Từ vựng & Cấu trúc ăn điểm:** [Cụm tầng 1 ➔ Cụm Band 8]
-- **👉 Bản nâng cấp:** "[Câu đỉnh cao]"
+- **Từ vựng & Cấu trúc ăn điểm:** [Cụm tầng 1 ➔ Cụm Band 8]
+- **Bản nâng cấp:** "[Câu đỉnh cao]"
 ---
 
 # PHẦN 2: BẢNG ĐÁNH GIÁ 4 TIÊU CHÍ TASK 2
@@ -113,7 +118,7 @@ XUẤT THEO CẤU TRÚC:
 |---|---|---|---|
 | Band [X] | Band [X] | Band [X] | Band [X] |
 
-> ### 🎯 OVERALL BAND DỰ KIẾN: [X]/9.0
+> ### OVERALL BAND DỰ KIẾN: [X]/9.0
 
 # PHẦN 3: NHẬN XÉT TƯ DUY PHẢN BIỆN (CRITICAL THINKING)
 [Chỉ rõ cách triển khai luận điểm, dẫn chứng, phân tích nguyên nhân - kết quả]
@@ -136,7 +141,7 @@ XUẤT THEO CẤU TRÚC:
       resultContent.innerHTML = marked.parse(fullText);
     });
     statusBar.innerHTML = `✅ Thầy đã chấm xong bằng model [${usedModel}]. Em nghiền ngẫm các Collocations Tầng 2 nhé!`;
-  // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
+
     try {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} - ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
@@ -158,12 +163,10 @@ XUẤT THEO CẤU TRÚC:
         pageUrl: "pre-writing/index-pwt2.html"
       };
 
-      // 1. Lưu LocalStorage
       const localHist = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
       localHist.unshift(attemptSnapshot);
       localStorage.setItem('ielts_local_history', JSON.stringify(localHist));
 
-      // 2. Bắn lên Google Drive
       fetch("https://script.google.com/macros/s/AKfycbyNErQQFdciAQM0k9KUrACtpX7rxKkopjChYAC2Ubwj5MGzFOeekDEGs8C1n7P9cNR6vg/exec", {
         method: "POST",
         mode: "no-cors",
@@ -173,7 +176,7 @@ XUẤT THEO CẤU TRÚC:
     } catch(errHist) {
       console.warn("Lỗi lưu Pre-Writing 2:", errHist);
     }
-    // ------------------------------------------------
+
     btn.disabled = false;
   } catch (e) {
     statusBar.innerHTML = `❌ Lỗi: ${e.message}. Em bấm thử lại nhé!`;
