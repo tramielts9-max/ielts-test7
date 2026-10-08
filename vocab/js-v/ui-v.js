@@ -1,3 +1,8 @@
+/**
+ * vocab/js-v/ui-v.js
+ * BỘ ĐIỀU KHIỂN GIAO DIỆN VOCABULARY THEO PHONG CÁCH DUOLINGO X TRẠM IELTS
+ */
+
 export const UIController = {
   renderMemoryTower(allWords, wordProgress, onTierClick) {
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -8,19 +13,29 @@ export const UIController = {
     });
 
     for (let i = 1; i <= 5; i++) {
+      // Cập nhật cả ở Tab Ôn tập và Tab Sổ tay
       const tierEl = document.getElementById(`towerT${i}`);
+      const tierStEl = document.getElementById(`towerT${i}_st`);
+      
+      const textVal = `${counts[i]} từ 👉`;
       if (tierEl) {
-        tierEl.innerText = `${counts[i]} từ 👉`;
+        tierEl.innerText = textVal;
         const parentTier = tierEl.closest('.tower-tier');
-        if (parentTier) {
-          parentTier.onclick = () => onTierClick(i);
-        }
+        if (parentTier) parentTier.onclick = () => onTierClick(i);
+      }
+      if (tierStEl) {
+        tierStEl.innerText = textVal;
+        const parentTierSt = tierStEl.closest('.tower-tier');
+        if (parentTierSt) parentTierSt.onclick = () => onTierClick(i);
       }
     }
 
     const total = allWords.length || 1;
     const retentionRate = Math.round(((counts[4] + counts[5]) / total) * 100);
-    document.getElementById('retentionRateDisplay').innerText = `${retentionRate}%`;
+    const retentionEl = document.getElementById('retentionRateDisplay');
+    if (retentionEl) {
+      retentionEl.innerText = `${retentionRate}%`;
+    }
   },
 
   showTierWordsModal(tierLevel, wordsInTier, wordProgress) {
@@ -45,19 +60,21 @@ export const UIController = {
           <button class="btn-close-modal" id="btnCloseTierModal">&times;</button>
         </div>
         <div class="modal-body">
-          ${wordsInTier.length === 0 ? '<div style="text-align:center; padding:20px; color:var(--text-muted);">Chưa có từ nào ở tầng này!</div>' : ''}
+          ${wordsInTier.length === 0 ? '<div style="text-align:center; padding:24px; font-weight:800; color:var(--text-muted);">Chưa có từ vựng nào ở tầng này!</div>' : ''}
           ${wordsInTier.map(w => {
             const p = wordProgress[w.id];
             const nextReviewStr = p ? new Date(p.nextReviewAt).toLocaleString("vi-VN") : "Chưa học";
             return `
               <div class="word-tier-item">
                 <div>
-                  <div style="font-weight: 800; font-size: 16px; color: var(--primary);">${w.word} <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">${w.phonetic}</span></div>
-                  <div style="font-size: 13.5px; margin-top: 2px;">${w.meaning}</div>
+                  <div style="font-weight: 900; font-size: 17px; color: var(--tram-red);">
+                    ${w.word} <span style="font-size: 13.5px; font-weight: normal; color: var(--text-muted);">${w.phonetic || ''}</span>
+                  </div>
+                  <div style="font-size: 14.5px; font-weight: 700; margin-top: 3px; color: var(--text-main);">${w.meaning}</div>
                 </div>
-                <div style="text-align: right; font-size: 12px; color: var(--text-muted);">
+                <div style="text-align: right; font-size: 12.5px; color: var(--text-muted); font-weight: 700;">
                   <div>Ôn tiếp theo:</div>
-                  <b style="color: #334155;">${nextReviewStr}</b>
+                  <b style="color: #1E293B; font-weight: 800;">${nextReviewStr}</b>
                 </div>
               </div>
             `;
@@ -88,10 +105,10 @@ export const UIController = {
           <div class="rank-num">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank}</div>
           <div class="user-avatar">${m.avatar}</div>
           <div class="user-info">
-            <div style="font-weight: 700;">${m.name} ${m.isBot ? '' : '(Bạn)'}</div>
-            <div style="font-size: 11px; color: var(--text-muted);">${rank <= 5 ? '🟢 Thăng hạng' : (rank > 25 ? '🔴 Nguy cơ rớt' : '⚪ Giữ hạng')}</div>
+            <div style="font-weight: 800; font-size: 15px;">${m.name} ${m.isBot ? '' : '(Bạn)'}</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted);">${rank <= 5 ? '🟢 Thăng hạng' : (rank > 25 ? '🔴 Nguy cơ rớt' : '⚪ Giữ hạng')}</div>
           </div>
-          <div class="user-xp">${m.xp} XP</div>
+          <div class="user-xp" style="font-size: 16px; font-weight: 900; color: var(--tram-red);">${m.xp} XP</div>
         </div>
       `;
     }).join('');
@@ -100,20 +117,25 @@ export const UIController = {
   startGoldenTimer(nextTime, hasDueWords) {
     const timerDisplay = document.getElementById('goldenCountdown');
     const reviewBtn = document.getElementById('btnStartReview');
+    if (!timerDisplay || !reviewBtn) return;
 
     if (window._timerInterval) clearInterval(window._timerInterval);
 
     const update = () => {
-      // 🌟 HỌC SINH LUÔN BẤM ĐƯỢC NÚT (KHÔNG BAO GIỜ BỊ DISABLED)
       reviewBtn.disabled = false;
 
       if (hasDueWords || !nextTime || nextTime <= Date.now()) {
         timerDisplay.innerText = "00:00:00";
-        reviewBtn.style.background = "#f59e0b"; // Nổi bật màu vàng cảnh báo
+        reviewBtn.style.background = "#FFC800";
+        reviewBtn.style.color = "#5A3800";
+        reviewBtn.style.borderBottomColor = "#CC8800";
         reviewBtn.innerText = "🚨 ĐẾN GIỜ VÀNG - CỨU TỪ NGAY!";
       } else {
-        reviewBtn.style.background = "var(--primary)";
+        reviewBtn.style.background = "var(--tram-red)";
+        reviewBtn.style.color = "#FFFFFF";
+        reviewBtn.style.borderBottomColor = "var(--tram-red-shadow)";
         reviewBtn.innerText = "⚡ LUYỆN TẬP TỰ DO (HỌC KHÔNG GIỚI HẠN)";
+        
         const diff = nextTime - Date.now();
         const h = Math.floor(diff / (1000 * 60 * 60));
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
