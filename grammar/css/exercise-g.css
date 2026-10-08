@@ -1,115 +1,196 @@
+/* ==========================================================================
+   grammar/css/exercise-g.css
+   GIAO DIỆN PHÒNG LÀM BÀI TẬP DUOLINGO X TRẠM IELTS (CHỮ TO RÕ, NÚT 3D)
+   ========================================================================== */
+
+/* 1. KHUNG CHỨA TỪNG NHÓM BÀI TẬP */
 .section-card-g {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: 10px;
-  padding: 22px;
-  margin-bottom: 25px;
+  background: var(--bg-card, #FFFFFF);
+  border: 2.5px solid var(--border-color, #E8E2D8);
+  border-bottom: 5.5px solid var(--border-shadow, #D3CBC0);
+  border-radius: 22px;
+  padding: 24px 26px;
+  margin-bottom: 26px;
 }
+
 .section-title-g {
   margin: 0 0 6px 0;
-  font-size: 17px;
-  color: var(--primary-dark);
-}
-.section-instruction-g {
-  font-size: 13.5px;
-  color: var(--text-muted);
-  margin-bottom: 18px;
-}
-
-.q-row-g {
-  padding: 14px;
-  border-radius: 8px;
-  background: #fdfdfd;
-  border: 1px solid #f1f5f9;
-  margin-bottom: 14px;
-}
-.q-row-g.is-correct {
-  border-color: var(--correct-border);
-  background-color: #f0fdf4;
-}
-.q-row-g.is-wrong {
-  border-color: var(--wrong-border);
-  background-color: #fef2f2;
-}
-
-.q-text-g {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--primary-color, #8B1518);
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
 }
 
-.input-blank-g {
-  padding: 6px 12px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 6px;
+.section-instruction-g {
   font-size: 14.5px;
   font-weight: 700;
-  color: #0f172a;
-  outline: none;
-  min-width: 140px;
-}
-.input-blank-g:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
-}
-
-.choice-label-g {
-  display: block;
-  margin: 6px 0;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.15s;
-}
-.choice-label-g:hover { background-color: #f1f5f9; }
-
-.feedback-box-g {
-  margin-top: 10px;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 13.5px;
-  display: none;
+  color: var(--text-muted, #756D68);
+  margin-bottom: 20px;
   line-height: 1.5;
 }
-.feedback-box-g.show { display: block; }
-.feedback-box-g.correct {
-  background: var(--correct-bg);
-  color: var(--correct-color);
-  border: 1px solid var(--correct-border);
-}
-.feedback-box-g.wrong {
-  background: var(--wrong-bg);
-  color: var(--wrong-color);
-  border: 1px solid var(--wrong-border);
+
+/* 2. TỪNG DÒNG CÂU HỎI BÀI TẬP */
+.q-row-g {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #FAF7F2;
+  border: 2px solid var(--border-color, #E8E2D8);
+  border-bottom: 4px solid var(--border-shadow, #D3CBC0);
+  margin-bottom: 16px;
+  transition: all 0.15s ease;
 }
 
+/* Trạng thái khi làm ĐÚNG */
+.q-row-g.is-correct {
+  border-color: #86EFAC !important;
+  border-bottom: 5px solid #22C55E !important;
+  background-color: #F0FDF4 !important;
+}
+
+/* Trạng thái khi làm SAI */
+.q-row-g.is-wrong {
+  border-color: #FCA5A5 !important;
+  border-bottom: 5px solid #EF4444 !important;
+  background-color: #FFF5F5 !important;
+}
+
+.q-text-g {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main, #261F1D);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  line-height: 1.6;
+}
+
+/* 3. Ô ĐIỀN TỪ VÀO CHỖ TRỐNG */
+.input-blank-g {
+  padding: 8px 16px;
+  border: 2px solid #CBD5E1;
+  border-bottom: 4px solid #94A3B8;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary-color, #8B1518);
+  background: #FFFFFF;
+  outline: none;
+  min-width: 150px;
+  transition: all 0.1s ease;
+}
+
+.input-blank-g:focus {
+  border-color: var(--primary-color, #8B1518);
+  border-bottom-color: var(--primary-shadow, #5E0C0E);
+  background: #FFFDF0;
+}
+
+/* 4. CÁC NÚT LỰA CHỌN TRẮC NGHIỆM DUOLINGO 3D */
+.choice-label-g {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  padding: 12px 18px;
+  background: #FFFFFF;
+  border: 2px solid var(--border-color, #E8E2D8);
+  border-bottom: 4px solid var(--border-shadow, #D3CBC0);
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main, #261F1D);
+  transition: all 0.08s ease;
+}
+
+.choice-label-g:hover {
+  background-color: #FAF7F2;
+  transform: translateY(-1px);
+}
+
+.choice-label-g:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* Khi người dùng chọn radio button */
+.choice-label-g input[type="radio"] {
+  accent-color: var(--primary-color, #8B1518);
+  transform: scale(1.2);
+}
+
+/* 5. HỘP HIỂN THỊ ĐÁP ÁN & GIẢI THÍCH CHI TIẾT */
+.feedback-box-g {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  display: none;
+  line-height: 1.55;
+}
+
+.feedback-box-g.show {
+  display: block;
+}
+
+.feedback-box-g.correct {
+  background: var(--correct-bg, #DCFCE7);
+  color: var(--correct-color, #166534);
+  border: 2px solid var(--correct-border, #86EFAC);
+  border-bottom: 3.5px solid #22C55E;
+}
+
+.feedback-box-g.wrong {
+  background: var(--wrong-bg, #FEE2E2);
+  color: var(--wrong-color, #991B1B);
+  border: 2px solid var(--wrong-border, #FCA5A5);
+  border-bottom: 3.5px solid #EF4444;
+}
+
+/* 6. THANH ĐÍNH CHÂN MÀN HÌNH CHỨA NÚT CHẤM BÀI (STICKY BAR) */
 .sticky-submit-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #ffffff;
-  border-top: 1.5px solid var(--border-color);
-  padding: 12px 20px;
+  background: #FFFFFF;
+  border-top: 2.5px solid var(--border-color, #E8E2D8);
+  padding: 14px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
-  z-index: 99;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.06);
+  z-index: 999;
 }
+
+/* Nút Chấm Bài Duolingo 3D To Bản */
 .btn-submit-g {
-  background: var(--primary-color);
-  color: white;
+  background: var(--duo-green, #22C55E);
+  color: #FFFFFF !important;
   border: none;
-  padding: 12px 28px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 700;
+  border-bottom: 5px solid var(--duo-green-dark, #15803D);
+  padding: 14px 34px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
+  transition: all 0.08s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-.btn-submit-g:hover { background: var(--primary-dark); }
+
+.btn-submit-g:hover {
+  background: #16A34A;
+}
+
+.btn-submit-g:active {
+  transform: translateY(3px);
+  border-bottom-width: 2px;
+}
