@@ -1,37 +1,90 @@
 /* ==========================================================================
-   css/reading.css - Layout chia 2 cột dành riêng cho Reading
+   reading/css-r/reading.css
+   DUOLINGO X TRẠM IELTS THEME SYSTEM (IELTS READING MODULE)
+   - Đồng bộ Banner 6: Đỏ Trạm IELTS (#8B1518 -> #B91C1C)
+   - Layout chia 2 cột bài đọc & câu hỏi hiện đại
+   - Bỏ 100% biểu tượng icon bị lỗi ô vuông
    ========================================================================== */
+
+:root {
+  --bg-cream: #FAF7F2;
+  --bg-card: #FFFFFF;
+  --bg-subcard: #F7F4EE;
+
+  /* Màu chủ đạo Banner 6 (IELTS Reading) */
+  --rd-red: #8B1518;
+  --rd-red-hover: #A01B20;
+  --rd-red-shadow: #5E0C0E;
+  --rd-red-light: #FDEDEE;
+
+  --duo-green: #22C55E;
+  --duo-green-shadow: #15803D;
+  --duo-gold: #FFC800;
+  --duo-gold-shadow: #CC8800;
+
+  --border-color: #E8E2D8;
+  --border-shadow: #D3CBC0;
+
+  --text-main: #261F1D;
+  --text-muted: #756D68;
+}
+
+/* ÉP 100% THẺ DÙNG CHUNG FONT PLUS JAKARTA SANS */
+*, select, option, input, button, textarea {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-cream) !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%238B1518" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%238B1518" opacity="0.045"/></svg>');
+  background-repeat: repeat;
+  background-size: 130px 130px;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.container-rd {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 18px 80px 18px;
+}
+
+/* BỐ CỤC 2 CỘT: BÀI ĐỌC (PASSAGE) & CÂU HỎI (QUESTION) */
 .container {
   display: flex;
   gap: 0;
   max-width: 100%;
   margin: auto;
-  height: calc(100vh - 165px);
+  height: calc(100vh - 175px);
   min-height: 550px;
   position: relative;
   overflow: hidden;
+  border-radius: 20px;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5.5px solid var(--border-shadow);
+  background: #FFFFFF;
 }
 
 .passage-box {
   width: 50%;
-  background: var(--bg-card);
-  padding: 24px;
-  border-radius: 8px 0 0 8px;
+  background: #FFFFFF;
+  padding: 26px 30px;
   overflow-y: auto;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  border: 1px solid var(--border-color);
-  font-size: var(--font-size-base);
-  line-height: 1.7;
+  font-size: var(--font-size-base, 15.5px);
+  line-height: 1.8;
 }
-
 .passage-box p {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   text-align: justify;
 }
 
+/* THANH KÉO CO GIÃN 2 CỘT */
 .resizer {
-  width: 10px;
-  background: var(--border-color);
+  width: 12px;
+  background: #E8E2D8;
   cursor: col-resize;
   position: relative;
   z-index: 10;
@@ -39,65 +92,108 @@
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
+  user-select: none;
+  flex-shrink: 0;
 }
-
 .resizer:hover, .resizer.resizing {
-  background: var(--primary-blue);
+  background: var(--rd-red);
 }
-
 .resizer::after {
-  content: '⋮';
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 16px;
+  content: '◄►';
+  color: #64748B;
+  font-weight: 900;
+  font-size: 10px;
+}
+.resizer:hover::after {
+  color: #FFFFFF;
 }
 
 .question-box {
   flex: 1;
   width: 50%;
-  background: var(--bg-card);
-  padding: 24px;
-  border-radius: 0 8px 8px 0;
+  background: #FFFFFF;
+  padding: 26px 30px;
   overflow-y: auto;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  border: 1px solid var(--border-color);
-  border-left: none;
-  font-size: var(--font-size-base);
-  line-height: 1.7;
+  border-left: 2px solid var(--border-color);
+  font-size: var(--font-size-base, 15.5px);
+  line-height: 1.8;
 }
 
+/* TIÊU ĐỀ PHẦN BÀI */
 .section-title {
-  font-weight: 700;
-  background: #FDF2F2;
-  color: #8B1518;
-  padding: 10px 14px;
-  border-left: 4px solid var(--primary-blue);
-  margin: 20px 0 14px 0;
-  border-radius: 0 6px 6px 0;
+  font-weight: 900;
+  font-size: 17px;
+  background: #FDEDEE;
+  color: var(--rd-red);
+  padding: 12px 18px;
+  border-left: 5px solid var(--rd-red);
+  margin: 22px 0 16px 0;
+  border-radius: 0 12px 12px 0;
 }
 
-body.dark-theme .section-title {
-  background: #0369a1;
-  color: #ffffff;
-}
-
-/* Định vị text highlight khi click nút */
+/* TEXT HIGHLIGHT ĐỐI CHIẾU SAU KHI NỘP BÀI */
 .submitted .hl {
-  background-color: #fef08a;
-  padding: 2px 4px;
-  border-radius: 3px;
-  color: #1e293b;
-}
-
-.submitted .hl-active {
-  background-color: #fde047 !important;
-  outline: 2px solid #ca8a04;
-}
-
-.submitted .kw {
-  background-color: #86efac !important;
+  background-color: #FEF08A;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #854D0E;
   font-weight: 700;
-  padding: 1px 4px;
-  border-radius: 3px;
-  color: #14532d;
 }
+.submitted .hl-active {
+  background-color: #FDE047 !important;
+  outline: 2.5px solid #D97706;
+  border-radius: 4px;
+}
+.submitted .kw {
+  background-color: #DCFCE7 !important;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #166534;
+}
+
+/* CÁC NÚT BẤM 3D CHUNKY */
+.btn-3d {
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.08s ease;
+  white-space: nowrap;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: none !important;
+}
+
+.btn-3d-red {
+  background: var(--rd-red);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--rd-red-shadow);
+}
+.btn-3d-red:hover { background: var(--rd-red-hover); }
+
+.btn-3d-green {
+  background: var(--duo-green);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--duo-green-shadow);
+}
+.btn-3d-green:hover { background: #16A34A; }
+
+.btn-3d-white {
+  background: #FFFFFF;
+  color: var(--text-main) !important;
+  border: 2px solid var(--border-color);
+  border-bottom: 4.5px solid var(--border-shadow);
+}
+.btn-3d-white:hover { background: #FAF7F2; }
