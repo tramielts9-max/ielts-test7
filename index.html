@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trạm IELTS - Cổng Luyện Thi Toàn Diện</title>
   
-  <!-- Font Plus Jakarta Sans: Đậm chất Duolingo, hỗ trợ 100% Tiếng Việt không bao giờ lỗi font -->
+  <!-- Font Plus Jakarta Sans: Chuẩn nét Duolingo, hỗ trợ 100% tiếng Việt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -18,11 +18,8 @@
   <style>
     /* ===================================================
        DUOLINGO X TRẠM IELTS THEME SYSTEM
-       - Nền: Kem ấm (#FAF7F2) + Watermark Logo Trạm IELTS chìm
-       - Đỏ chủ đạo: #8B1518 (London Underground Red)
     =================================================== */
     :root {
-      /* Biến chuẩn kế thừa hệ thống gốc (Đảm bảo ui-system.js chạy 100%) */
       --bg-card: #FFFFFF;
       --bg-subcard: #F7F4EE;
       --border-color: #E6E0D6;
@@ -30,7 +27,6 @@
       --text-muted: #756D68;
       --primary-blue: #0284C7;
 
-      /* Biến Brand Trạm IELTS & Duolingo Style */
       --bg-cream: #FAF7F2;
       --tram-red: #8B1518;
       --tram-red-hover: #A01B20;
@@ -41,7 +37,6 @@
 
     body {
       background-color: var(--bg-cream) !important;
-      /* Watermark logo Trạm IELTS mờ chìm phủ đều nền trang */
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%238B1518" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%238B1518" opacity="0.045"/></svg>');
       background-repeat: repeat;
       background-size: 130px 130px;
@@ -49,7 +44,6 @@
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent;
     }
 
     .main-container {
@@ -58,7 +52,7 @@
       padding: 18px 16px 60px 16px;
     }
 
-    /* TOP BAR DUOLINGO STYLE */
+    /* TOP BAR DUOLINGO */
     .duo-topbar {
       display: flex;
       justify-content: space-between;
@@ -69,512 +63,131 @@
       border-radius: 20px;
       padding: 12px 20px;
       margin-bottom: 22px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
     }
-
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
+    .brand-wrap { display: flex; align-items: center; gap: 12px; }
     .tram-roundel {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 6px solid var(--tram-red);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      background: #FFFFFF;
-      flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 50%; border: 6px solid var(--tram-red);
+      position: relative; display: flex; align-items: center; justify-content: center;
+      box-sizing: border-box; background: #FFFFFF; flex-shrink: 0;
     }
-    .tram-roundel::after {
-      content: '';
-      position: absolute;
-      width: 52px;
-      height: 9px;
-      background: var(--tram-red);
-      border-radius: 2px;
-    }
+    .tram-roundel::after { content: ''; position: absolute; width: 52px; height: 9px; background: var(--tram-red); border-radius: 2px; }
+    .brand-name { font-size: 21px; font-weight: 900; color: var(--tram-red); line-height: 1; }
+    .brand-tagline { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-top: 3px; }
 
-    .brand-name {
-      font-size: 21px;
-      font-weight: 900;
-      color: var(--tram-red);
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
-    .brand-tagline {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--text-muted);
-      letter-spacing: 0.5px;
-      margin-top: 3px;
-    }
-
-    /* DUOLINGO STATUS PILLS */
     .duo-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 14px;
-      font-weight: 900;
-      font-size: 13px;
-      letter-spacing: 0.2px;
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      border-radius: 14px; font-weight: 900; font-size: 13px;
     }
     .pill-streak { background: #FFF4E5; color: #D97706; border: 2px solid #FCD34D; }
     .pill-red { background: #FDF2F2; color: var(--tram-red); border: 2px solid #F8B4B7; }
 
-    /* DUOLINGO BUTTON 3D CHUNKY */
+    /* DUOLINGO 3D BUTTONS */
     .btn-3d {
-      border: none;
-      border-radius: 16px;
-      font-family: inherit;
-      font-weight: 900;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 12px 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.08s ease;
-      box-sizing: border-box;
-      white-space: nowrap;
+      border: none; border-radius: 16px; font-family: inherit; font-weight: 900; font-size: 14px;
+      text-transform: uppercase; padding: 12px 22px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px; cursor: pointer; text-decoration: none; transition: all 0.08s ease;
+      box-sizing: border-box; white-space: nowrap;
     }
-    .btn-3d:active {
-      transform: translateY(3px);
-      box-shadow: none !important;
-    }
-
-    .btn-3d-red {
-      background: var(--tram-red);
-      color: #FFFFFF !important;
-      border-bottom: 5px solid var(--tram-red-shadow);
-    }
+    .btn-3d:active { transform: translateY(3px); box-shadow: none !important; }
+    .btn-3d-red { background: var(--tram-red); color: #FFFFFF !important; border-bottom: 5px solid var(--tram-red-shadow); }
     .btn-3d-red:hover { background: var(--tram-red-hover); }
+    .btn-3d-white { background: #FFFFFF; color: var(--text-main) !important; border: 2px solid var(--duo-border); border-bottom: 5px solid var(--duo-shadow); }
 
-    .btn-3d-white {
-      background: #FFFFFF;
-      color: var(--text-main) !important;
-      border: 2px solid var(--duo-border);
-      border-bottom: 5px solid var(--duo-shadow);
-    }
-    .btn-3d-white:hover { background: #FAF7F2; }
-
-    /* HERO BANNER */
-    .duo-hero {
-      background: #FFFFFF;
-      border: 2.5px solid var(--duo-border);
-      border-bottom: 5px solid var(--duo-shadow);
-      border-radius: 22px;
-      padding: 22px 24px;
-      margin-bottom: 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .duo-hero h1 {
-      margin: 0 0 6px 0;
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--tram-red);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .duo-hero p {
-      margin: 0;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    /* KHUNG LOGIN ONBOARDING */
+    /* KHUNG LOGIN */
     .login-box {
-      background: #FFFFFF;
-      border: 2.5px solid var(--duo-border);
-      border-bottom: 6px solid var(--duo-shadow);
-      border-radius: 24px;
-      max-width: 480px;
-      margin: 30px auto;
-      padding: 34px 28px;
-      text-align: center;
+      background: #FFFFFF; border: 2.5px solid var(--duo-border); border-bottom: 6px solid var(--duo-shadow);
+      border-radius: 24px; max-width: 480px; margin: 30px auto; padding: 34px 28px; text-align: center;
     }
     .duo-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 13px 16px;
-      border: 2px solid var(--duo-border);
-      border-bottom: 4px solid var(--duo-border);
-      border-radius: 14px;
-      font-size: 14.5px;
-      font-family: inherit;
-      font-weight: 700;
-      color: var(--text-main);
-      background: #FAF7F2;
-      outline: none;
-      margin-bottom: 14px;
-      transition: all 0.15s;
+      width: 100%; box-sizing: border-box; padding: 13px 16px; border: 2px solid var(--duo-border);
+      border-bottom: 4px solid var(--duo-border); border-radius: 14px; font-size: 14.5px;
+      font-family: inherit; font-weight: 700; color: var(--text-main); background: #FAF7F2; outline: none; margin-bottom: 14px;
     }
-    .duo-input:focus {
-      background: #FFFFFF;
-      border-color: var(--tram-red);
-      border-bottom-color: var(--tram-red-shadow);
-    }
+    .duo-input:focus { background: #FFFFFF; border-color: var(--tram-red); border-bottom-color: var(--tram-red-shadow); }
 
-    /* USER BAR KHI ĐÃ ĐĂNG NHẬP */
     .user-bar {
-      background: #FFFFFF;
-      border: 2.5px solid var(--duo-border);
-      border-bottom: 5px solid var(--duo-shadow);
-      border-radius: 18px;
-      padding: 14px 20px;
-      margin-bottom: 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+      background: #FFFFFF; border: 2.5px solid var(--duo-border); border-bottom: 5px solid var(--duo-shadow);
+      border-radius: 18px; padding: 14px 20px; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
     }
 
-    /* ===================================================
-       KHUNG BÀI TẬP & LỊCH CHUYÊN CẦN DUOLINGO QUEST
-    =================================================== */
+    /* KHUNG BÀI TẬP VÀ LỊCH CHUYÊN CẦN */
     .history-section {
-      background: #FFFFFF !important;
-      border: 2.5px solid var(--duo-border) !important;
-      border-bottom: 5px solid var(--duo-shadow) !important;
-      border-radius: 22px !important;
-      padding: 22px !important;
-      margin-bottom: 28px !important;
+      background: #FFFFFF !important; border: 2.5px solid var(--duo-border) !important;
+      border-bottom: 5px solid var(--duo-shadow) !important; border-radius: 22px !important;
+      padding: 22px !important; margin-bottom: 28px !important;
     }
     .history-header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      margin-bottom: 14px;
-      border-bottom: 2px solid var(--bg-subcard);
-      flex-wrap: wrap;
-      gap: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid var(--bg-subcard); flex-wrap: wrap; gap: 10px;
     }
-    .history-header-bar h3 {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 900;
-      color: var(--tram-red);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .history-header-bar h3 { margin: 0; font-size: 17.5px; font-weight: 900; color: var(--tram-red); display: flex; align-items: center; gap: 8px; }
 
-    /* ===================================================
-       CÁC CARD HỌC PHẦN ĐẦY MÀU SẮC DUOLINGO
-    =================================================== */
-    .section-headline {
-      margin: 32px 0 16px 0;
-      font-size: 19px;
-      font-weight: 900;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      letter-spacing: -0.3px;
-    }
+    /* LỊCH THÁNG HEATMAP */
+    .duo-cal-box { background: #FAF7F2; border: 2px solid var(--duo-border); border-radius: 16px; padding: 16px; margin-bottom: 18px; }
+    .duo-cal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .duo-cal-nav-btn { background: #FFFFFF; border: 1.5px solid var(--duo-border); border-bottom: 3px solid var(--duo-shadow); border-radius: 10px; padding: 4px 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+    .duo-cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; }
+    .duo-cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .duo-cal-day-cell { height: 38px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; background: #FFFFFF; border: 1.5px solid #EFEAE2; color: var(--text-main); position: relative; }
+    .duo-cal-day-cell.is-today { border: 2px solid var(--tram-red); }
+    .duo-cal-day-cell.has-done { background: var(--tram-red) !important; color: #FFFFFF !important; border-color: var(--tram-red-shadow) !important; box-shadow: 0 2px 0 var(--tram-red-shadow); }
+    .duo-cal-day-cell.has-done::after { content: '🔥'; font-size: 9px; position: absolute; bottom: 1px; }
 
-    .module-card {
-      border-radius: 20px;
-      padding: 18px 22px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      color: #FFFFFF;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      position: relative;
-      overflow: hidden;
+    .attempt-item-card {
+      background: #FFFFFF; border: 1.5px solid var(--duo-border); border-bottom: 3.5px solid var(--duo-shadow);
+      border-radius: 14px; padding: 12px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
     }
-    .module-card:hover {
-      transform: translateY(-2px);
-    }
-    .module-card:active {
-      transform: translateY(1px);
-    }
+    .score-pill { background: #16A34A; border-bottom: 3px solid #15803D; color: white; padding: 4px 10px; border-radius: 10px; font-weight: 800; font-size: 12px; }
+    .btn-review { background: #0284C7; border-bottom: 3px solid #0369A1; color: white; text-decoration: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
 
-    .module-card h3 {
-      margin: 0;
-      font-size: 17.5px;
-      font-weight: 900;
-      color: #FFFFFF !important;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .module-card p {
-      margin: 5px 0 0 0;
-      font-size: 13.5px;
-      font-weight: 700;
-      opacity: 0.95;
-      line-height: 1.4;
-      color: rgba(255, 255, 255, 0.95);
-    }
+    /* CÁC CARD HỌC PHẦN MÀU SẮC */
+    .section-headline { margin: 32px 0 16px 0; font-size: 19px; font-weight: 900; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    .module-card { border-radius: 20px; padding: 18px 22px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: #FFFFFF; transition: transform 0.1s ease; }
+    .module-card:hover { transform: translateY(-2px); }
+    .module-card h3 { margin: 0; font-size: 17.5px; font-weight: 900; color: #FFFFFF !important; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .module-card p { margin: 5px 0 0 0; font-size: 13.5px; font-weight: 700; opacity: 0.95; line-height: 1.4; }
+    .module-icon { width: 56px; height: 56px; border-radius: 16px; background: rgba(255, 255, 255, 0.22); border: 2px solid rgba(255, 255, 255, 0.35); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+    .module-badge-tag { font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; background: rgba(255, 255, 255, 0.28); color: #FFFFFF; }
+    .btn-module-white { background: #FFFFFF !important; border: none; border-bottom: 4px solid rgba(0,0,0,0.2) !important; border-radius: 14px; padding: 10px 20px; font-weight: 900; font-size: 13.5px; text-transform: uppercase; text-decoration: none; cursor: pointer; white-space: nowrap; }
 
-    .module-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.22);
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      flex-shrink: 0;
-    }
-
-    .module-badge-tag {
-      font-size: 11px;
-      font-weight: 900;
-      padding: 3px 10px;
-      border-radius: 12px;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.28);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-
-    .btn-module-white {
-      background: #FFFFFF !important;
-      border: none;
-      border-bottom: 4px solid rgba(0,0,0,0.18) !important;
-      border-radius: 14px;
-      padding: 10px 20px;
-      font-weight: 900;
-      font-size: 13.5px;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.08s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-module-white:active {
-      transform: translateY(2px);
-      border-bottom-width: 2px !important;
-    }
-
-    /* MÀU SẮC ĐẶC TRƯNG TỪNG MODULE */
-    /* 1. Vocab: Tím Indigo Duolingo */
-    .mod-vocab {
-      background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
-      border: 2px solid #3730A3;
-      border-bottom: 6px solid #312E81;
-    }
+    .mod-vocab { background: linear-gradient(135deg, #4F46E5, #6366F1); border: 2px solid #3730A3; border-bottom: 6px solid #312E81; }
     .mod-vocab .btn-module-white { color: #4338CA; }
-
-    /* 2. Grammar: Xanh ngọc Emerald Duolingo */
-    .mod-grammar {
-      background: linear-gradient(135deg, #059669 0%, #10B981 100%);
-      border: 2px solid #047857;
-      border-bottom: 6px solid #065F46;
-    }
+    .mod-grammar { background: linear-gradient(135deg, #059669, #10B981); border: 2px solid #047857; border-bottom: 6px solid #065F46; }
     .mod-grammar .btn-module-white { color: #047857; }
-
-    /* 3. Pre-Listening: Cyan Tươi mát */
-    .mod-pre-listening {
-      background: linear-gradient(135deg, #0891B2 0%, #06B6D4 100%);
-      border: 2px solid #0E7490;
-      border-bottom: 6px solid #155E75;
-    }
+    .mod-pre-listening { background: linear-gradient(135deg, #0891B2, #06B6D4); border: 2px solid #0E7490; border-bottom: 6px solid #155E75; }
     .mod-pre-listening .btn-module-white { color: #0891B2; }
-
-    /* 4. IELTS Listening: Xanh lam Hoàng gia */
-    .mod-listening {
-      background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
-      border: 2px solid #0369A1;
-      border-bottom: 6px solid #075985;
-    }
+    .mod-listening { background: linear-gradient(135deg, #0284C7, #38BDF8); border: 2px solid #0369A1; border-bottom: 6px solid #075985; }
     .mod-listening .btn-module-white { color: #0284C7; }
-
-    /* 5. Pre-Reading: Cam Hổ Phách */
-    .mod-pre-reading {
-      background: linear-gradient(135deg, #EA580C 0%, #F97316 100%);
-      border: 2px solid #C2410C;
-      border-bottom: 6px solid #9A3412;
-    }
+    .mod-pre-reading { background: linear-gradient(135deg, #EA580C, #F97316); border: 2px solid #C2410C; border-bottom: 6px solid #9A3412; }
     .mod-pre-reading .btn-module-white { color: #C2410C; }
-
-    /* 6. IELTS Reading: ĐỎ TRẠM IELTS BRAND */
-    .mod-reading {
-      background: linear-gradient(135deg, #8B1518 0%, #B91C1C 100%);
-      border: 2px solid #630D10;
-      border-bottom: 6px solid #45080A;
-    }
+    .mod-reading { background: linear-gradient(135deg, #8B1518, #B91C1C); border: 2px solid #630D10; border-bottom: 6px solid #45080A; }
     .mod-reading .btn-module-white { color: #8B1518; }
-
-    /* 7A. Pre-Writing 1: Xanh Dương Đậm */
-    .mod-pre-w1 {
-      background: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%);
-      border: 2px solid #1D4ED8;
-      border-bottom: 6px solid #1E40AF;
-    }
+    .mod-pre-w1 { background: linear-gradient(135deg, #2563EB, #60A5FA); border: 2px solid #1D4ED8; border-bottom: 6px solid #1E40AF; }
     .mod-pre-w1 .btn-module-white { color: #1D4ED8; }
-
-    /* 7B. Pre-Writing 2: Hồng Đỏ Ruby */
-    .mod-pre-w2 {
-      background: linear-gradient(135deg, #E11D48 0%, #FB7185 100%);
-      border: 2px solid #BE123C;
-      border-bottom: 6px solid #9F1239;
-    }
+    .mod-pre-w2 { background: linear-gradient(135deg, #E11D48, #FB7185); border: 2px solid #BE123C; border-bottom: 6px solid #9F1239; }
     .mod-pre-w2 .btn-module-white { color: #BE123C; }
-
-    /* 8A. Writing Task 1: Teal Xanh Mòng Két */
-    .mod-w1 {
-      background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
-      border: 2px solid #0F766E;
-      border-bottom: 6px solid #115E59;
-    }
+    .mod-w1 { background: linear-gradient(135deg, #0D9488, #14B8A6); border: 2px solid #0F766E; border-bottom: 6px solid #115E59; }
     .mod-w1 .btn-module-white { color: #0F766E; }
-
-    /* 8B. Writing Task 2: Tím Violet Học Thuật */
-    .mod-w2 {
-      background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
-      border: 2px solid #6D28D9;
-      border-bottom: 6px solid #5B21B6;
-    }
+    .mod-w2 { background: linear-gradient(135deg, #7C3AED, #A78BFA); border: 2px solid #6D28D9; border-bottom: 6px solid #5B21B6; }
     .mod-w2 .btn-module-white { color: #6D28D9; }
-
-    /* 9. Pre-Speaking: Tím Fuchsia Năng Động */
-    .mod-pre-s {
-      background: linear-gradient(135deg, #9333EA 0%, #C084FC 100%);
-      border: 2px solid #7E22CE;
-      border-bottom: 6px solid #6B21A8;
-    }
+    .mod-pre-s { background: linear-gradient(135deg, #9333EA, #C084FC); border: 2px solid #7E22CE; border-bottom: 6px solid #6B21A8; }
     .mod-pre-s .btn-module-white { color: #7E22CE; }
+    .mod-speaking { background: linear-gradient(135deg, #D97706, #F59E0B); border: 2.5px solid #B45309; border-bottom: 6px solid #78350F; }
+    .mod-speaking .btn-module-white { color: #B45309; }
 
-    /* 10. IELTS Speaking: Vàng Kim VIP / AI Examiner */
-    .mod-speaking {
-      background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
-      border: 2.5px solid #B45309;
-      border-bottom: 6px solid #78350F;
-    }
-    .mod-speaking .btn-module-white { color: #B45309; font-weight: 900; }
+    .module-card.is-locked { filter: grayscale(0.85); opacity: 0.65; }
 
-    /* TẠM KHÓA */
-    .module-card.is-locked {
-      filter: grayscale(0.85);
-      opacity: 0.65;
-    }
-
-    /* ADMIN CONTROLS */
-    .admin-switch-bar {
-      background: #FFFBEB;
-      border: 2.5px solid #F59E0B;
-      border-bottom: 5px solid #D97706;
-      border-radius: 18px;
-      padding: 14px 18px;
-      margin-bottom: 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .role-btn {
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      border: 2px solid #F59E0B;
-      border-bottom: 4px solid #D97706;
-      background: white;
-      color: #92400E;
-    }
+    /* ADMIN */
+    .admin-switch-bar { background: #FFFBEB; border: 2.5px solid #F59E0B; border-bottom: 5px solid #D97706; border-radius: 18px; padding: 14px 18px; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .role-btn { padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; border: 2px solid #F59E0B; border-bottom: 4px solid #D97706; background: white; color: #92400E; }
     .role-btn.active { background: #D97706; color: white; border-color: #B45309; }
+    .admin-panel { background: #FFFFFF; border: 2.5px solid #F59E0B; border-bottom: 5px solid #D97706; border-radius: 20px; padding: 22px; margin-bottom: 28px; }
+    .admin-tab-btn { background: var(--bg-subcard); border: 2px solid var(--duo-border); border-bottom: 4px solid var(--duo-shadow); padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; color: var(--text-main); }
+    .admin-tab-btn.active { background: var(--tram-red); color: white; border-color: var(--tram-red-shadow); }
 
-    .admin-panel {
-      background: #FFFFFF;
-      border: 2.5px solid #F59E0B;
-      border-bottom: 5px solid #D97706;
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 28px;
-    }
-    .admin-tab-btn {
-      background: var(--bg-subcard);
-      border: 2px solid var(--duo-border);
-      border-bottom: 4px solid var(--duo-shadow);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      color: var(--text-main);
-    }
-    .admin-tab-btn.active {
-      background: var(--tram-red);
-      color: white;
-      border-color: var(--tram-red-shadow);
-    }
-
-    .student-card {
-      border: 2px solid var(--duo-border);
-      border-bottom: 4px solid var(--duo-shadow);
-      border-radius: 14px;
-      margin-bottom: 12px;
-      background: #FFFFFF;
-      overflow: hidden;
-    }
-    .student-card-header {
-      padding: 12px 16px;
-      background: #FAF7F2;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .score-pill {
-      background: #16A34A;
-      border-bottom: 3px solid #15803D;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 12.5px;
-    }
-    .btn-review {
-      background: #0284C7;
-      border-bottom: 3px solid #0369A1;
-      color: white;
-      text-decoration: none;
-      padding: 5px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .date-accordion-header {
-      padding: 10px 14px; background: var(--bg-subcard); font-weight: 800; font-size: 13.5px;
-      display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
-    }
+    .student-card { border: 2px solid var(--duo-border); border-bottom: 4px solid var(--duo-shadow); border-radius: 14px; margin-bottom: 12px; background: #FFFFFF; overflow: hidden; }
+    .student-card-header { padding: 12px 16px; background: #FAF7F2; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; }
+    .date-accordion-header { padding: 10px 14px; background: var(--bg-subcard); font-weight: 800; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -588,7 +201,7 @@
 
 <div class="main-container">
 
-  <!-- TOP BAR TRẠM IELTS X DUOLINGO -->
+  <!-- TOP BAR -->
   <div class="duo-topbar">
     <div class="brand-wrap">
       <div class="tram-roundel"></div>
@@ -598,20 +211,12 @@
       </div>
     </div>
     <div style="display: flex; align-items: center; gap: 8px;">
-      <span class="duo-pill pill-streak"><i class="fa-solid fa-fire"></i> STREAK</span>
+      <span class="duo-pill pill-streak" id="streakCounterBadge"><i class="fa-solid fa-fire"></i> 0 NGÀY</span>
       <span class="duo-pill pill-red"><i class="fa-solid fa-gem"></i> BAND 8.0+</span>
     </div>
   </div>
 
-  <!-- BANNER HERO -->
-  <div class="duo-hero">
-    <div>
-      <h1><i class="fa-solid fa-graduation-cap"></i> CHÀO MỪNG ĐẾN VỚI TRẠM IELTS</h1>
-      <p>Lộ trình toàn diện: Từ vựng • Ngữ pháp • Pre Foundation • Cambridge 17-21 • Chữa AI 2 tầng</p>
-    </div>
-  </div>
-
-  <!-- 1. MÀN HÌNH ĐĂNG NHẬP -->
+  <!-- CỔNG ĐĂNG NHẬP -->
   <div id="authGateBox" class="login-box">
     <div class="tram-roundel" style="margin: 0 auto 16px auto; transform: scale(1.2);"></div>
     <h3 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 900; color: var(--tram-red);">Học Viên Đăng Nhập</h3>
@@ -625,10 +230,9 @@
     </button>
   </div>
 
-  <!-- 2. KHU VỰC HỌC TẬP KHI ĐÃ ĐĂNG NHẬP -->
+  <!-- KHU VỰC ĐÃ ĐĂNG NHẬP -->
   <div id="unlockedContentBox" style="display: none;">
 
-    <!-- THANH PROFILE HỌC VIÊN -->
     <div class="user-bar">
       <div style="display: flex; align-items: center; gap: 12px;">
         <div id="userAvatarChar" style="width: 40px; height: 40px; border-radius: 12px; background: #FDF2F2; color: var(--tram-red); border: 2px solid #F8B4B7; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px;">
@@ -643,12 +247,12 @@
       <div style="display: flex; align-items: center; gap: 8px;">
         <span id="roleBadge" class="duo-pill pill-red">HỌC SINH</span>
         <button type="button" class="btn-3d btn-3d-white" onclick="handleStudentLogout()" style="padding: 7px 14px; font-size: 12.5px;">
-          🚪 Đổi tài khoản
+          🚪 Đổi nick
         </button>
       </div>
     </div>
 
-    <!-- THANH ADMIN SWITCH (KHI EMAIL LÀ ADMIN) -->
+    <!-- THANH ADMIN -->
     <div id="adminSwitchBar" class="admin-switch-bar" style="display: none;">
       <div>
         <b style="color: #92400e; font-size: 15px;"><i class="fa-solid fa-shield-halved"></i> BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN</b>
@@ -703,13 +307,11 @@
           </span>
         </div>
         
-        <!-- Nơi curriculumUI mount lịch tháng và danh sách bài nộp -->
-        <div id="historyResultsList">
-          <div style="text-align:center; padding:15px; font-weight:700; color:var(--text-muted);">⏳ Đang đồng bộ lịch sử từ Google Drive...</div>
-        </div>
+        <!-- Nơi ui-system.js mount lịch tháng và bài nộp -->
+        <div id="historyResultsList"></div>
       </div>
 
-      <!-- TIÊU ĐỀ LỘ TRÌNH LUYỆN THI -->
+      <!-- TIÊU ĐỀ LỘ TRÌNH -->
       <div class="section-headline">
         <i class="fa-solid fa-map-location-dot" style="color: var(--tram-red);"></i> CÁC PHÂN HỆ LUYỆN THI (BẤM VÀO ĐỂ BẮT ĐẦU)
       </div>
@@ -719,10 +321,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">🧠</div>
           <div>
-            <h3>
-              1. TỪ VỰNG THÔNG MINH (SPACED REPETITION)
-              <span class="module-badge-tag">CORE</span>
-            </h3>
+            <h3>1. TỪ VỰNG THÔNG MINH (SPACED REPETITION) <span class="module-badge-tag">CORE</span></h3>
             <p>5 Hũ trí nhớ lặp lại ngắt quãng • Bảng xếp hạng thi đua • Giữ chuỗi Streak 🔥</p>
           </div>
         </div>
@@ -734,10 +333,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📐</div>
           <div>
-            <h3>
-              2. NGỮ PHÁP TRỌNG TÂM IELTS
-              <span class="module-badge-tag">NỀN TẢNG</span>
-            </h3>
+            <h3>2. NGỮ PHÁP TRỌNG TÂM IELTS <span class="module-badge-tag">NỀN TẢNG</span></h3>
             <p>Cấu trúc câu phức, mệnh đề quan hệ, đảo ngữ và các bẫy ngữ pháp thường gặp</p>
           </div>
         </div>
@@ -749,10 +345,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">👂</div>
           <div>
-            <h3>
-              3. PRE-LISTENING (CHÉP CHÍNH TẢ & PHẢN XẠ)
-              <span class="module-badge-tag">PREPARATION</span>
-            </h3>
+            <h3>3. PRE-LISTENING (CHÉP CHÍNH TẢ & PHẢN XẠ) <span class="module-badge-tag">PREPARATION</span></h3>
             <p>Luyện nối âm, nuốt âm, số liệu, tên riêng & Dictation từng câu trước khi vào đề</p>
           </div>
         </div>
@@ -764,10 +357,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">🎧</div>
           <div>
-            <h3>
-              4. IELTS LISTENING (AUDIO-SYNC)
-              <span class="module-badge-tag">CAM 17 - 21</span>
-            </h3>
+            <h3>4. IELTS LISTENING (AUDIO-SYNC) <span class="module-badge-tag">CAM 17 - 21</span></h3>
             <p>Audio chạy đồng bộ Transcript • Nhấp câu nghe ngay • Tự động chấm điểm</p>
           </div>
         </div>
@@ -779,10 +369,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">🔍</div>
           <div>
-            <h3>
-              5. PRE-READING (SKIMMING & SCANNING)
-              <span class="module-badge-tag">KỸ NĂNG</span>
-            </h3>
+            <h3>5. PRE-READING (SKIMMING & SCANNING) <span class="module-badge-tag">KỸ NĂNG</span></h3>
             <p>Phương pháp định vị từ khóa (Keywords), đọc lướt nắm ý và xử lý bài đọc dài</p>
           </div>
         </div>
@@ -794,10 +381,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📖</div>
           <div>
-            <h3>
-              6. PHÒNG THI IELTS READING
-              <span class="module-badge-tag">CAM 17 - 21</span>
-            </h3>
+            <h3>6. PHÒNG THI IELTS READING <span class="module-badge-tag">CAM 17 - 21</span></h3>
             <p>Tự động chấm điểm • AI Trợ giảng giải thích câu sai • Lưu tiến độ đám mây</p>
           </div>
         </div>
@@ -809,10 +393,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📊</div>
           <div>
-            <h3>
-              7A. PRE-WRITING TASK 1 (DỊCH SONG NGỮ)
-              <span class="module-badge-tag">TASK 1 NỀN TẢNG</span>
-            </h3>
+            <h3>7A. PRE-WRITING TASK 1 (DỊCH SONG NGỮ) <span class="module-badge-tag">TASK 1 NỀN TẢNG</span></h3>
             <p>Dạng Line, Bar, Pie, Table, Process • Đối chiếu mẫu Band 6-7-8 • AI Sửa 2 tầng</p>
           </div>
         </div>
@@ -824,10 +405,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📝</div>
           <div>
-            <h3>
-              7B. PRE-WRITING TASK 2 (DỊCH LUẬN & Ý TƯỞNG)
-              <span class="module-badge-tag">TASK 2 ESSAY</span>
-            </h3>
+            <h3>7B. PRE-WRITING TASK 2 (DỊCH LUẬN & Ý TƯỞNG) <span class="module-badge-tag">TASK 2 ESSAY</span></h3>
             <p>Opinion, Discussion, Problem-Solution • Rèn tư duy phản biện & Paraphrase học thuật</p>
           </div>
         </div>
@@ -839,10 +417,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📊</div>
           <div>
-            <h3>
-              8A. IELTS WRITING TASK 1 (TRẠM HƯỚNG DẪN)
-              <span class="module-badge-tag">BAND 8.0+</span>
-            </h3>
+            <h3>8A. IELTS WRITING TASK 1 (TRẠM HƯỚNG DẪN) <span class="module-badge-tag">BAND 8.0+</span></h3>
             <p>Kho 133 đề thi thật • Hướng dẫn viết từng câu • Tự lực bấm giờ • AI Chấm 2 tầng</p>
           </div>
         </div>
@@ -854,10 +429,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">📝</div>
           <div>
-            <h3>
-              8B. IELTS WRITING TASK 2 (TRẠM HƯỚNG DẪN)
-              <span class="module-badge-tag">BAND 8.0+ MASTER</span>
-            </h3>
+            <h3>8B. IELTS WRITING TASK 2 (TRẠM HƯỚNG DẪN) <span class="module-badge-tag">BAND 8.0+ MASTER</span></h3>
             <p>Kho đề thi thật 5 dạng bài • Hướng dẫn chi tiết từng câu • AI Sửa 2 tầng chuyên sâu</p>
           </div>
         </div>
@@ -869,10 +441,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon">🗣️</div>
           <div>
-            <h3>
-              9. PRE-SPEAKING (IPA & SHADOWING NÓI ĐUỔI)
-              <span class="module-badge-tag">PRONUNCIATION</span>
-            </h3>
+            <h3>9. PRE-SPEAKING (IPA & SHADOWING NÓI ĐUỔI) <span class="module-badge-tag">PRONUNCIATION</span></h3>
             <p>Chuẩn hóa 44 âm IPA, trọng âm từ, ngữ điệu câu và phản xạ kéo dài câu trả lời</p>
           </div>
         </div>
@@ -884,10 +453,7 @@
         <div style="display: flex; align-items: center; gap: 16px;">
           <div class="module-icon" style="background: rgba(255,255,255,0.25);">🎙️</div>
           <div>
-            <h3>
-              10. PHÒNG LUYỆN NÓI IELTS SPEAKING 2 TẦNG
-              <span class="module-badge-tag" style="background: #FFFFFF; color: #B45309;">AI EXAMINER</span>
-            </h3>
+            <h3>10. PHÒNG LUYỆN NÓI IELTS SPEAKING 2 TẦNG <span class="module-badge-tag" style="background: #FFFFFF; color: #B45309;">AI EXAMINER</span></h3>
             <p>Ký âm giọng nói tức thì (Speech-to-Text) • Sửa phát âm & ngữ pháp ➔ Nâng cấp Collocation Band 8.0+</p>
           </div>
         </div>
@@ -962,7 +528,6 @@
       }
 
       loadModuleSettings();
-      // Đồng bộ và render ngay Lịch & Lịch sử
       syncAndRenderHistory(user.email);
       curriculumUI.render('roadmapSectionMount');
     } else {
@@ -1220,6 +785,7 @@
       try {
         const res = await fetch(CONFIG.DRIVE_STORAGE_URL, {
           method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "get_settings" })
         });
         const d = await res.json();
@@ -1263,6 +829,7 @@
     if (CONFIG.DRIVE_STORAGE_URL) {
       fetch(CONFIG.DRIVE_STORAGE_URL, {
         method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "save_settings", settings: systemSettings })
       }).catch(() => {});
     }
@@ -1290,7 +857,7 @@
             btn.style.background = "#CBD5E1";
             btn.onclick = (e) => {
               e.preventDefault();
-              alert("⚠️ Phân hệ này đang được Admin bảo trì hoặc cập nhật đề mới. Em quay lại sau nhé!");
+              alert("⚠️ Phân hệ này đang được Admin bảo trì. Em quay lại sau nhé!");
             };
           }
         }
@@ -1300,7 +867,7 @@
     });
   }
 
-  // TỐI ƯU ĐỒNG BỘ: HIỂN THỊ NGAY BẢNG LỊCH MÀ KHÔNG BỊ TREO CHỜ DRIVE
+  // ĐỒNG BỘ LỊCH SỬ VÀ GỌI HÀM VẼ LỊCH CỦA CURRICULUM_UI
   async function syncAndRenderHistory(email) {
     let localAttempts = [];
     try {
@@ -1310,15 +877,15 @@
       }
     } catch(e) {}
 
-    // 1. Luôn vẽ ngay giao diện Lịch từ dữ liệu có sẵn (dù 0 bài hay nhiều bài để không bao giờ bị kẹt chữ chờ)
-    renderHistoryUI(localAttempts, email);
+    // Gọi trực tiếp phương thức của class CurriculumUISystem
+    curriculumUI.renderTodayHistoryAndCalendar(localAttempts, email);
 
     if (!CONFIG.DRIVE_STORAGE_URL) return;
 
-    // 2. Chạy ngầm fetch Drive để cập nhật bài mới nhất từ server
     try {
       const res = await fetch(CONFIG.DRIVE_STORAGE_URL, {
         method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "get_history", email: email })
       });
       const data = await res.json();
@@ -1329,25 +896,10 @@
         });
         const merged = Array.from(map.values()).sort((a, b) => (b.id || '').localeCompare(a.id || ''));
         localStorage.setItem('ielts_local_history', JSON.stringify(merged));
-        renderHistoryUI(merged, email);
+        curriculumUI.renderTodayHistoryAndCalendar(merged, email);
       }
     } catch (e) {
-      console.warn("Đồng bộ Google Drive đang dùng dữ liệu offline:", e);
-    }
-  }
-
-  function renderHistoryUI(attempts, email) {
-    try {
-      curriculumUI.renderTodayHistoryAndCalendar(attempts, email);
-    } catch (err) {
-      console.error("Lỗi khi render lịch chuyên cần:", err);
-      // Fallback nếu có lỗi xảy ra bên ngoài
-      const box = document.getElementById('historyResultsList');
-      if (box && (!attempts || attempts.length === 0)) {
-        box.innerHTML = `<div style="text-align:center; padding:18px; font-weight:700; color:var(--text-muted);">
-          ✨ Em chưa làm bài tập nào hôm nay. Hãy chọn một phân hệ bên dưới để bắt đầu nhé!
-        </div>`;
-      }
+      console.warn("Dùng dữ liệu lưu trữ trên thiết bị:", e);
     }
   }
 
