@@ -1,3 +1,8 @@
+/**
+ * pre-listening/modal-pl.js
+ * ĐIỀU KHIỂN POPUP DÁN ẢNH BẰNG CHỨNG (CTRL + V) DUOLINGO STYLE
+ */
+
 import { getSubmission, saveSubmission } from './db-pl.js';
 
 let activeLessonId = null;
@@ -5,7 +10,7 @@ let currentLevel = 'A1';
 let tempWrongImages = [];
 let tempFullImage = null;
 let onSaveCallback = null;
-let currentPasteTarget = 'wrong'; // 'wrong' hoặc 'full'
+let currentPasteTarget = 'wrong';
 
 export function initModal(onSaved) {
   onSaveCallback = onSaved;
@@ -21,17 +26,16 @@ export function initModal(onSaved) {
     }
   });
 
-  // Chọn vùng dán ảnh bằng click chuột
   const zoneWrong = document.getElementById('pasteZoneWrong');
   const zoneFull = document.getElementById('pasteZoneFull');
 
   zoneWrong.addEventListener('click', () => setPasteTarget('wrong'));
   zoneFull.addEventListener('click', () => setPasteTarget('full'));
 
-  // LẮNG NGHE SỰ KIỆN CTRL + V TOÀN CỤC KHI MODAL MỞ
+  // LẮNG NGHE CTRL + V TOÀN CỤC KHI MODAL MỞ
   window.addEventListener('paste', (e) => {
     const modal = document.getElementById('submitModal');
-    if (modal.classList.contains('hidden')) return; // Không làm gì nếu modal đang đóng
+    if (modal.classList.contains('hidden')) return;
 
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
     let foundImage = false;
@@ -120,7 +124,7 @@ export async function openModal(id, title, level) {
   tempWrongImages = [];
   tempFullImage = null;
 
-  setPasteTarget('full'); // Mặc định focus vào ảnh Full kết quả (ảnh bắt buộc)
+  setPasteTarget('full');
 
   const existing = await getSubmission(id);
   if (existing) {
@@ -148,9 +152,9 @@ export function closeModal() {
 function renderWrongPreview() {
   const container = document.getElementById('previewWrong');
   container.innerHTML = tempWrongImages.map((src, idx) => `
-    <div class="relative w-16 h-16 rounded border overflow-hidden group shadow-sm bg-slate-50">
-      <img src="${src}" class="w-full h-full object-cover">
-      <button onclick="window.removeWrongImgPL(${idx})" class="absolute top-0 right-0 bg-rose-600 text-white w-4 h-4 text-[10px] flex items-center justify-center opacity-90 hover:opacity-100">&times;</button>
+    <div style="position: relative; width: 68px; height: 68px; border-radius: 12px; border: 2px solid var(--border-color); overflow: hidden; background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+      <img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">
+      <button onclick="window.removeWrongImgPL(${idx})" style="position: absolute; top: 0; right: 0; background: #DC2626; color: white; border: none; width: 20px; height: 20px; font-size: 11px; font-weight: 900; cursor: pointer; border-bottom-left-radius: 6px;">&times;</button>
     </div>
   `).join('');
 }
@@ -159,9 +163,9 @@ function renderFullPreview() {
   const container = document.getElementById('previewFull');
   if (!tempFullImage) { container.innerHTML = ''; return; }
   container.innerHTML = `
-    <div class="relative inline-block border rounded overflow-hidden shadow-sm mt-2">
-      <img src="${tempFullImage}" class="h-28 object-contain bg-slate-100 rounded">
-      <button onclick="window.removeFullImgPL()" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold">&times;</button>
+    <div style="position: relative; display: inline-block; border: 2.5px solid var(--border-color); border-bottom: 4px solid var(--border-shadow); border-radius: 14px; overflow: hidden; margin-top: 8px; background: #FFFFFF;">
+      <img src="${tempFullImage}" style="height: 120px; object-fit: contain; background: #FAF7F2;">
+      <button onclick="window.removeFullImgPL()" style="position: absolute; top: 4px; right: 4px; background: #DC2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 13px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
     </div>
   `;
 }
@@ -184,8 +188,8 @@ async function handleSave() {
     id: activeLessonId,
     skill: "listening",
     level: currentLevel,
-    correct: parseInt(correct),
-    total: parseInt(total),
+    correct: parseInt(correct, 10),
+    total: parseInt(total, 10),
     wrongNotes: wrongNotes || 'Không có',
     wrongProofs: tempWrongImages,
     fullProof: tempFullImage,
