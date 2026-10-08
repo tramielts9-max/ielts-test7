@@ -1,6 +1,6 @@
 /**
  * curriculum-system/ui-system.js
- * GIAO DIỆN LỘ TRÌNH, 4 CARD THỐNG KÊ 3D & LỊCH CHUYÊN CẦN DUOLINGO 5 MÀU
+ * GIAO DIỆN LỘ TRÌNH, LỊCH CHUYÊN CẦN 5 MÀU & HỖ TRỢ LÀM LẠI BÀI (LẦN 1, LẦN 2...)
  */
 
 import { curriculumEngineSystem } from './engine-system.js';
@@ -87,11 +87,12 @@ class CurriculumUISystem {
     return email.includes('admin') || (window.CONFIG?.ADMIN_EMAILS || []).map(e => e.toLowerCase()).includes(email);
   }
 
-  // ĐỐI SOÁT KẾT QUẢ THẬT ĐỂ LẤY ĐIỂM SỐ & THỜI GIAN LÀM BÀI
+  // ĐỐI SOÁT TẤT CẢ CÁC LẦN NỘP BÀI (LẦN 1, LẦN 2...)
   getNodeCompletionInfo(node) {
     try {
       const history = JSON.parse(localStorage.getItem('ielts_local_history') || '[]');
-      const match = history.find(item => {
+      
+      const matches = history.filter(item => {
         if (!item) return false;
         const t = (item.testTitle || '').toLowerCase();
         const nTitle = (node.title || '').toLowerCase();
@@ -102,23 +103,35 @@ class CurriculumUISystem {
         const matchId = nId && t.includes(nId);
         const matchTitle = (nTitle && t.includes(nTitle)) || (t && nTitle.includes(t));
         const matchUrl = nu && u && (u.includes(nu) || nu.includes(u));
-
         const codeInNode = node.url?.match(/[\d]+[\-\.][\d]+/)?.[0];
         const matchCode = codeInNode && t.includes(codeInNode);
 
         return matchId || matchTitle || matchUrl || matchCode;
       });
 
-      if (match) {
+      if (matches.length > 0) {
+        // Sắp xếp các lần thi theo thời gian (Lần 1 là cũ nhất, Lần sau mới hơn)
+        matches.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+        const first = matches[0];
+        const latest = matches.length > 1 ? matches[matches.length - 1] : null;
+
         return {
           isCompleted: true,
-          score: match.score || 'Đã nộp',
-          timeSpent: match.timeSpent && match.timeSpent !== 'N/A' ? match.timeSpent : 'Hoàn thành',
-          timestamp: match.timestamp || ''
+          totalAttempts: matches.length,
+          firstAttempt: {
+            score: first.score || 'Đã nộp',
+            timeSpent: first.timeSpent && first.timeSpent !== 'N/A' ? first.timeSpent : 'Hoàn thành',
+            timestamp: first.timestamp || ''
+          },
+          latestAttempt: latest ? {
+            score: latest.score || 'Đã nộp',
+            timeSpent: latest.timeSpent && latest.timeSpent !== 'N/A' ? latest.timeSpent : 'Hoàn thành',
+            timestamp: latest.timestamp || ''
+          } : null
         };
       }
     } catch(e) {}
-    return { isCompleted: false };
+    return { isCompleted: false, totalAttempts: 0 };
   }
 
   isNodeCompletedInHistory(node) {
@@ -255,7 +268,7 @@ class CurriculumUISystem {
     }
   }
 
-  // RENDER GIAO DIỆN LỘ TRÌNH MÀN HÌNH CHÍNH (ĐỒNG BỘ SỐ NGÀY & 4 CARD 3D)
+  // RENDER GIAO DIỆN LỘ TRÌNH MÀN HÌNH CHÍNH
   render(targetContainerId = 'roadmapSectionMount') {
     let container = document.getElementById(targetContainerId);
     if (!container) return;
@@ -395,7 +408,7 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- 4 Ô THỐNG KÊ DUOLINGO 3D - CHỮ TO, MÀU SẮC ĐẬM CHẤT HỌC TẬP -->
+        <!-- 4 Ô THỐNG KÊ DUOLINGO 3D -->
         <div class="cs-stats-grid">
           <div class="cs-stat-box stat-box-red">
             <div class="cs-stat-val" style="color: #8B1518;">🎯 ${completedTotal}/${data.totals.nodeCount}</div>
@@ -425,7 +438,7 @@ class CurriculumUISystem {
           </div>
         </div>
 
-        <!-- DANH SÁCH BÀI TẬP HÔM NAY (CHỮ TO RÕ, ĐỐI SOÁT THẬT) -->
+        <!-- DANH SÁCH BÀI TẬP HÔM NAY: HIỆN CẢ LẦN 1 VÀ LẦN 2, NÚT LÀM LẠI HOẠT ĐỘNG BÌNH THƯỜNG -->
         <div class="cs-task-list">
           ${currentDayPlan.nodes.map(node => {
             const compInfo = this.getNodeCompletionInfo(node);
@@ -444,10 +457,24 @@ class CurriculumUISystem {
                   </div>
                   
                   ${isDone ? `
-                    <div style="font-size: 13.5px; font-weight: 800; color: #166534; background: #DCFCE7; border: 1.5px solid #86EFAC; border-radius: 10px; padding: 6px 12px; margin-top: 6px; display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                      <span>🎯 Điểm đạt: <b>${compInfo.score}</b></span>
-                      <span>⏱️ Thời gian: <b>${compInfo.timeSpent}</b></span>
-                      <span>📅 Nộp lúc: <b>${compInfo.timestamp}</b></span>
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                      <!-- KẾT QUẢ LẦN 1 -->
+                      <div style="font-size: 13px; font-weight: 800; color: #166534; background: #DCFCE7; border: 1.5px solid #86EFAC; border-radius: 8px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span style="background: #166534; color: white; padding: 1px 6px; border-radius: 5px; font-size: 11px;">LẦN 1</span>
+                        <span>🎯 Điểm: <b>${compInfo.firstAttempt.score}</b></span>
+                        <span>⏱️ Thời gian: <b>${compInfo.firstAttempt.timeSpent}</b></span>
+                        <span>📅 Nộp lúc: <b>${compInfo.firstAttempt.timestamp}</b></span>
+                      </div>
+
+                      <!-- KẾT QUẢ LẦN 2 (NẾU ĐÃ LÀM LẠI) -->
+                      ${compInfo.latestAttempt ? `
+                        <div style="font-size: 13px; font-weight: 800; color: #065F46; background: #A7F3D0; border: 1.5px solid #34D399; border-radius: 8px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                          <span style="background: #059669; color: white; padding: 1px 6px; border-radius: 5px; font-size: 11px;">LẦN 2 (MỚI NHẤT)</span>
+                          <span>🎯 Điểm: <b>${compInfo.latestAttempt.score}</b></span>
+                          <span>⏱️ Thời gian: <b>${compInfo.latestAttempt.timeSpent}</b></span>
+                          <span>📅 Nộp lúc: <b>${compInfo.latestAttempt.timestamp}</b></span>
+                        </div>
+                      ` : ''}
                     </div>
                   ` : `
                     <div style="font-size: 13px; color: #756D68; background: #FAF7F2; border: 1.5px solid #E8E2D8; padding: 6px 12px; border-radius: 10px; margin-top: 6px; line-height: 1.4; font-weight: 700;">
@@ -458,9 +485,14 @@ class CurriculumUISystem {
 
                 <div>
                   ${isDone ? `
-                    <span class="cs-btn-action cs-btn-done">
-                      <i class="fa-solid fa-circle-check"></i> Đã hoàn thành
-                    </span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                      <span class="cs-btn-action cs-btn-done" style="padding: 5px 12px; font-size: 12px; border-radius: 8px;">
+                        <i class="fa-solid fa-circle-check"></i> Đã hoàn thành
+                      </span>
+                      <a href="${node.url}" target="_blank" class="cs-btn-action" style="background: #FFFFFF; color: #166534; border: 2px solid #86EFAC; border-bottom: 4px solid #4ADE80; padding: 7px 16px; font-size: 13px; text-decoration: none; border-radius: 10px; font-weight: 900; white-space: nowrap;">
+                        🔄 Làm lại bài &rarr;
+                      </a>
+                    </div>
                   ` : `
                     <a href="${node.url}" target="_blank" class="cs-btn-action cs-btn-start">
                       🚀 Vào làm bài &rarr;
@@ -476,7 +508,7 @@ class CurriculumUISystem {
   }
 
   // =========================================================================
-  // LỊCH CHUYÊN CẦN 5 MÀU (HEATMAP) VỚI MÀU VÀNG DUOLINGO CHUẨN XỊN
+  // LỊCH CHUYÊN CẦN 5 MÀU (HEATMAP)
   // =========================================================================
   renderTodayHistoryAndCalendar(attempts = [], email = '') {
     this.cachedAttempts = attempts;
@@ -554,7 +586,6 @@ class CurriculumUISystem {
     container.innerHTML = calHtml + listHtml;
   }
 
-  // BỘ MÁY VẼ LỊCH VỚI CHỮ TO & MÀU VÀNG DUOLINGO
   generateMonthCalendarHtml(attempts) {
     const year = this.calCurrentYear;
     const month = this.calCurrentMonth;
@@ -600,7 +631,7 @@ class CurriculumUISystem {
       } else if (count >= 3 && count <= 4) {
         colorClass = 'cal-color-full';
       } else if (count >= 5) {
-        colorClass = 'cal-color-over'; // VÀNG DUOLINGO
+        colorClass = 'cal-color-over';
       }
 
       const activeBorder = isSelected ? 'box-shadow: 0 0 0 3.5px #8B1518, 0 4px 12px rgba(0,0,0,0.25); transform: scale(1.08); z-index: 5;' : '';
@@ -636,7 +667,6 @@ class CurriculumUISystem {
           ${gridHtml}
         </div>
 
-        <!-- BẢNG CHÚ THÍCH 5 CẤP ĐỘ MÀU -->
         <div class="cs-legend-bar">
           <span style="color: #756D68; font-size: 13.5px; margin-right: 6px;">Mức độ hoàn thành:</span>
           <div class="cs-legend-item">
