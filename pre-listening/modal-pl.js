@@ -1,6 +1,7 @@
 /**
  * pre-listening/modal-pl.js
- * ĐIỀU KHIỂN POPUP DÁN ẢNH BẰNG CHỨNG (CTRL + V) DUOLINGO STYLE
+ * ĐIỀU KHIỂN POPUP DÁN ẢNH BẰNG CHỨNG (CTRL + V)
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
  */
 
 import { getSubmission, saveSubmission } from './db-pl.js';
@@ -15,7 +16,6 @@ let currentPasteTarget = 'wrong';
 export function initModal(onSaved) {
   onSaveCallback = onSaved;
 
-  // Lắng nghe chọn file truyền thống
   document.getElementById('mWrongImgs').addEventListener('change', (e) => {
     handleFileSelect(Array.from(e.target.files), 'wrong');
   });
@@ -32,7 +32,6 @@ export function initModal(onSaved) {
   zoneWrong.addEventListener('click', () => setPasteTarget('wrong'));
   zoneFull.addEventListener('click', () => setPasteTarget('full'));
 
-  // LẮNG NGHE CTRL + V TOÀN CỤC KHI MODAL MỞ
   window.addEventListener('paste', (e) => {
     const modal = document.getElementById('submitModal');
     if (modal.classList.contains('hidden')) return;
@@ -113,7 +112,6 @@ export async function openModal(id, title, level) {
   document.getElementById('mTitle').innerText = title;
   document.getElementById('mLevel').innerText = `LISTENING - ${level}`;
 
-  // Reset form
   document.getElementById('mCorrect').value = '';
   document.getElementById('mTotal').value = '';
   document.getElementById('mWrongList').value = '';
@@ -154,7 +152,7 @@ function renderWrongPreview() {
   container.innerHTML = tempWrongImages.map((src, idx) => `
     <div style="position: relative; width: 68px; height: 68px; border-radius: 12px; border: 2px solid var(--border-color); overflow: hidden; background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
       <img src="${src}" style="width: 100%; height: 100%; object-fit: cover;">
-      <button onclick="window.removeWrongImgPL(${idx})" style="position: absolute; top: 0; right: 0; background: #DC2626; color: white; border: none; width: 20px; height: 20px; font-size: 11px; font-weight: 900; cursor: pointer; border-bottom-left-radius: 6px;">&times;</button>
+      <button onclick="window.removeWrongImgPL(${idx})" style="position: absolute; top: 0; right: 0; background: #DC2626; color: white; border: none; width: 22px; height: 22px; font-size: 13px; font-weight: 900; cursor: pointer; border-bottom-left-radius: 8px;">&times;</button>
     </div>
   `).join('');
 }
@@ -165,7 +163,7 @@ function renderFullPreview() {
   container.innerHTML = `
     <div style="position: relative; display: inline-block; border: 2.5px solid var(--border-color); border-bottom: 4px solid var(--border-shadow); border-radius: 14px; overflow: hidden; margin-top: 8px; background: #FFFFFF;">
       <img src="${tempFullImage}" style="height: 120px; object-fit: contain; background: #FAF7F2;">
-      <button onclick="window.removeFullImgPL()" style="position: absolute; top: 4px; right: 4px; background: #DC2626; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 13px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+      <button onclick="window.removeFullImgPL()" style="position: absolute; top: 4px; right: 4px; background: #DC2626; color: white; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 14px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
     </div>
   `;
 }
