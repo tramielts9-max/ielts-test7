@@ -3,31 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IELTS Listening Examination</title>
+  <title>IELTS Listening Examination - Trạm IELTS</title>
+  
+  <!-- Font Plus Jakarta Sans chuẩn Duolingo, hỗ trợ tiếng Việt 100% -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/components.css">
   <link rel="stylesheet" href="css-l/listening.css">
+
   <style>
     /* ========================================================
-       1. TỔNG THỂ & BỐ CỤC CHUẨN THI IELTS TRÊN MÁY TÍNH
+       BỐ CỤC CHUẨN THI IELTS DUOLINGO 3D
        ======================================================== */
-    body.listening-test {
-      background-color: #f8fafc;
-      color: #0f172a;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
     body.listening-test:not(.submitted) #passageBox { display: none !important; }
     body.listening-test:not(.submitted) #dragResizer { display: none !important; }
     body.listening-test:not(.submitted) #questionBox {
       width: 100% !important;
       max-width: 1250px;
       margin: 0 auto;
-      padding: 20px 24px;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
-      border: 1px solid #e2e8f0;
+      padding: 24px 28px;
+      background: #FFFFFF;
+      border-radius: 22px;
+      border: 2.5px solid var(--border-color);
+      border-bottom: 5.5px solid var(--border-shadow);
     }
 
     /* SPLIT-VIEW TRANSCRIPT SAU KHI NỘP BÀI */
@@ -46,13 +47,13 @@
       height: 100% !important;
       overflow-y: auto !important;
       padding: 24px 28px;
-      background: #ffffff;
-      border-right: 1px solid #e2e8f0;
+      background: #FFFFFF;
+      border-right: 2px solid var(--border-color);
     }
     body.listening-test.submitted #dragResizer {
       display: flex !important;
-      width: 10px;
-      background: #e2e8f0;
+      width: 12px;
+      background: #E8E2D8;
       cursor: col-resize;
       align-items: center;
       justify-content: center;
@@ -63,11 +64,11 @@
     }
     body.listening-test.submitted #dragResizer:hover,
     body.listening-test.submitted #dragResizer.resizing {
-      background: #0284c7;
+      background: #0284C7;
     }
     body.listening-test.submitted #dragResizer .resizer-icon {
       font-size: 11px;
-      color: #64748b;
+      color: #64748B;
       pointer-events: none;
     }
     body.listening-test.submitted #questionBox {
@@ -75,111 +76,80 @@
       min-width: 340px;
       height: 100% !important;
       overflow-y: auto !important;
-      padding: 20px 24px;
-      background: #ffffff;
+      padding: 24px 28px;
+      background: #FFFFFF;
       border-radius: 0;
       border: none;
-      box-shadow: none;
     }
 
-    /* ========================================================
-       2. BỐ CỤC GOOGLE DOCS: BÀI THI BÊN TRÁI - COMMENT BÊN PHẢI
-       ======================================================== */
+    /* BỐ CỤC GOOGLE DOCS: BÀI THI TRÁI - GHI CHÚ PHẢI */
     .gdocs-exam-wrapper {
       display: flex;
-      gap: 22px;
+      gap: 24px;
       align-items: flex-start;
       position: relative;
       width: 100%;
     }
     .gdocs-paper-col {
       flex: 1;
-      min-width: 0; /* Cho phép co giãn linh hoạt */
+      min-width: 0;
     }
     .gdocs-comments-col {
-      width: 325px;
+      width: 330px;
       flex-shrink: 0;
       position: sticky;
       top: 15px;
       max-height: calc(100vh - 160px);
       overflow-y: auto;
       padding-right: 4px;
-      border-left: 1.5px solid #f1f5f9;
-      padding-left: 14px;
+      border-left: 2px solid var(--border-color);
+      padding-left: 16px;
     }
-    @media (max-width: 920px) {
-      .gdocs-exam-wrapper {
-        flex-direction: column;
-      }
+    @media (max-width: 950px) {
+      .gdocs-exam-wrapper { flex-direction: column; }
       .gdocs-comments-col {
-        width: 100%;
-        position: static;
-        max-height: none;
-        border-left: none;
-        padding-left: 0;
-        margin-top: 24px;
+        width: 100%; position: static; max-height: none; border-left: none; padding-left: 0; margin-top: 24px;
       }
     }
 
-    /* HEADER CỘT BÌNH LUẬN */
     .gdocs-comments-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1.5px solid #e2e8f0;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border-color);
     }
     .gdocs-header-title {
-      font-size: 13.5px;
-      font-weight: 800;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .gdocs-header-actions {
-      display: flex;
-      gap: 5px;
+      font-size: 14.5px;
+      font-weight: 900;
+      color: var(--text-main);
     }
     .btn-gdocs-toggle-all {
-      background: #f1f5f9;
-      color: #475569;
-      border: 1px solid #cbd5e1;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
+      background: #FFFFFF;
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+      border-bottom: 3px solid var(--border-shadow);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-gdocs-toggle-all:hover {
-      background: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
     }
 
-    /* TỪNG BUBBLE BÌNH LUẬN (GOOGLE DOCS COMMENT CARD) */
-    .gdocs-bubbles-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    /* BUBBLE GHI CHÚ & AI */
     .gdocs-comment-bubble {
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 10px 12px;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
-    .gdocs-comment-bubble:hover {
-      border-color: #94a3b8;
+      background: #FFFFFF;
+      border: 2px solid var(--border-color);
+      border-bottom: 3.5px solid var(--border-shadow);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      transition: all 0.15s ease;
     }
     .gdocs-comment-bubble.is-active {
-      border-color: #0284c7;
-      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2), 0 4px 10px rgba(0,0,0,0.06);
-      background: #f0f9ff;
+      border-color: #0284C7;
+      background: #F0F9FF;
     }
     .gdocs-bubble-header {
       display: flex;
@@ -188,376 +158,259 @@
       cursor: pointer;
       user-select: none;
     }
-    .gdocs-bubble-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
     .gdocs-bubble-badge {
       font-size: 12px;
-      font-weight: 800;
-      background: #e0f2fe;
-      color: #0284c7;
-      padding: 2px 7px;
-      border-radius: 4px;
+      font-weight: 900;
+      background: #E0F2FE;
+      color: #0284C7;
+      padding: 2px 8px;
+      border-radius: 6px;
     }
     .gdocs-bubble-preview {
-      font-size: 11.5px;
-      color: #64748b;
-      max-width: 140px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 6px;
+      font-weight: 700;
     }
-    .gdocs-bubble-toggle-btn {
-      background: transparent;
-      border: none;
-      color: #64748b;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 0 4px;
-      transition: transform 0.2s;
-    }
+    .gdocs-comment-bubble.is-collapsed .gdocs-bubble-body { display: none; }
 
-    /* KHI THU GỌN BUBBLE */
-    .gdocs-comment-bubble.is-collapsed .gdocs-bubble-body {
-      display: none;
-    }
-    .gdocs-comment-bubble.is-collapsed .gdocs-bubble-toggle-btn {
-      transform: rotate(-90deg);
-    }
-
-    /* THÂN BUBBLE CHỨA GHI CHÚ & TRỢ GIẢNG AI */
     .gdocs-bubble-body {
       margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+      border-top: 1.5px dashed var(--border-color);
     }
     .inline-thought-box {
-      margin-bottom: 8px;
-      padding: 6px 10px;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-left: 3px solid #16a34a;
-      border-radius: 5px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      background: #F0FDF4;
+      border: 1.5px solid #86EFAC;
+      border-radius: 10px;
     }
     .inline-thought-box label {
-      font-size: 11.5px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       color: #166534;
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
     .inline-thought-box textarea {
       width: 100%;
-      height: 34px;
-      min-height: 34px;
-      padding: 5px 8px;
-      font-size: 12.5px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      background: #ffffff;
-      color: #0f172a;
-      resize: vertical;
-      outline: none;
-      box-sizing: border-box;
-      font-family: inherit;
-    }
-    .ai-assistant-box {
+      height: 40px;
       padding: 6px 10px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-left: 3px solid #0284c7;
-      border-radius: 5px;
-    }
-    .ai-assistant-box label {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #0369a1;
-      display: block;
-      margin-bottom: 3px;
-    }
-    .ai-input-group {
-      display: flex;
-      gap: 5px;
-    }
-    .ai-input-group input {
-      flex: 1;
-      padding: 5px 8px;
-      font-size: 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
+      font-size: 13px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 8px;
       outline: none;
-    }
-    .ai-input-group input:focus { border-color: #0284c7; }
-    .ai-btn {
-      background: #0284c7;
-      color: #ffffff;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 11.5px;
-      cursor: pointer;
-    }
-    .ai-btn:hover { background: #0369a1; }
-    .ai-response {
-      margin-top: 6px;
-      font-size: 12px;
-      line-height: 1.45;
-      color: #1e293b;
-      padding: 6px 8px;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 5px;
-      display: none;
+      resize: vertical;
     }
 
-    /* NÚT ICON BÌNH LUẬN TRONG BÀI THI */
-    .btn-comment-anchor {
-      background: #f1f5f9;
-      color: #0369a1;
-      border: 1px solid #cbd5e1;
-      padding: 2px 6px;
+    .ai-assistant-box {
+      padding: 8px 12px;
+      background: #FFFFFF;
+      border: 1.5px solid #BAE6FD;
       border-radius: 10px;
-      font-size: 11px;
-      cursor: pointer;
-      margin-left: 5px;
-      vertical-align: middle;
-      transition: all 0.15s;
     }
-    .btn-comment-anchor:hover {
-      background: #0284c7;
-      color: #ffffff;
+    .ai-assistant-box label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0369A1;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .ai-input-group { display: flex; gap: 6px; }
+    .ai-input-group input {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 13px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 8px;
+      outline: none;
+    }
+    .ai-btn {
+      background: #0284C7;
+      color: white;
+      border: none;
+      border-bottom: 3px solid #075985;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-comment-anchor {
+      background: #FFFFFF;
+      color: #0369A1;
+      border: 1.5px solid var(--border-color);
+      border-bottom: 3px solid var(--border-shadow);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-left: 6px;
     }
 
     /* TIÊU ĐỀ & HƯỚNG DẪN ĐỀ THI */
     .section-title {
-      font-size: 16.5px;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 20px 0 8px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-left: 4px solid #0284c7;
-      padding-left: 10px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-main);
+      margin: 22px 0 10px 0;
+      border-left: 5px solid #0284C7;
+      padding-left: 12px;
     }
     .instructions-box {
-      background: #f1f5f9;
-      border-radius: 6px;
-      padding: 10px 14px;
-      color: #334155;
-      font-size: 13.5px;
-      line-height: 1.5;
-      margin-bottom: 16px;
-      border-left: 3px solid #94a3b8;
+      background: #FAF7F2;
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 18px;
     }
     .btn-audio-pill {
-      background: #f1f5f9;
-      color: #0369a1;
-      border: 1px solid #cbd5e1;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 11.5px;
+      background: #FFFFFF;
+      color: #0369A1;
+      border: 1.5px solid #BAE6FD;
+      border-bottom: 3px solid #7DD3FC;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.15s ease;
-      vertical-align: middle;
+      margin-left: 6px;
     }
-    .btn-audio-pill:hover { background: #0284c7; color: #ffffff; }
 
-    /* DẠNG ĐIỀN TỪ */
-    .table-question {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 14px 0 18px 0;
-      background: #ffffff;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      overflow: hidden;
-      font-size: 14px;
+    /* CÂU HỎI TRẮC NGHIỆM DUOLINGO */
+    .mcq-options-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+    .mcq-option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-bottom: 4px solid var(--border-shadow);
+      border-radius: 14px;
+      background: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.08s ease;
     }
-    .table-question th, .table-question td {
-      border: 1px solid #e2e8f0;
-      padding: 10px 12px;
-      line-height: 1.5;
-      vertical-align: middle;
+    .mcq-option-item:hover { background: #FAF7F2; }
+    .mcq-option-item.selected {
+      border-color: #0284C7;
+      border-bottom-color: #075985;
+      background: #F0F9FF;
     }
-    .table-question th { background: #f8fafc; color: #1e293b; font-weight: 800; }
-    .table-question tbody tr:nth-child(even) { background: #fafafa; }
+    .mcq-badge {
+      font-weight: 900;
+      color: #0284C7;
+      background: #E0F2FE;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .mcq-option-item.selected .mcq-badge {
+      background: #0284C7;
+      color: #FFFFFF;
+    }
+
+    /* ĐIỀN TỪ */
     .fill-input {
-      font-family: inherit; font-size: 14px; font-weight: 700; color: #0284c7;
-      background: #ffffff; border: 1.5px solid #94a3b8; border-radius: 5px;
-      padding: 5px 8px; text-align: center; outline: none; transition: all 0.2s ease; margin: 0 3px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      color: #0284C7;
+      background: #FFFFFF;
+      border: 2px solid #CBD5E1;
+      border-bottom: 3.5px solid #94A3B8;
+      border-radius: 10px;
+      padding: 6px 12px;
+      text-align: center;
+      outline: none;
+      margin: 0 4px;
     }
     .fill-input:focus {
-      border-color: #0284c7; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18); background: #f0f9ff;
-    }
-    .inline-result-feedback {
-      display: none; margin-top: 3px; padding: 3px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;
-    }
-    .inline-result-feedback.correct { background: #f0fdf4; border: 1px solid #86efac; color: #166534; display: inline-block; }
-    .inline-result-feedback.wrong { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; display: inline-block; }
-
-    /* DẠNG TRẮC NGHIỆM */
-    .lis-question-card {
-      background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px;
-      padding: 14px 16px; margin-top: 12px;
-    }
-    .lis-card-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;
-    }
-    .lis-card-title { color: #0f172a; font-size: 14.5px; font-weight: 800; line-height: 1.4; }
-    .mcq-options-list { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
-    .mcq-option-item {
-      display: flex; align-items: flex-start; gap: 10px; padding: 9px 14px;
-      border: 1.5px solid #e2e8f0; border-radius: 7px; background: #ffffff; cursor: pointer; transition: all 0.15s ease;
-    }
-    .mcq-option-item:hover { border-color: #94a3b8; background: #f8fafc; }
-    .mcq-option-item.selected { border-color: #0284c7; background: #f0f9ff; box-shadow: 0 0 0 1px #0284c7; }
-    .mcq-badge {
-      font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 2px 7px;
-      border-radius: 4px; font-size: 12.5px; min-width: 22px; text-align: center; flex-shrink: 0;
-    }
-    .mcq-option-item.selected .mcq-badge { background: #0284c7; color: #ffffff; }
-
-    /* DẠNG KÉO - THẢ */
-    .drag-drop-area { margin: 16px 0; }
-    .flowchart-step {
-      margin-bottom: 14px; background: #ffffff; padding: 12px 14px;
-      border-radius: 8px; border: 1px solid #e2e8f0;
-    }
-    .flowchart-step-title {
-      font-size: 14.5px; font-weight: 700; color: #0f172a; margin-bottom: 8px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .dropzone-box {
-      min-height: 44px; display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 12px; border: 2px dashed #94a3b8; border-radius: 7px;
-      background: #f8fafc; cursor: pointer; transition: all 0.2s ease; width: 100%; box-sizing: border-box;
-    }
-    .dropzone-box:hover, .dropzone-box.drag-over { border-color: #0284c7; background: #f0f9ff; border-style: solid; }
-    .dropzone-box.filled { border-style: solid; border-color: #0284c7; background: #ffffff; box-shadow: 0 2px 5px rgba(2, 132, 199, 0.08); }
-    .dropzone-box.correct-drop { border-color: #16a34a !important; background: #f0fdf4 !important; }
-    .dropzone-box.wrong-drop { border-color: #dc2626 !important; background: #fef2f2 !important; }
-    .drop-q-badge {
-      font-weight: 800; font-size: 12.5px; color: #0f172a; padding: 2px 7px;
-      border: 1px solid #cbd5e1; border-radius: 4px; background: #ffffff; flex-shrink: 0;
-    }
-    .drop-placeholder { color: #94a3b8; font-size: 13px; font-style: italic; }
-    .drop-content { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
-    .drop-content .drop-text { font-size: 13.5px; font-weight: 700; color: #0369a1; }
-    .btn-clear-drop {
-      background: #fee2e2; color: #dc2626; border: none; border-radius: 50%;
-      width: 20px; height: 20px; font-size: 11px; font-weight: bold; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .btn-clear-drop:hover { background: #dc2626; color: #ffffff; }
-
-    .drag-bank-wrapper {
-      margin-top: 20px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px;
-    }
-    .drag-bank-header { font-size: 13.5px; font-weight: 800; color: #1e293b; margin-bottom: 10px; }
-    .drag-items-grid { display: flex; flex-direction: column; gap: 8px; }
-    .draggable-card {
-      display: flex; align-items: center; gap: 10px; padding: 9px 14px;
-      background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px;
-      cursor: grab; user-select: none; transition: all 0.15s ease;
-    }
-    .draggable-card:hover { border-color: #0284c7; background: #f0f9ff; }
-    .draggable-card.is-used { opacity: 0.45; background: #f1f5f9; border-color: #e2e8f0; cursor: not-allowed; text-decoration: line-through; }
-    .drag-card-letter {
-      background: #0284c7; color: #ffffff; font-weight: 800; font-size: 12.5px; padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+      border-color: #0284C7;
+      background: #F0F9FF;
     }
 
-    /* DẠNG BẢN ĐỒ MAP LABELLING: HÌNH Ở TRÊN, BẢNG Ở DƯỚI */
-    .map-labelling-layout { display: flex; flex-direction: column; gap: 18px; margin: 18px 0; width: 100%; }
-    .map-image-card {
-      background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center; width: 100%; box-sizing: border-box;
-    }
-    .map-image-card img { max-width: 100%; height: auto; border-radius: 5px; display: block; margin: 0 auto; }
-    .map-matrix-table { width: 100%; border-collapse: collapse; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; overflow: hidden; }
-    .map-matrix-table th, .map-matrix-table td { border: 1px solid #e2e8f0; padding: 9px 6px; text-align: center; font-size: 13px; }
-    .map-matrix-table th { background: #f8fafc; font-weight: 800; color: #1e293b; }
-    .map-matrix-table tr:hover td { background: #f0f9ff; }
-    .map-matrix-table td.map-item-label { text-align: left; font-weight: 700; color: #0f172a; padding-left: 12px; }
-    .map-radio-custom { cursor: pointer; width: 18px; height: 18px; accent-color: #0284c7; }
-
-    /* NÚT NỘP BÀI & MODAL */
+    /* NÚT CHẤM BÀI 3D TO BẢN */
     .btn-submit {
-      background: #0284c7; color: white; border: none; padding: 13px 18px;
-      font-size: 15px; font-weight: 800; border-radius: 8px; width: 100%; cursor: pointer; margin-top: 22px;
+      background: var(--duo-green);
+      color: #FFFFFF !important;
+      border: none;
+      border-bottom: 5px solid var(--duo-green-shadow);
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 900;
+      border-radius: 16px;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.08s ease;
     }
-    .btn-submit:hover { background: #0369a1; }
-    .btn-full-submit {
-      margin-top: 12px; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
-      color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 15.5px; font-weight: 800; cursor: pointer;
-    }
+    .btn-submit:active { transform: translateY(3px); border-bottom-width: 2px; }
 
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px);
-      display: none !important; align-items: center; justify-content: center; z-index: 9999; padding: 15px;
+    .btn-full-submit {
+      margin-top: 14px;
+      background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
+      color: #FFFFFF !important;
+      border: none;
+      border-bottom: 5px solid #1E1B4B;
+      padding: 15px 24px;
+      border-radius: 16px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.08s ease;
     }
-    .modal-backdrop.is-active { display: flex !important; }
-    .modal-content {
-      background: #ffffff; width: 100%; max-width: 780px; max-height: 90vh; border-radius: 12px;
-      display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); overflow: hidden;
-    }
-    .modal-header { background: #0f172a; color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .modal-body { padding: 20px; overflow-y: auto; }
-    .band-score-banner {
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e;
-      border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px;
-    }
-    .band-score-value { font-size: 46px; font-weight: 900; color: #15803d; line-height: 1.1; margin: 4px 0; }
-    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
-    .summary-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; text-align: center; }
-    .summary-card b { font-size: 18px; color: #0284c7; }
-    .answers-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-    .answers-table th, .answers-table td { border: 1px solid #e2e8f0; padding: 9px 12px; text-align: left; }
-    .answers-table th { background: #f1f5f9; color: #334155; font-weight: 700; }
-    .status-correct { color: #16a34a; font-weight: 700; }
-    .status-wrong { color: #dc2626; font-weight: 700; }
+    .btn-full-submit:active { transform: translateY(3px); border-bottom-width: 2px; }
   </style>
 </head>
 <body class="listening-test">
 
-<div class="user-info-box">
-  <div class="user-info-field">
-    <label for="studentNameInput">👤 Họ và Tên:</label>
-    <input type="text" id="studentNameInput" placeholder="Đang đồng bộ họ tên...">
+<div class="user-info-box" style="background:#FFFFFF; border:2px solid var(--border-color); border-bottom:4px solid var(--border-shadow); border-radius:18px; padding:14px 20px; max-width:1250px; margin:16px auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+    <div style="display:flex; align-items:center; gap:6px;">
+      <b style="font-size:13.5px;">Họ và Tên:</b>
+      <input type="text" id="studentNameInput" placeholder="Đang đồng bộ..." style="padding:6px 12px; border:1.5px solid var(--border-color); border-radius:8px; font-weight:700; font-size:13.5px;">
+    </div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <b style="font-size:13.5px;">Email Google:</b>
+      <input type="email" id="studentEmailInput" placeholder="Đang đồng bộ..." style="padding:6px 12px; border:1.5px solid var(--border-color); border-radius:8px; font-weight:700; font-size:13.5px;">
+    </div>
   </div>
-  <div class="user-info-field">
-    <label for="studentEmailInput">✉️ Email Google:</label>
-    <input type="email" id="studentEmailInput" placeholder="Đang đồng bộ Email...">
+
+  <div style="display:flex; align-items:center; gap:10px;">
+    <a href="listening.html" class="btn-3d btn-3d-white" style="padding:8px 16px; font-size:13px;">← Danh mục Đề</a>
+    <a href="../index.html" class="btn-3d btn-3d-white" style="padding:8px 16px; font-size:13px;">Trang chủ</a>
   </div>
 </div>
 
-<div class="header-bar">
-  <h1 id="testTitleHeader">IELTS Listening Test</h1>
-  <div class="header-nav">
-    <a href="../index.html" class="nav-link">🏠 Trang chủ</a>
-    <a href="listening.html" class="nav-link" style="margin-left: 10px;">🎧 Danh mục Đề</a>
+<div class="header-bar" style="background:#FFFFFF; border:2px solid var(--border-color); border-bottom:4px solid var(--border-shadow); border-radius:18px; padding:14px 22px; max-width:1250px; margin:0 auto 20px auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+  <h1 id="testTitleHeader" style="margin:0; font-size:20px; font-weight:900; color:var(--lis-blue);">IELTS Listening Test</h1>
+  
+  <div style="display:flex; align-items:center; gap:10px;">
+    <div style="display:flex; align-items:center; gap:6px; background:#FAF7F2; padding:6px 12px; border-radius:12px; border:1.5px solid var(--border-color); font-weight:800; font-size:13.5px;">
+      <span>Thời gian:</span>
+      <span id="timerDisplay" style="color:#D97706; font-size:15px;">00:00</span>
+      <button type="button" onclick="window.startTimer && window.startTimer()" style="background:#22C55E; color:white; border:none; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">▶ Bắt đầu</button>
+      <button type="button" onclick="window.pauseTimer && window.pauseTimer()" style="background:#F59E0B; color:white; border:none; padding:4px 8px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">⏸ Tạm dừng</button>
+    </div>
+
+    <div id="scoreBadge" style="display:none; background:#DCFCE7; color:#166534; border:1.5px solid #86EFAC; padding:6px 14px; border-radius:12px; font-weight:900; font-size:14px;">
+      Điểm số: <span id="scoreText">0/10</span>
+    </div>
   </div>
-  <div class="header-controls">
-    <button type="button" class="btn-header" onclick="window.changeFontSize(-1)">A-</button>
-    <button type="button" class="btn-header" onclick="window.changeFontSize(1)">A+</button>
-    <button type="button" class="btn-header" id="btnThemeToggle" onclick="window.toggleTheme()">🌙 Tối/Sáng</button>
-  </div>
-  <div class="timer-container">
-    <span>⏱️ Thời gian:</span>
-    <span class="timer-display" id="timerDisplay">00:00</span>
-    <button type="button" class="btn-header" style="background:#22c55e;" onclick="window.startTimer && window.startTimer()">▶️ Bắt đầu</button>
-    <button type="button" class="btn-header" style="background:#eab308;" onclick="window.pauseTimer && window.pauseTimer()">⏸️ Tạm dừng</button>
-  </div>
-  <div class="score-badge" id="scoreBadge">Điểm số: <span id="scoreText">0/10</span></div>
 </div>
 
-<div class="audio-player-container" id="audioPlayerWrapper" style="display: none;">
+<div class="audio-player-container" id="audioPlayerWrapper" style="display: none; max-width:1250px; margin:0 auto 20px auto;">
   <audio id="mainAudioElement" class="audio-player-element" controls preload="auto"></audio>
 </div>
 
@@ -565,24 +418,24 @@
   <div class="passage-box" id="passageBox"></div>
   <div class="resizer" id="dragResizer"><div class="resizer-icon">◄►</div></div>
   <div class="question-box" id="questionBox">
-    <div style="text-align:center; padding: 40px; color: var(--text-muted);">⏳ Đang tải nội dung phần thi Nghe...</div>
+    <div style="text-align:center; padding: 40px; color: var(--text-muted); font-weight: 800; font-size: 15px;">
+      ⏳ Đang tải nội dung phần thi Nghe...
+    </div>
   </div>
 </div>
 
 <div id="fullScoreModal" class="modal-backdrop">
   <div class="modal-content">
-    <div class="modal-header">
-      <h3 style="margin: 0; font-size: 17px;">📊 BẢNG TỔNG KẾT ĐIỂM THI IELTS LISTENING (40 CÂU)</h3>
-      <button onclick="document.getElementById('fullScoreModal').classList.remove('is-active')" style="background:transparent; border:none; color:white; font-size:22px; cursor:pointer;">&times;</button>
+    <div style="background:#0F172A; color:white; padding:18px 22px; display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin: 0; font-size: 17px; font-weight:900;">BẢNG TỔNG KẾT ĐIỂM THI IELTS LISTENING (40 CÂU)</h3>
+      <button onclick="document.getElementById('fullScoreModal').classList.remove('is-active')" style="background:transparent; border:none; color:white; font-size:24px; cursor:pointer; font-weight:900;">&times;</button>
     </div>
-    <div class="modal-body" id="fullScoreModalBody"></div>
+    <div class="modal-body" id="fullScoreModalBody" style="padding:22px; overflow-y:auto;"></div>
   </div>
 </div>
 
 <script>
-  /* ========================================================
-     HỆ THỐNG LƯU TRỮ VĨNH VIỄN (AUTO-SAVE)
-     ======================================================== */
+  /* AUTO-SAVE VÀ ĐIỀU HƯỚNG GHI CHÚ */
   window.saveThought = function(qId, val) {
     if (!window.CURRENT_BASE_TEST) return;
     try {
@@ -617,7 +470,6 @@
 
   window.restoreSavedUserData = function() {
     if (!window.CURRENT_BASE_TEST) return;
-
     try {
       const thoughtKey = `ielts_thought_${window.CURRENT_BASE_TEST}`;
       const thoughtStore = JSON.parse(localStorage.getItem(thoughtKey) || '{}');
@@ -665,15 +517,12 @@
     observer.observe(qBox, { childList: true, subtree: true, characterData: true });
   }
 
-  /* ========================================================
-     ĐIỀU HƯỚNG BÌNH LUẬN KIỂU GOOGLE DOCS
-     ======================================================== */
   window.activateCommentBubble = function(qId) {
     document.querySelectorAll('.gdocs-comment-bubble').forEach(b => b.classList.remove('is-active'));
     const target = document.getElementById(`bubble_${qId}`);
     if (target) {
       target.classList.add('is-active');
-      target.classList.remove('is-collapsed'); // Tự động mở ra khi được chọn
+      target.classList.remove('is-collapsed');
       target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   };
@@ -756,11 +605,6 @@
   window.handleDragStart = function(e, key, text) {
     window.draggedData = { key, text };
     e.dataTransfer.setData('text/plain', JSON.stringify({ key, text }));
-    e.target.classList.add('is-dragging');
-  };
-
-  window.handleDragEnd = function(e) {
-    e.target.classList.remove('is-dragging');
   };
 
   window.handleDragOver = function(e) {
@@ -786,43 +630,21 @@
     }
   };
 
-  window.selectOptionToPlace = function(key, text, el) {
-    document.querySelectorAll('.draggable-card').forEach(c => c.style.outline = '');
-    if (window.selectedOptionForPlacement && window.selectedOptionForPlacement.key === key) {
-      window.selectedOptionForPlacement = null;
-    } else {
-      window.selectedOptionForPlacement = { key, text };
-      el.style.outline = '2px solid #0284c7';
-    }
-  };
-
-  window.handleDropzoneClick = function(qId) {
-    window.activateCommentBubble(qId);
-    if (window.selectedOptionForPlacement) {
-      window.placeAnswerIntoDropzone(qId, window.selectedOptionForPlacement.key, window.selectedOptionForPlacement.text);
-      document.querySelectorAll('.draggable-card').forEach(c => c.style.outline = '');
-      window.selectedOptionForPlacement = null;
-    }
-  };
-
   window.placeAnswerIntoDropzone = function(qId, key, text) {
     window.syncUserAnswer(qId, key);
-
     const dz = document.getElementById(`dropzone_${qId}`);
     if (dz) {
       dz.classList.add('filled');
       dz.innerHTML = `
-        <div class="drop-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <div style="display:flex; align-items:center; gap:8px;">
-            <span class="drop-q-badge">Câu ${qId.replace('q','')}</span>
-            <span class="mcq-badge">${key}</span>
-            <span class="drop-text">${text}</span>
+            <span style="font-weight:900; background:#E0F2FE; color:#0284C7; padding:2px 8px; border-radius:6px;">${key}</span>
+            <span style="font-weight:700; color:#0369A1;">${text}</span>
           </div>
-          <button type="button" class="btn-clear-drop" onclick="window.clearDropAnswer('${qId}', event)" title="Bỏ chọn">✕</button>
+          <button type="button" onclick="window.clearDropAnswer('${qId}', event)" style="background:#FEE2E2; color:#DC2626; border:none; border-radius:50%; width:22px; height:22px; font-weight:900; cursor:pointer;">&times;</button>
         </div>
       `;
     }
-    window.updateDraggableUsedStates();
   };
 
   window.clearDropAnswer = function(qId, e) {
@@ -831,30 +653,11 @@
     const dz = document.getElementById(`dropzone_${qId}`);
     if (dz) {
       dz.classList.remove('filled');
-      dz.innerHTML = `
-        <span class="drop-q-badge">Câu ${qId.replace('q','')}</span>
-        <span class="drop-placeholder">Drop answer here</span>
-      `;
+      dz.innerHTML = `<span style="color:#94A3B8; font-style:italic;">Kéo thả đáp án vào đây</span>`;
     }
-    window.updateDraggableUsedStates();
   };
 
-  window.updateDraggableUsedStates = function() {
-    const chosenLetters = new Set();
-    document.querySelectorAll('.dropzone-box.filled .mcq-badge').forEach(b => chosenLetters.add(b.innerText.trim()));
-    document.querySelectorAll('.draggable-card').forEach(card => {
-      const key = card.getAttribute('data-key');
-      if (chosenLetters.has(key)) {
-        card.classList.add('is-used');
-      } else {
-        card.classList.remove('is-used');
-      }
-    });
-  };
-
-  /* ========================================================
-     BUILD BÀI THI (GOOGLE DOCS LAYOUT 2 CỘT)
-     ======================================================== */
+  /* BUILD BÀI THI DUOLINGO 2 CỘT */
   window.buildListeningHtml = function(data, isPart4) {
     if (!data.groups || !data.questions) return data.questionHtml || "";
     let paperHtml = '';
@@ -871,90 +674,74 @@
       const isMapGroup = group.type === 'map' || group.imageUrl;
 
       if (isMapGroup) {
-        // MAP LABELLING: HÌNH Ở TRÊN, MA TRẬN BẢNG Ở DƯỚI
         const optsLetters = ['A','B','C','D','E','F','G','H','I','J'].slice(0, group.optionsCount || 9);
         const imgPath = group.imageUrl || 'data-l/images/cam21-t2-p2-map.png';
 
         paperHtml += `
-          <div class="map-labelling-layout">
-            <div class="map-image-card">
-              <img src="${imgPath}" alt="Map Diagram" onerror="this.src='data-l/images/cam21-t2-p2-map.png';">
+          <div style="margin: 18px 0;">
+            <div style="background:#FFFFFF; border:2px solid var(--border-color); border-radius:16px; padding:12px; text-align:center; margin-bottom:14px;">
+              <img src="${imgPath}" alt="Map" style="max-width:100%; height:auto; border-radius:10px;">
             </div>
-            <div>
-              <table class="map-matrix-table">
-                <thead>
-                  <tr>
-                    <th style="text-align:left; padding-left:12px;">Questions</th>
-                    ${optsLetters.map(l => `<th>${l}</th>`).join('')}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${group.questionIds.map(qId => {
-                    allQIds.push(qId);
-                    const q = data.questions[qId];
-                    return `
-                      <tr id="row_${qId}" onclick="window.activateCommentBubble('${qId}')">
-                        <td class="map-item-label">
-                          <b>${q?.num || qId.replace('q','')}</b>. ${q?.text || ''}
-                          ${q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶</button>` : ''}
-                          <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')" title="Mở ghi chú & hỏi AI">💬</button>
+            <table style="width:100%; border-collapse:collapse; background:#FFFFFF; border:2px solid var(--border-color); border-radius:16px; overflow:hidden;">
+              <thead>
+                <tr style="background:#FAF7F2;">
+                  <th style="padding:10px 14px; text-align:left;">Câu hỏi</th>
+                  ${optsLetters.map(l => `<th style="padding:10px 6px; text-align:center;">${l}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${group.questionIds.map(qId => {
+                  allQIds.push(qId);
+                  const q = data.questions[qId];
+                  return `
+                    <tr style="border-top:1px solid var(--border-color);">
+                      <td style="padding:10px 14px; font-weight:800;">
+                        Câu ${q?.num || qId.replace('q','')}. ${q?.text || ''}
+                        ${q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ Nghe</button>` : ''}
+                        <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')">Ghi chú</button>
+                      </td>
+                      ${optsLetters.map(letter => `
+                        <td style="text-align:center; padding:6px;">
+                          <input type="radio" name="${qId}" value="${letter}" onchange="window.syncUserAnswer('${qId}', '${letter}')" style="width:18px; height:18px; accent-color:#0284C7; cursor:pointer;">
                         </td>
-                        ${optsLetters.map(letter => `
-                          <td>
-                            <input type="radio" name="${qId}" value="${letter}" class="map-radio-custom" onchange="window.syncUserAnswer('${qId}', '${letter}')">
-                          </td>
-                        `).join('')}
-                      </tr>
-                    `;
-                  }).join('')}
-                </tbody>
-              </table>
-            </div>
+                      `).join('')}
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
           </div>
         `;
 
       } else if (isMatchingDragDrop) {
-        // FLOWCHART KÉO THẢ (SẠCH SẼ, KHÔNG BỊ CHOÁN CHỖ)
-        paperHtml += `<div class="drag-drop-area">`;
-        if (group.notesTitle) {
-          paperHtml += `<h4 style="margin: 0 0 12px 0; color:#0f172a; font-size:15px; font-weight:800;">${group.notesTitle}</h4>`;
-        }
-
+        paperHtml += `<div style="margin:16px 0;">`;
         group.questionIds.forEach(qId => {
           allQIds.push(qId);
           const q = data.questions[qId];
           paperHtml += `
-            <div class="flowchart-step" id="${qId}">
-              <div class="flowchart-step-title">
-                <span>
-                  <b>${q?.num || qId.replace('q','')}.</b> ${q?.stepTitle || q?.text || ''}
-                  <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')" title="Ghi chú & hỏi AI">💬</button>
+            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:14px; padding:14px; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:900; font-size:15px;">
+                  Câu ${q?.num || qId.replace('q','')}. ${q?.stepTitle || q?.text || ''}
+                  <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')">Ghi chú</button>
                 </span>
                 ${q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ ${formatTime(q.time)}</button>` : ''}
               </div>
-              <div class="dropzone-box" id="dropzone_${qId}" data-qid="${qId}" 
-                   ondragover="window.handleDragOver(event)" 
-                   ondragleave="window.handleDragLeave(event)" 
-                   ondrop="window.handleDrop(event, '${qId}')"
-                   onclick="window.handleDropzoneClick('${qId}')">
-                <span class="drop-q-badge">Câu ${q?.num || qId.replace('q','')}</span>
-                <span class="drop-placeholder">Drop answer here</span>
+              <div id="dropzone_${qId}" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${qId}')" style="min-height:44px; border:2px dashed #94A3B8; border-radius:10px; background:#FFFFFF; display:flex; align-items:center; padding:6px 14px;">
+                <span style="color:#94A3B8; font-style:italic;">Kéo thả đáp án vào đây</span>
               </div>
             </div>
           `;
         });
 
         paperHtml += `
-          <div class="drag-bank-wrapper">
-            <div class="drag-bank-header">🎯 <b>Drag and drop an option to fill in each blank</b>:</div>
-            <div class="drag-items-grid">
+          <div style="background:#FFFFFF; border:2px solid var(--border-color); border-radius:16px; padding:16px; margin-top:16px;">
+            <b style="display:block; margin-bottom:10px; font-size:14px;">Ngân hàng đáp án:</b>
+            <div style="display:flex; flex-direction:column; gap:8px;">
               ${group.options.map(opt => `
-                <div class="draggable-card" draggable="true" data-key="${opt.key}"
-                     ondragstart="window.handleDragStart(event, '${opt.key}', '${opt.text.replace(/'/g, "\\'")}')"
-                     ondragend="window.handleDragEnd(event)"
-                     onclick="window.selectOptionToPlace('${opt.key}', '${opt.text.replace(/'/g, "\\'")}', this)">
-                  <span class="drag-card-letter">${opt.key}</span>
-                  <span style="font-size:13.5px; font-weight:600;">${opt.text}</span>
+                <div draggable="true" ondragstart="window.handleDragStart(event, '${opt.key}', '${opt.text.replace(/'/g, "\\'")}')" style="background:#FAF7F2; border:1.5px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:grab; display:flex; align-items:center; gap:10px;">
+                  <span style="background:#0284C7; color:white; font-weight:900; padding:2px 8px; border-radius:6px;">${opt.key}</span>
+                  <span style="font-weight:700;">${opt.text}</span>
                 </div>
               `).join('')}
             </div>
@@ -962,36 +749,29 @@
         </div>`;
 
       } else if (isGapFillGroup) {
-        // ĐIỀN TỪ TRỰC TIẾP
         let contentBody = group.tableHtml || group.template || '';
-        
         group.questionIds.forEach(qId => {
           allQIds.push(qId);
           const q = data.questions[qId];
-          const width = q?.inputWidth || "120px";
-          const audioTimeStr = q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ ${formatTime(q.time)}</button>` : '';
+          const width = q?.inputWidth || "140px";
+          const audioTimeStr = q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶</button>` : '';
 
           const inputReplacement = `
-            <span style="display:inline-block; vertical-align:middle; margin:2px 0;">
+            <span style="display:inline-block; vertical-align:middle; margin:3px 0;">
               <input type="text" class="fill-input" id="${qId}_input" style="width:${width};" placeholder="[Câu ${q?.num || qId}]" 
                      onfocus="window.activateCommentBubble('${qId}')"
                      oninput="window.syncUserAnswer('${qId}', this.value)">
               ${audioTimeStr}
-              <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')" title="Ghi chú & hỏi AI">💬</button>
-              <div id="${qId}_feedback" class="inline-result-feedback"></div>
+              <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')">Ghi chú</button>
+              <div id="${qId}_feedback" style="display:none; font-size:12px; font-weight:800; padding:2px 6px; border-radius:4px; margin-top:2px;"></div>
             </span>
           `;
           contentBody = contentBody.replace(new RegExp(`{{${qId}}}`, 'g'), inputReplacement);
         });
 
-        if (group.notesTitle) {
-          contentBody = `<div style="background:#f8fafc; border:1.5px solid #e2e8f0; padding:16px; border-radius:8px;"><h4 style="margin-top:0; margin-bottom:10px; font-size:15px;">${group.notesTitle}</h4>${contentBody}</div>`;
-        }
-
-        paperHtml += `<div style="margin-bottom:16px; font-size:14.5px; line-height:1.75;">${contentBody}</div>`;
+        paperHtml += `<div style="margin-bottom:18px; font-size:15px; line-height:1.8;">${contentBody}</div>`;
 
       } else {
-        // TRẮC NGHIỆM TIÊU CHUẨN
         group.questionIds.forEach(qId => {
           allQIds.push(qId);
           const q = data.questions[qId];
@@ -1008,18 +788,18 @@
                 <label class="mcq-option-item" onclick="window.syncUserAnswer('${qId}', '${letter}'); window.activateCommentBubble('${qId}');">
                   <input type="radio" name="${qId}" value="${letter}" style="display:none;">
                   <span class="mcq-badge">${letter}</span>
-                  <span style="font-size:14px; line-height:1.4; color:#1e293b;">${text}</span>
+                  <span style="font-size:14.5px; font-weight:700; color:var(--text-main);">${text}</span>
                 </label>
               `;
             }).join('');
           }
 
           paperHtml += `
-            <div class="lis-question-card" id="${qId}" onclick="window.activateCommentBubble('${qId}')">
-              <div class="lis-card-header">
-                <span class="lis-card-title">
-                  <b>Câu ${q.num || qId.replace('q','')}.</b> ${q.text || ''}
-                  <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')" title="Ghi chú & hỏi AI">💬</button>
+            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:18px; padding:18px 20px; margin-top:14px;" id="${qId}" onclick="window.activateCommentBubble('${qId}')">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:16px; font-weight:900;">
+                  Câu ${q.num || qId.replace('q','')}. ${q.text || ''}
+                  <button type="button" class="btn-comment-anchor" onclick="window.activateCommentBubble('${qId}')">Ghi chú</button>
                 </span>
                 ${q.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ ${formatTime(q.time)}</button>` : ''}
               </div>
@@ -1031,35 +811,34 @@
       }
     });
 
-    paperHtml += `<button type="button" class="btn-submit" onclick="window.checkAnswers()">CHẤM BÀI PHẦN NÀY VÀ MỞ TRANSCRIPT</button>`;
+    paperHtml += `<button type="button" class="btn-submit" onclick="window.checkAnswers()">CHẤM BÀI PHẦN NÀY VÀ MỞ TRANSCRIPT &rarr;</button>`;
 
     if (isPart4) {
       paperHtml += `
         <button type="button" class="btn-full-submit" onclick="window.submitFullListeningTest()">
-          🏆 NỘP TỔNG & TÍNH BAND SCORE CẢ 4 PARTS (40 CÂU)
+          NỘP TỔNG & TÍNH BAND SCORE CẢ 4 PARTS (40 CÂU) &rarr;
         </button>
       `;
     }
 
-    // SINH TOÀN BỘ CỘT BÌNH LUẬN KIỂU GOOGLE DOCS BÊN TAY PHẢI
     const commentsListHtml = allQIds.map(qId => {
       const num = data.questions[qId]?.num || qId.replace('q','');
       return `
         <div class="gdocs-comment-bubble is-collapsed" id="bubble_${qId}" onclick="window.activateCommentBubble('${qId}')">
           <div class="gdocs-bubble-header" onclick="window.toggleSingleCommentBubble('${qId}', event)">
-            <div class="gdocs-bubble-title">
+            <div>
               <span class="gdocs-bubble-badge">Câu ${num}</span>
               <span class="gdocs-bubble-preview" id="bubble_prev_${qId}"></span>
             </div>
-            <button type="button" class="gdocs-bubble-toggle-btn" title="Thu gọn / Mở rộng">▾</button>
+            <span style="font-size:12px; font-weight:900; color:var(--text-muted);">▼</span>
           </div>
           <div class="gdocs-bubble-body">
             <div class="inline-thought-box">
-              <label>💭 Mạch suy nghĩ của em:</label>
+              <label>Mạch suy nghĩ của em:</label>
               <textarea id="${qId}_thought" placeholder="Ghi chú suy nghĩ..." oninput="window.saveThought('${qId}', this.value)"></textarea>
             </div>
             <div class="ai-assistant-box">
-              <label>🤖 Hỏi Trợ giảng AI:</label>
+              <label>Hỏi Trợ giảng AI:</label>
               <div class="ai-input-group">
                 <input type="text" id="ai_ask_${qId}" placeholder="Hỏi AI về câu này..." oninput="window.saveAiDraft('${qId}', this.value)">
                 <button type="button" class="ai-btn" onclick="window.askGeminiAI && window.askGeminiAI('${qId}')">Gửi</button>
@@ -1078,10 +857,10 @@
         </div>
         <div class="gdocs-comments-col">
           <div class="gdocs-comments-header">
-            <span class="gdocs-header-title">💬 Ghi chú & AI</span>
-            <div class="gdocs-header-actions">
-              <button type="button" class="btn-gdocs-toggle-all" onclick="window.toggleAllCommentBubbles(true)" title="Mở tất cả">Mở hết</button>
-              <button type="button" class="btn-gdocs-toggle-all" onclick="window.toggleAllCommentBubbles(false)" title="Thu gọn tất cả">Thu gọn</button>
+            <span class="gdocs-header-title">Ghi chú & Trợ giảng AI</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn-gdocs-toggle-all" onclick="window.toggleAllCommentBubbles(true)">Mở hết</button>
+              <button type="button" class="btn-gdocs-toggle-all" onclick="window.toggleAllCommentBubbles(false)">Thu gọn</button>
             </div>
           </div>
           <div class="gdocs-bubbles-container">
@@ -1118,20 +897,12 @@
           const userVal = inp.value.trim().toLowerCase();
           let isCorrect = Array.isArray(official) ? official.some(a => a.toLowerCase() === userVal) : (String(official).trim().toLowerCase() === userVal);
           if (isCorrect) {
-            inp.style.borderColor = '#16a34a'; inp.style.backgroundColor = '#f0fdf4';
-            feedback.className = 'inline-result-feedback correct'; feedback.innerHTML = `✓ Đúng!`;
+            inp.style.borderColor = '#22C55E'; inp.style.backgroundColor = '#F0FDF4';
+            feedback.style.display = 'block'; feedback.style.color = '#166534'; feedback.innerHTML = `✓ Đúng!`;
           } else {
-            inp.style.borderColor = '#dc2626'; inp.style.backgroundColor = '#fef2f2';
-            feedback.className = 'inline-result-feedback wrong'; feedback.innerHTML = `✗ Sai! Đáp án: <b>${Array.isArray(official) ? official.join(' / ') : official}</b>`;
+            inp.style.borderColor = '#EF4444'; inp.style.backgroundColor = '#FFF5F5';
+            feedback.style.display = 'block'; feedback.style.color = '#991B1B'; feedback.innerHTML = `✗ Sai! Đáp án: <b>${Array.isArray(official) ? official.join(' / ') : official}</b>`;
           }
-        }
-
-        const dz = document.getElementById(`dropzone_${qId}`);
-        if (dz) {
-          const badge = dz.querySelector('.mcq-badge');
-          const userVal = badge ? badge.innerText.trim().toUpperCase() : '';
-          const isCorrect = userVal === String(official).trim().toUpperCase();
-          dz.classList.add(isCorrect ? 'correct-drop' : 'wrong-drop');
         }
       });
     }
@@ -1140,10 +911,9 @@
     if (questionBox && !document.getElementById('submitSuccessBanner')) {
       const banner = document.createElement('div');
       banner.id = 'submitSuccessBanner';
-      banner.className = 'submit-banner';
-      banner.style.cssText = 'background:#ecfdf5; border:1.5px solid #10b981; border-radius:8px; padding:12px 16px; margin-bottom:16px; color:#065f46; font-size:13.5px; display:flex; align-items:center; gap:8px;';
+      banner.style.cssText = 'background:#F0FDF4; border:2px solid #86EFAC; border-radius:14px; padding:14px 18px; margin-bottom:18px; color:#166534; font-size:14px; font-weight:800;';
       banner.innerHTML = `
-        <span>🎉 <b>Đã chấm bài xong!</b> Transcript đối chiếu đã mở ở cột bên trái. Bạn có thể giữ chuột vào thanh giữa ◄► để kéo co giãn.</span>
+        <span>✓ ĐÃ CHẤM BÀI XONG! Transcript đối chiếu đã mở ở cột bên trái. Em có thể giữ chuột vào thanh giữa ◄► để kéo co giãn.</span>
       `;
       questionBox.insertBefore(banner, questionBox.firstChild);
       questionBox.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1155,9 +925,8 @@
     const passageBox = document.getElementById('passageBox');
     if (el && passageBox) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.style.transition = 'all 0.3s ease';
-      el.style.backgroundColor = '#fef08a';
-      el.style.outline = '2px solid #eab308';
+      el.style.backgroundColor = '#FEF08A';
+      el.style.outline = '2px solid #EAB308';
       setTimeout(() => {
         el.style.backgroundColor = '';
         el.style.outline = '';
@@ -1207,10 +976,10 @@
 
       if (!data) {
         document.getElementById('mainContainer').innerHTML = `
-          <div style="padding: 30px; text-align: center; width: 100%;">
-            <h3 style="color: #dc2626;">❌ Không tìm thấy file đề: <code>${fileName}.json</code></h3>
-            <p style="color: #64748b;">Hãy kiểm tra lại xem file đã được đặt vào thư mục <code>listening/data-l/</code> chưa.</p>
-            <a href="listening.html" style="color:#0284c7; font-weight:700;">Quay về danh mục nghe</a>
+          <div style="padding: 40px; text-align: center; width: 100%; background:#FFFFFF; border-radius:20px; border:2px solid var(--border-color);">
+            <h3 style="color: #DC2626; font-size:18px;">❌ Không tìm thấy file đề: <code>${fileName}.json</code></h3>
+            <p style="color: var(--text-muted); font-size:14px;">Hãy kiểm tra lại xem file đã được đặt vào thư mục <code>listening/data-l/</code> chưa.</p>
+            <a href="listening.html" style="color:#0284C7; font-weight:800;">← Quay về danh mục nghe</a>
           </div>
         `;
         return;
@@ -1248,7 +1017,6 @@
       };
 
       await initListeningApp();
-
       window.restoreSavedUserData();
       setupAiObserver();
 
