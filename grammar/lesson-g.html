@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Luyện Tập Ngữ Pháp IELTS</title>
+  <title>Luyện Tập Ngữ Pháp IELTS - Trạm IELTS</title>
   
-  <!-- Các file giao diện -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/base-g.css">
   <link rel="stylesheet" href="css/components-g.css">
   <link rel="stylesheet" href="css/exercise-g.css">
 
-  <!-- ================================================================= -->
-  <!-- ĐÂY CHÍNH LÀ DÒNG THƯ VIỆN MARKED MỚI ĐƯỢC THÊM VÀO NÈ BẠN:     -->
-  <!-- Dòng này giúp dịch kết quả từ AI thành bảng điểm đẹp mắt cho học sinh -->
+  <!-- Thư viện Marked chuyển kết quả AI thành bảng điểm đẹp mắt -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <!-- ================================================================= -->
-
 </head>
 <body>
 
 <div class="container-g" id="appContainer">
-  <a href="index-g.html" class="nav-back-g">&larr; Trở về danh mục chuyên đề</a>
+  <a href="index-g.html" class="nav-back-g">
+    <i class="fa-solid fa-arrow-left"></i> Trở về danh mục chuyên đề
+  </a>
 </div>
 
 <script type="module">
@@ -29,7 +27,7 @@
   async function initLesson() {
     const appContainer = document.getElementById('appContainer');
     
-    // Đọc tên thì từ thanh địa chỉ web (?tense=...)
+    // Đọc tên chuyên đề từ URL (?tense=...)
     const urlParams = new URLSearchParams(window.location.search);
     const tense = urlParams.get('tense') || 'present-simple';
 
@@ -41,22 +39,22 @@
       ]);
 
       if (!theoryRes.ok || !exerciseRes.ok) {
-        throw new Error("Không tìm thấy file JSON của bài này.");
+        throw new Error("Không tìm thấy file JSON của bài học này.");
       }
 
       const theoryData = await theoryRes.json();
       const exerciseData = await exerciseRes.json();
 
-      // Gọi bộ vẽ giao diện và gắn tính năng AI chấm bài
+      // Gọi bộ vẽ giao diện và kích hoạt AI chấm bài
       const renderer = new LessonRenderer(appContainer, theoryData, exerciseData);
       renderer.renderAll();
 
     } catch (err) {
       console.error(err);
       appContainer.innerHTML += `
-        <div style="background:#fee2e2; color:#991b1b; padding:20px; border-radius:8px; margin-top:20px;">
-          <h3>⚠️ Chưa tìm thấy dữ liệu bài học!</h3>
-          <p>Hệ thống không tìm thấy file cho thì: <b>${tense}</b>.</p>
+        <div style="background:#FFF5F5; color:#991B1B; padding:24px; border-radius:18px; border:2px solid #FCA5A5; margin-top:20px;">
+          <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:900;">⚠️ Chưa tìm thấy dữ liệu bài học!</h3>
+          <p style="margin:0; font-weight:700; font-size:14px;">Hệ thống không tìm thấy file cho chuyên đề: <b>${tense}</b>. Em hãy quay lại danh mục để chọn bài khác nhé.</p>
         </div>
       `;
     }
