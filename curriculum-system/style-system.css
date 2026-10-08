@@ -1,23 +1,23 @@
 /* =========================================================================
    curriculum-system/style-system.css
-   GIAO DIỆN LỘ TRÌNH, AI DIAGNOSTIC, LỊCH THÁNG & BÁO CÁO ZALO PHỤ HUYNH
+   GIAO DIỆN LỘ TRÌNH, 4 Ô THỐNG KÊ 3D & LỊCH DUOLINGO CHỮ TO RÕ NÉT
    ========================================================================= */
 
 .cs-container {
   background: var(--bg-card, #ffffff);
-  border: 2px solid #0284c7;
-  border-radius: 14px;
-  padding: 22px;
-  margin-bottom: 24px;
-  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.08);
-  color: var(--text-main, #0f172a);
+  border: 2.5px solid #E8E2D8;
+  border-bottom: 5px solid #D3CBC0;
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 26px;
+  color: var(--text-main, #261F1D);
 }
 
 .cs-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1.5px solid var(--border-color, #e2e8f0);
+  border-bottom: 2px solid #F4EFEB;
   padding-bottom: 14px;
   margin-bottom: 18px;
   flex-wrap: wrap;
@@ -25,166 +25,153 @@
 }
 
 .cs-title-group h3 {
-  margin: 4px 0 0 0;
-  font-size: 19px;
-  font-weight: 800;
-  color: #0284c7;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #8B1518;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.cs-badge {
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 9px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.cs-badge-speed { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-.cs-badge-speed:hover { background: #bbf7d0; }
-
+/* 4 Ô THỐNG KÊ DUOLINGO 3D - CHỮ TO, NỔI BẬT, MÀU SẮC RIÊNG BIỆT */
 .cs-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
 .cs-stat-box {
-  background: var(--bg-subcard, #f8fafc);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 16px;
+  padding: 14px 16px;
   text-align: center;
+  transition: transform 0.1s ease;
+}
+.cs-stat-box:hover {
+  transform: translateY(-2px);
 }
 
-.cs-stat-val { font-size: 17px; font-weight: 800; color: #0284c7; }
-.cs-stat-lbl { font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b); margin-top: 2px; text-transform: uppercase; }
+/* 4 Card thống kê theo 4 gam màu chủ đạo Duolingo */
+.stat-box-red {
+  background: #FFF5F5;
+  border: 2px solid #FCA5A5;
+  border-bottom: 5px solid #EF4444;
+}
+.stat-box-green {
+  background: #F0FDF4;
+  border: 2px solid #86EFAC;
+  border-bottom: 5px solid #22C55E;
+}
+.stat-box-blue {
+  background: #F0F9FF;
+  border: 2px solid #7DD3FC;
+  border-bottom: 5px solid #0284C7;
+}
+.stat-box-gold {
+  background: #FFFDF0;
+  border: 2px solid #FDE047;
+  border-bottom: 5px solid #EAB308;
+}
 
-/* THANH PROGRESS BANNER CHẠY ĐỘNG */
-.cs-progress-container { margin: 14px 0 20px 0; }
-.cs-progress-header { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: var(--text-muted, #64748b); margin-bottom: 6px; }
-.cs-progress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 99px; overflow: hidden; position: relative; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-.cs-progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0284c7, #10b981, #16a34a); border-radius: 99px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.cs-stat-val {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.cs-stat-lbl {
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
 
-/* Danh sách task */
-.cs-task-list { display: flex; flex-direction: column; gap: 10px; }
+/* THANH TIẾN ĐỘ */
+.cs-progress-container { margin: 16px 0 24px 0; }
+.cs-progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: #756D68; margin-bottom: 8px; }
+.cs-progress-bar-bg { width: 100%; height: 16px; background: #E8E2D8; border-radius: 99px; overflow: hidden; position: relative; }
+.cs-progress-bar-fill { height: 100%; background: #8B1518; border-radius: 99px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* DANH SÁCH BÀI TẬP HÔM NAY - CHỮ TO RÕ */
+.cs-task-list { display: flex; flex-direction: column; gap: 12px; }
 .cs-task-card {
-  display: flex; justify-content: space-between; align-items: center; background: var(--bg-subcard, #f8fafc);
-  border: 1.5px solid var(--border-color, #e2e8f0); padding: 14px 18px; border-radius: 10px; flex-wrap: wrap; gap: 12px; transition: all 0.2s ease;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-radius: 18px; flex-wrap: wrap; gap: 14px;
+  transition: all 0.15s ease;
 }
-.cs-task-card.is-done { background: #f0fdf4 !important; border-color: #86efac !important; }
-.cs-task-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 240px; }
+.cs-task-card.is-done { background: #F0FDF4 !important; border: 2px solid #86EFAC !important; border-bottom: 5px solid #4ADE80 !important; }
+.cs-task-card:not(.is-done) { background: #FFFFFF; border: 2px solid #E8E2D8; border-bottom: 5px solid #D3CBC0; }
+
+.cs-task-info { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 260px; }
 .cs-task-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.cs-node-id { font-family: monospace; font-weight: 800; font-size: 11px; background: #1e293b; color: #ffffff; padding: 2px 7px; border-radius: 4px; }
-.cs-node-domain { font-size: 11px; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 2px 8px; border-radius: 8px; }
-.cs-node-time { font-size: 12px; color: var(--text-muted, #64748b); }
-.cs-task-title { font-size: 14.5px; font-weight: 700; color: var(--text-main, #0f172a); }
+.cs-node-id { font-family: monospace; font-weight: 900; font-size: 12px; background: #1E293B; color: #FFFFFF; padding: 3px 8px; border-radius: 6px; }
+.cs-node-domain { font-size: 12px; font-weight: 900; color: #8B1518; background: #FDEDEE; padding: 3px 10px; border-radius: 10px; }
+.cs-node-time { font-size: 13px; font-weight: 700; color: #756D68; }
+.cs-task-title { font-size: 16.5px; font-weight: 900; color: #261F1D; line-height: 1.4; }
 .cs-task-card.is-done .cs-task-title { color: #166534; }
 
 .cs-btn-action {
-  padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: none; transition: all 0.2s;
+  padding: 11px 20px; border-radius: 14px; font-weight: 900; font-size: 14px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none;
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
-.cs-btn-start { background: #0284c7; color: #ffffff; }
-.cs-btn-start:hover { background: #0369a1; }
-.cs-btn-done { background: #dcfce7; color: #166534; border: 1px solid #86efac; cursor: default; }
+.cs-btn-start { background: #8B1518; color: #FFFFFF; border-bottom: 4px solid #5E0C0E; }
+.cs-btn-start:hover { background: #A01B20; }
+.cs-btn-done { background: #DCFCE7; color: #166534; border: 2px solid #86EFAC; border-bottom: 4px solid #4ADE80; cursor: default; }
 
-/* MODAL CHUNG */
-.cs-modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
-.cs-modal-card { background: #ffffff; border-radius: 16px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #e2e8f0; }
-.cs-modal-header { padding: 16px 20px; background: #0f172a; color: white; display: flex; justify-content: space-between; align-items: center; }
-.cs-modal-body { padding: 20px; overflow-y: auto; flex: 1; }
-.cs-day-timeline-box { margin-bottom: 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff; }
-.cs-day-timeline-header { padding: 10px 16px; background: #f8fafc; font-weight: 800; font-size: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
-.cs-benchmark-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-.cs-benchmark-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-weight: 700; border: 1px solid #e2e8f0; }
-.cs-benchmark-table td { padding: 8px 10px; border: 1px solid #e2e8f0; }
+/* LỊCH THÁNG HEATMAP DUOLINGO CHỮ TO & MÀU VÀNG CHUẨN XỊN */
+.cs-calendar-wrapper {
+  margin-top: 20px; background: #FAF7F2; border: 2.5px solid #E8E2D8;
+  border-bottom: 5px solid #D3CBC0; border-radius: 22px; padding: 22px;
+}
+.cs-calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.cs-calendar-title { font-size: 17.5px; font-weight: 900; color: #261F1D; }
+.cs-cal-btn {
+  background: #FFFFFF; border: 2px solid #E8E2D8; border-bottom: 4px solid #D3CBC0;
+  padding: 8px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 800; cursor: pointer;
+}
+.cs-cal-btn:hover { background: #F4EFEB; }
 
-/* CỔNG CHẨN ĐOÁN MICRO STT */
-.cs-diag-box { background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); border: 2px dashed #0284c7; border-radius: 14px; padding: 20px; margin-top: 20px; text-align: left; }
-.cs-diag-mic-btn { background: #ef4444; color: white; border: none; padding: 10px 18px; border-radius: 25px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
-.cs-diag-mic-btn.recording { background: #16a34a; animation: csPulse 1.2s infinite; }
-@keyframes csPulse { 0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); } 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); } }
-.cs-diag-textarea { width: 100%; height: 90px; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; font-size: 13.5px; font-family: inherit; outline: none; resize: vertical; background: #ffffff; margin: 10px 0; box-sizing: border-box; }
-.cs-ai-report-card { background: #ffffff; border: 1.5px solid #86efac; border-left: 5px solid #16a34a; border-radius: 10px; padding: 16px; margin-top: 14px; box-shadow: 0 4px 15px rgba(22, 163, 74, 0.1); }
+.cs-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.cs-cal-day-name { text-align: center; font-size: 14px; font-weight: 900; color: #756D68; padding-bottom: 8px; text-transform: uppercase; }
 
-/* LỊCH SỬ HÔM NAY & LỊCH HEATMAP 5 MÀU */
-.cs-empty-today { background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 10px; padding: 24px 16px; text-align: center; color: #64748b; font-size: 14px; font-weight: 600; margin: 10px 0; }
-.cs-calendar-wrapper { margin-top: 22px; background: #ffffff; border: 1.5px solid var(--border-color, #e2e8f0); border-radius: 12px; padding: 18px; }
-.cs-calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.cs-calendar-title { font-size: 16px; font-weight: 800; color: var(--text-main, #0f172a); }
-.cs-cal-btn { background: var(--bg-subcard, #f8fafc); border: 1px solid var(--border-color, #cbd5e1); padding: 5px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-.cs-cal-btn:hover { background: #e2e8f0; }
-.cs-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-.cs-cal-day-name { text-align: center; font-size: 12px; font-weight: 800; color: #64748b; padding-bottom: 6px; }
-.cs-cal-cell { aspect-ratio: 1 / 1; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; user-select: none; }
-.cs-cal-cell:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+.cs-cal-cell {
+  height: 52px; border-radius: 14px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-size: 16px; font-weight: 900;
+  cursor: pointer; transition: transform 0.1s ease; user-select: none;
+}
+.cs-cal-cell:hover { transform: scale(1.08); z-index: 5; }
 .cs-cal-cell-empty { opacity: 0; pointer-events: none; }
-.cs-cal-subtext { font-size: 10px; font-weight: 700; margin-top: 2px; }
+.cs-cal-subtext { font-size: 11.5px; font-weight: 900; margin-top: 2px; }
 
-.cal-color-zero { background: #dc2626 !important; color: #ffffff !important; border: 1.5px solid #b91c1c !important; }
-.cal-color-low { background: #fecdd3 !important; color: #9f1239 !important; border: 1.5px solid #fda4af !important; }
-.cal-color-mid { background: #bbf7d0 !important; color: #14532d !important; border: 1.5px solid #86efac !important; }
-.cal-color-full { background: #15803d !important; color: #ffffff !important; border: 1.5px solid #166534 !important; }
-.cal-color-over { background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #fbbf24 100%) !important; color: #78350f !important; border: 2px solid #d97706 !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.7); animation: csGoldShimmer 2s infinite alternate ease-in-out; }
-@keyframes csGoldShimmer { 0% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); transform: scale(1); } 100% { box-shadow: 0 0 16px rgba(245, 158, 11, 0.9), 0 0 25px rgba(251, 191, 36, 0.5); transform: scale(1.03); } }
-.cal-color-future { background: #f8fafc !important; color: #94a3b8 !important; border: 1px dashed #cbd5e1 !important; cursor: default; }
+/* 5 CẤP ĐỘ MÀU LỊCH CHUYÊN CẦN DUOLINGO */
+.cal-color-future { background: #FFFFFF !important; color: #CBD5E1 !important; border: 1.5px dashed #E2E8F0 !important; cursor: default; }
+.cal-color-zero { background: #FFFFFF !important; color: #64748B !important; border: 2px solid #E8E2D8 !important; border-bottom: 3.5px solid #D3CBC0 !important; }
+.cal-color-low { background: #DCFCE7 !important; color: #166534 !important; border: 2px solid #86EFAC !important; border-bottom: 3.5px solid #4ADE80 !important; }
+.cal-color-mid { background: #86EFAC !important; color: #14532D !important; border: 2px solid #4ADE80 !important; border-bottom: 3.5px solid #22C55E !important; }
+.cal-color-full { background: #22C55E !important; color: #FFFFFF !important; border: 2px solid #16A34A !important; border-bottom: 3.5px solid #15803D !important; }
 
-.cs-legend-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-color, #e2e8f0); font-size: 11.5px; font-weight: 700; }
-.cs-legend-item { display: flex; align-items: center; gap: 5px; }
-.cs-legend-dot { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+/* MÀU VÀNG DUOLINGO CHUẨN XỊN (#FFC800) CHO MỨC CAO NHẤT */
+.cal-color-over {
+  background: #FFC800 !important;
+  color: #5A3800 !important;
+  border: 2px solid #E5A500 !important;
+  border-bottom: 4px solid #CC8800 !important;
+  box-shadow: 0 4px 12px rgba(255, 200, 0, 0.45) !important;
+  font-weight: 900 !important;
+}
 
-/* =========================================================================
-   GIAI ĐOẠN C: BÁO CÁO ZALO PHỤ HUYNH & ADMIN ADVANCED
-   ========================================================================= */
-.cs-zalo-card {
-  background: #f0f7ff;
-  border: 1.5px solid #0068ff;
-  border-radius: 12px;
-  padding: 18px;
-  margin-top: 12px;
+/* THANH CHÚ THÍCH (LEGEND) */
+.cs-legend-bar {
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+  margin-top: 18px; padding-top: 14px; border-top: 2px solid #E8E2D8; font-size: 13px; font-weight: 800;
 }
-.cs-zalo-title {
-  color: #0068ff;
-  font-weight: 800;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.cs-zalo-textarea {
-  width: 100%;
-  height: 140px;
-  background: #ffffff;
-  border: 1px solid #b9d5ff;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 13px;
-  line-height: 1.6;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-.cs-btn-zalo-copy {
-  background: #0068ff;
-  color: white;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 10px;
-  transition: background 0.15s;
-}
-.cs-btn-zalo-copy:hover { background: #0054cf; }
+.cs-legend-item { display: flex; align-items: center; gap: 6px; }
+.cs-legend-dot { width: 16px; height: 16px; border-radius: 6px; display: inline-block; }
+
+/* CỔNG CHẨN ĐOÁN & MODAL */
+.cs-diag-box { background: #F0FDF4; border: 2px dashed #0284C7; border-radius: 16px; padding: 20px; margin-top: 20px; text-align: left; }
+.cs-diag-mic-btn { background: #EF4444; color: white; border: none; padding: 10px 18px; border-radius: 25px; font-weight: 800; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.cs-diag-textarea { width: 100%; height: 90px; border: 2px solid #CBD5E1; border-radius: 10px; padding: 10px; font-size: 14px; font-family: inherit; outline: none; margin: 10px 0; box-sizing: border-box; }
+.cs-ai-report-card { background: #FFFFFF; border: 2px solid #86EFAC; border-left: 6px solid #16A34A; border-radius: 12px; padding: 16px; margin-top: 14px; }
