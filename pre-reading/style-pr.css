@@ -1,19 +1,447 @@
-.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #fed7aa; border-radius: 4px; }
+/* ==========================================================================
+   pre-reading/style-pr.css
+   DUOLINGO X TRẠM IELTS THEME SYSTEM (PRE-READING MODULE)
+   - Đồng bộ Banner 5: Cam Hổ Phách (#D97706 -> #F59E0B)
+   - Bảng màu CEFR Duolingo đa sắc rực rỡ (A1 -> C1)
+   - Bỏ 100% biểu tượng icon bị lỗi ô vuông
+   ========================================================================== */
 
-/* Vùng dán ảnh Paste Zone tông màu cam */
-.paste-zone {
-  border: 2px dashed #fed7aa;
-  background-color: #fffbeb;
-  transition: all 0.2s ease-in-out;
+:root {
+  --bg-cream: #FAF7F2;
+  --bg-card: #FFFFFF;
+  --bg-subcard: #F7F4EE;
+
+  /* Màu chủ đạo Banner 5 (Pre-Reading) */
+  --amber-primary: #D97706;
+  --amber-hover: #F59E0B;
+  --amber-dark: #B45309;
+  --amber-shadow: #78350F;
+
+  /* Màu Duolingo 3D */
+  --duo-green: #22C55E;
+  --duo-green-hover: #16A34A;
+  --duo-green-shadow: #15803D;
+
+  --duo-gold: #FFC800;
+  --duo-gold-shadow: #CC8800;
+
+  --border-color: #E8E2D8;
+  --border-shadow: #D3CBC0;
+
+  --text-main: #261F1D;
+  --text-muted: #756D68;
+}
+
+/* ÉP 100% THẺ DÙNG CHUNG FONT PLUS JAKARTA SANS */
+*, select, option, input, button, textarea {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-cream) !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%23D97706" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%23D97706" opacity="0.045"/></svg>');
+  background-repeat: repeat;
+  background-size: 130px 130px;
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* TOPBAR ĐỒNG BỘ THEO BANNER 5 TRANG CHỦ */
+.pr-topbar {
+  background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+  border-bottom: 5px solid #B45309;
+  padding: 16px 22px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.2);
+  color: #FFFFFF;
+}
+
+.pr-topbar-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.pr-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tram-roundel-pr {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 6px solid #FFFFFF;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+.tram-roundel-pr::after {
+  content: '';
+  position: absolute;
+  width: 52px;
+  height: 9px;
+  background: #FFFFFF;
+  border-radius: 2px;
+}
+
+.pr-brand-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+}
+.pr-brand-sub {
+  margin: 4px 0 0 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.pr-main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 26px 18px 80px 18px;
+}
+
+/* CÁC NÚT BẤM 3D CHUNKY */
+.btn-3d {
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.08s ease;
+  white-space: nowrap;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: none !important;
+}
+
+.btn-3d-amber {
+  background: var(--amber-primary);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--amber-shadow);
+}
+.btn-3d-amber:hover { background: var(--amber-hover); }
+
+.btn-3d-green {
+  background: var(--duo-green);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--duo-green-shadow);
+}
+.btn-3d-green:hover { background: var(--duo-green-hover); }
+
+.btn-3d-white {
+  background: #FFFFFF;
+  color: var(--text-main) !important;
+  border: 2px solid var(--border-color);
+  border-bottom: 4.5px solid var(--border-shadow);
+}
+.btn-3d-white:hover { background: #FAF7F2; }
+
+/* KHUNG CHỌN LEVEL CEFR */
+.pr-level-card {
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5px solid var(--border-shadow);
+  border-radius: 20px;
+  padding: 16px 22px;
+  margin-bottom: 22px;
+}
+.pr-level-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pr-level-label {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+.pr-level-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* NÚT LEVEL DUOLINGO ĐA SẮC MÀU (A1 -> C1) */
+.pr-level-btn {
+  padding: 9px 22px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  background: #FFFFFF;
+  color: var(--text-main);
+}
+.pr-level-btn:hover { background: #FAF7F2; }
+.pr-level-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ĐỔ MÀU SẮC RIÊNG CHO TỪNG LEVEL KHI ACTIVE */
+.pr-level-btn.active.lvl-A1 { background: #D97706 !important; color: #FFFFFF !important; border-color: #B45309 !important; border-bottom: 4px solid #78350F !important; }
+.pr-level-btn.active.lvl-A2 { background: #059669 !important; color: #FFFFFF !important; border-color: #047857 !important; border-bottom: 4px solid #065F46 !important; }
+.pr-level-btn.active.lvl-B1 { background: #0891B2 !important; color: #FFFFFF !important; border-color: #0E7490 !important; border-bottom: 4px solid #155E75 !important; }
+.pr-level-btn.active.lvl-B1plus { background: #0284C7 !important; color: #FFFFFF !important; border-color: #0369A1 !important; border-bottom: 4px solid #075985 !important; }
+.pr-level-btn.active.lvl-B2 { background: #7C3AED !important; color: #FFFFFF !important; border-color: #6D28D9 !important; border-bottom: 4px solid #5B21B6 !important; }
+.pr-level-btn.active.lvl-C1 { background: #8B1518 !important; color: #FFFFFF !important; border-color: #630D10 !important; border-bottom: 4px solid #45080A !important; }
+
+/* THANH LỌC & TÌM KIẾM */
+.pr-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.pr-progress-badge-wrap {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pr-pill-progress {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1.5px solid #FDE68A;
+  padding: 5px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 900;
+}
+.pr-search-input {
+  padding: 12px 18px;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  border-radius: 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  width: 100%;
+  max-width: 340px;
+  outline: none;
+  background: #FFFFFF;
+}
+.pr-search-input:focus {
+  border-color: var(--amber-primary);
+  background: #FFFDF0;
+}
+
+/* LƯỚI CARD BÀI ĐỌC */
+.pr-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.pr-lesson-card {
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5.5px solid var(--border-shadow);
+  border-radius: 22px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.1s ease;
+}
+.pr-lesson-card:hover { transform: translateY(-2px); }
+.pr-lesson-card.is-done {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+  border-bottom-color: #22C55E;
+}
+
+.pr-card-tag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 4px 12px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+.pr-card-title {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 12px 0 18px 0;
+  line-height: 1.4;
+}
+
+/* MODAL */
+.pr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.pr-modal-overlay.hidden { display: none !important; }
+
+.pr-modal-card {
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 6px solid var(--border-shadow);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pr-modal-header {
+  padding: 18px 24px;
+  background: #FAF7F2;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pr-modal-level-tag {
+  font-size: 12px;
+  font-weight: 900;
+  background: #FEF3C7;
+  color: #B45309;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+.pr-modal-title {
+  margin: 6px 0 0 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-main);
+}
+.pr-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-muted);
   cursor: pointer;
 }
+
+.pr-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pr-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pr-input-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 900;
+  color: var(--text-main);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pr-input-field {
+  width: 100%;
+  padding: 11px 16px;
+  border: 2px solid var(--border-color);
+  border-bottom: 3.5px solid var(--border-shadow);
+  border-radius: 14px;
+  font-size: 15.5px;
+  font-weight: 800;
+  outline: none;
+  background: #FAF7F2;
+}
+.pr-input-field:focus {
+  background: #FFFFFF;
+  border-color: var(--amber-primary);
+}
+
+.paste-zone {
+  border: 2.5px dashed var(--border-color);
+  background-color: #FAF7F2;
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  margin-bottom: 10px;
+}
 .paste-zone:hover {
-  border-color: #d97706;
-  background-color: #fef3c7;
+  border-color: var(--amber-primary);
+  background-color: #FFFBEB;
 }
 .paste-zone.active-paste {
-  border-color: #d97706;
-  background-color: #fef3c7;
+  border-color: var(--amber-primary);
+  background-color: #FFFBEB;
   box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+}
+
+.pr-kbd {
+  padding: 3px 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-bottom: 3px solid #94A3B8;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 900;
+}
+
+.pr-file-input {
+  width: 100%;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.pr-modal-footer {
+  padding: 16px 24px;
+  background: #FAF7F2;
+  border-top: 2px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
