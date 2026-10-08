@@ -1,5 +1,6 @@
 /**
- * reading/js-r/app-r.js - Module điều khiển bài thi IELTS Reading
+ * reading/js-r/app-r.js - Module điều khiển bài thi IELTS Reading Duolingo 3D
+ * ĐÃ BỎ 100% BIỂU TƯỢNG FONT AWESOME GÂY LỖI Ô VUÔNG
  */
 import { CONFIG } from '../../js/config.js';
 import { stateManager } from '../../js/state.js';
@@ -29,7 +30,7 @@ window.toggleTheme = () => {
   const isDark = document.body.classList.toggle('dark-theme');
   localStorage.setItem('ielts_theme', isDark ? 'dark' : 'light');
   const btn = document.getElementById('btnThemeToggle');
-  if (btn) btn.innerText = isDark ? '☀️ Sáng' : '🌙 Tối';
+  if (btn) btn.innerText = isDark ? 'Chế độ Sáng' : 'Chế độ Tối';
 };
 
 window.askGeminiAI = (qId) => askGemini(qId);
@@ -110,7 +111,6 @@ export async function initReadingApp() {
   document.addEventListener('input', () => collectAndSaveState());
   document.addEventListener('change', () => collectAndSaveState());
 
-  // KIỂM TRA CHẾ ĐỘ XEM LẠI BÀI (REVIEW MODE)
   const urlParams = new URLSearchParams(window.location.search);
   const attemptId = urlParams.get('attemptId');
   const emailParam = urlParams.get('email');
@@ -132,7 +132,6 @@ export async function initReadingApp() {
     }
   }
 
-  // Khôi phục bài đang làm dở từ LocalStorage
   const saved = stateManager.getSavedProgress();
   if (saved) {
     if (saved.seconds) timer.setTime(saved.seconds);
@@ -162,12 +161,12 @@ function restoreReviewMode(attempt, timer, evaluator) {
   timer.stop();
 
   const banner = document.createElement('div');
-  banner.style.cssText = "background: #fef3c7; color: #92400e; border: 1.5px solid #f59e0b; padding: 10px 16px; font-weight: 700; font-size: 14px; text-align: center; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;";
+  banner.style.cssText = "background: #FEF3C7; color: #92400E; border: 2px solid #F59E0B; border-bottom: 4px solid #D97706; padding: 12px 18px; font-weight: 800; font-size: 14.5px; border-radius: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;";
   banner.innerHTML = `
-    <span>📜 ĐANG XEM LẠI BÀI (${attempt.timestamp}) — Điểm số: <b>${attempt.score}</b> (Học viên: ${attempt.studentName})</span>
+    <span>ĐANG XEM LẠI BÀI (${attempt.timestamp}) — Điểm: <b>${attempt.score}</b> (Học viên: ${attempt.studentName})</span>
     <div style="display:flex; gap:8px;">
-      <button type="button" id="btnExitReview" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">🔄 Làm lại bài này</button>
-      <a href="../index.html" style="background: #b45309; color: white; padding: 6px 12px; text-decoration: none; border-radius: 6px; font-weight: bold;">🔙 Về Trang chủ</a>
+      <button type="button" id="btnExitReview" style="background: #EF4444; color: white; border: none; border-bottom: 3px solid #B91C1C; padding: 7px 14px; border-radius: 10px; font-weight: 900; cursor: pointer;">Làm lại bài này</button>
+      <a href="../index.html" style="background: #D97706; color: white; border-bottom: 3px solid #B45309; padding: 7px 14px; text-decoration: none; border-radius: 10px; font-weight: 900;">Về Trang chủ</a>
     </div>
   `;
   document.body.insertBefore(banner, document.body.firstChild);
