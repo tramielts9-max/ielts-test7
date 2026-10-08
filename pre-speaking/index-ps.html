@@ -3,234 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pre-Speaking: Shadowing Portal (A1 - C1)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Pre-Speaking: Shadowing Portal (A1 - C1) - Trạm IELTS</title>
+  
+  <!-- Font Plus Jakarta Sans chuẩn Duolingo, hỗ trợ tiếng Việt 100% -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style-ps.css">
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-6 px-4 font-sans">
+<body>
 
-<div class="max-w-7xl mx-auto space-y-5">
+<div class="ps-main-container">
 
   <!-- ============================================================== -->
-  <!-- MÀN HÌNH 1: PORTAL CHÍNH (DANH SÁCH CARD TẤT CẢ CÁC BÀI TẬP) -->
+  <!-- MÀN HÌNH 1: PORTAL CHÍNH (DANH SÁCH BÀI TẬP SHADOWING) -->
   <!-- ============================================================== -->
-  <div id="portalScreen" class="space-y-6">
-    <!-- Header Portal -->
-    <header class="bg-gradient-to-r from-violet-900 to-indigo-900 text-white rounded-2xl p-5 border border-violet-700/50 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <a href="../index.html" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-white/10">
-          <i class="fa-solid fa-chevron-left"></i> Trang Chủ
+  <div id="portalScreen">
+    <!-- Header Portal: Đồng bộ màu Tím Fuchsia Banner 9 -->
+    <header class="ps-topbar">
+      <div class="ps-brand-group">
+        <a href="../index.html" class="btn-3d btn-3d-white" style="padding: 10px 18px; font-size: 14px;">
+          ← Trang Chủ
         </a>
+        <div class="tram-roundel-ps"></div>
         <div>
-          <h1 class="text-xl font-black tracking-tight flex items-center gap-2 text-violet-200">
-            <i class="fa-solid fa-microphone-lines text-violet-400"></i> Pre-Speaking Shadowing Portal
-          </h1>
-          <p class="text-slate-300 text-xs mt-0.5">Luyện nói nhại theo mẫu người bản xứ từ A1 đến C1 & AI chấm điểm tức thì</p>
+          <h1 class="ps-brand-title">PRE-SPEAKING SHADOWING PORTAL</h1>
+          <p class="ps-brand-sub">Luyện nói nhại theo mẫu người bản xứ từ A1 đến C1 & AI chấm điểm tức thì</p>
         </div>
       </div>
-      <div class="flex items-center gap-2 text-xs">
-        <span class="bg-violet-950/80 border border-violet-500/40 text-violet-300 px-3 py-1.5 rounded-lg font-bold">
-          ⚡ Hơn 270+ Video Shadowing
+      <div>
+        <span class="ps-header-badge">
+          ⚡ 270+ Video Shadowing
         </span>
       </div>
     </header>
 
-    <!-- Thanh Chọn Trình Độ (Pills CEFR) -->
-    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm space-y-3">
-      <div class="flex items-center gap-2 overflow-x-auto pb-1">
-        <span class="text-xs font-bold uppercase text-slate-400 whitespace-nowrap mr-2">
-          <i class="fa-solid fa-layer-group text-violet-400"></i> Cấp độ (CEFR):
-        </span>
-        <div id="levelPillsContainer" class="flex gap-2"></div>
+    <!-- Thanh Chọn Trình Độ (Pills CEFR Duolingo) -->
+    <div class="ps-card" style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <span class="ps-label-title">CẤP ĐỘ CEFR:</span>
+        <div id="levelPillsContainer" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
       </div>
     </div>
 
     <!-- Thanh Tiến Độ & Tìm Kiếm Bài Học -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div class="text-xs sm:text-sm font-medium text-slate-300 flex items-center gap-2">
+    <div class="ps-filter-bar">
+      <div class="ps-progress-wrap">
         <span>Tiến độ cấp độ hiện tại:</span>
-        <span id="levelProgressBadge" class="bg-emerald-950 border border-emerald-700 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold">
-          0/0 Đã xong
-        </span>
+        <span id="levelProgressBadge" class="ps-pill-progress">0/0 Đã xong</span>
       </div>
-      <div class="relative w-full sm:w-72">
-        <input 
-          type="text" 
-          id="portalSearchInput" 
-          oninput="window.filterPortalLessons()" 
-          placeholder="🔍 Tìm tên bài tập..." 
-          class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-sky-200 focus:outline-none focus:border-violet-500"
-        >
-      </div>
+      <input 
+        type="text" 
+        id="portalSearchInput" 
+        oninput="window.filterPortalLessons()" 
+        placeholder="Tìm kiếm bài tập theo tên hoặc mã..." 
+        class="ps-search-input"
+      >
     </div>
 
-    <!-- Lưới Card Các Bài Học (Grid 3 Cột giống Pre-Reading) -->
-    <div id="portalCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="col-span-full text-center py-12 text-slate-400">
-        <i class="fa-solid fa-spinner fa-spin text-2xl text-violet-400 mb-2"></i>
-        <p class="text-sm">Đang nạp toàn bộ danh mục bài học...</p>
+    <!-- Lưới Card Các Bài Học (Grid 3 Cột Duolingo 3D) -->
+    <div id="portalCardsGrid" class="ps-lesson-grid">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 800; font-size: 15px;">
+        ⏳ Đang nạp danh mục bài học Shadowing...
       </div>
     </div>
   </div>
 
 
   <!-- ============================================================== -->
-  <!-- MÀN HÌNH 2: PHÒNG LUYỆN NÓI WORKSPACE (HIỂN THỊ KHI BẤM LÀM BÀI)-->
+  <!-- MÀN HÌNH 2: PHÒNG LUYỆN NÓI WORKSPACE (KHI BẤM LÀM BÀI) -->
   <!-- ============================================================== -->
-  <div id="workspaceScreen" class="space-y-4 hidden">
+  <div id="workspaceScreen" class="hidden">
     
-    <!-- Header Workspace kèm nút Back quay về Portal -->
-    <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-md">
-      <div class="flex items-center gap-3">
-        <button onclick="window.backToPortal()" class="px-3.5 py-1.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow">
-          <i class="fa-solid fa-arrow-left"></i> Danh sách bài
+    <!-- Header Workspace kèm nút Back -->
+    <div class="ps-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding: 14px 20px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button onclick="window.backToPortal()" class="btn-3d btn-3d-purple" style="padding: 9px 18px; font-size: 13.5px;">
+          ← Danh sách bài
         </button>
-        <h2 class="text-sm sm:text-base font-bold text-violet-300">
-          🗣️ PHÒNG LUYỆN NÓI SHADOWING
+        <h2 style="margin: 0; font-size: 18px; font-weight: 900; color: var(--ps-purple);">
+          PHÒNG LUYỆN NÓI SHADOWING
         </h2>
       </div>
-      <span class="text-xs font-bold px-2.5 py-1 rounded bg-violet-950 text-violet-300 border border-violet-700">
+      <span class="ps-pill-tag" style="background: #F3E8FF; color: #7E22CE; border-color: #D8B4FE;">
         ⚡ AI Scoring Engine Active
       </span>
     </div>
 
-    <!-- Nhắc nhở đeo tai nghe -->
-    <div class="bg-amber-950/40 border border-amber-500/50 rounded-xl p-3 flex items-center gap-3 text-amber-300 text-xs sm:text-sm">
-      <i class="fa-solid fa-headphones text-lg flex-shrink-0 animate-pulse text-amber-400"></i>
-      <span><b>Yêu cầu đeo tai nghe:</b> Bạn cần đeo tai nghe để mic thu âm giọng nói chuẩn xác nhất, không bị lẫn tiếng phát ra từ video YouTube.</span>
+    <!-- Hộp Nhắc Nhở Đeo Tai Nghe Duolingo Gold -->
+    <div class="ps-notice-box">
+      <span style="font-size: 20px;">🎧</span>
+      <span><b>Yêu cầu đeo tai nghe:</b> Bạn cần đeo tai nghe để mic thu âm giọng nói chuẩn xác nhất, không bị lẫn âm thanh phát ra từ video YouTube.</span>
     </div>
 
-    <!-- BỘ CHỌN 3 CẤP LIÊN HOÀN (ĐƯỢC ĐỒNG BỘ TỰ ĐỘNG) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-800 p-4 rounded-xl border border-slate-700">
-      <div>
-        <label class="block text-xs font-bold text-amber-400 uppercase mb-1">1. Trình độ (Level):</label>
-        <select id="levelSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-amber-300 font-bold focus:outline-none focus:border-violet-500 cursor-pointer" onchange="window.handleLevelChange()"></select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-sky-400 uppercase mb-1">2. Nhóm chủ đề (Category):</label>
-        <select id="categorySelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-sky-300 font-bold focus:outline-none focus:border-violet-500 cursor-pointer" onchange="window.handleCategoryChange()"></select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-emerald-400 uppercase mb-1">3. Bài luyện nói (Lesson Video):</label>
-        <select id="lessonSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-emerald-300 font-bold focus:outline-none focus:border-violet-500 cursor-pointer" onchange="window.handleLessonChange()"></select>
+    <!-- Bộ Chọn 3 Cấp Liên Hoàn -->
+    <div class="ps-card" style="margin-bottom: 22px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+        <div>
+          <label class="ps-dropdown-label" style="color: #B45309;">1. Trình độ (Level):</label>
+          <select id="levelSelect" class="ps-select" onchange="window.handleLevelChange()"></select>
+        </div>
+        <div>
+          <label class="ps-dropdown-label" style="color: #0369A1;">2. Nhóm chủ đề (Category):</label>
+          <select id="categorySelect" class="ps-select" onchange="window.handleCategoryChange()"></select>
+        </div>
+        <div>
+          <label class="ps-dropdown-label" style="color: #15803D;">3. Bài luyện nói (Lesson Video):</label>
+          <select id="lessonSelect" class="ps-select" onchange="window.handleLessonChange()"></select>
+        </div>
       </div>
     </div>
 
-    <!-- KHU VỰC THỰC HÀNH CHÍNH -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+    <!-- KHU VỰC THỰC HÀNH CHÍNH (LAYOUT 2 CỘT) -->
+    <div class="ps-workspace-grid">
       
-      <!-- CỘT TRÁI: VIDEO & Ô KÝ ÂM LIVE (7 CỘT) -->
-      <div class="lg:col-span-7 space-y-3">
-        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 flex justify-between items-center">
+      <!-- CỘT TRÁI: VIDEO & Ô KÝ ÂM LIVE -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="ps-card" style="padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <b id="displayLessonTitle" class="text-sm text-sky-300 font-bold block">Đang nạp bài học...</b>
-            <span id="displayLessonDuration" class="text-xs text-slate-400">Thời lượng: --:--</span>
+            <b id="displayLessonTitle" style="font-size: 15px; color: var(--text-main); display: block;">Đang nạp bài học...</b>
+            <span id="displayLessonDuration" style="font-size: 13px; color: var(--text-muted); font-weight: 700;">Thời lượng: --:--</span>
           </div>
         </div>
 
         <!-- Khung nhúng YouTube -->
-        <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
-          <div id="youtube-player" class="absolute inset-0 w-full h-full"></div>
+        <div class="ps-video-frame">
+          <div id="youtube-player" style="position: absolute; inset: 0; width: 100%; height: 100%;"></div>
         </div>
 
-        <!-- Thanh điều khiển thu âm -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-2">
-            <button id="btnRecord" onclick="window.toggleShadowRecording()" class="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg shadow-lg shadow-red-600/30 flex items-center gap-2 text-sm transition-all">
-              <i class="fa-solid fa-circle"></i> Bắt đầu Shadow & Nói
+        <!-- Thanh điều khiển thu âm 3D -->
+        <div class="ps-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button id="btnRecord" onclick="window.toggleShadowRecording()" class="btn-3d btn-3d-red">
+              ● Bắt đầu Shadow & Nói
             </button>
-            <button id="btnStop" disabled onclick="window.stopAndSubmitRecording()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold rounded-lg text-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all">
-              <i class="fa-solid fa-stop"></i> Dừng & Chấm bài
+            <button id="btnStop" disabled onclick="window.stopAndSubmitRecording()" class="btn-3d btn-3d-white" style="color: var(--text-muted) !important;">
+              ■ Dừng & Chấm bài
             </button>
           </div>
 
-          <div class="flex items-center gap-3">
-            <div class="text-right">
-              <div id="timerDisplay" class="font-mono text-xl font-black text-sky-400">00:00</div>
-              <div class="text-[10px] text-slate-400 uppercase">Thời lượng nói</div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="text-align: right;">
+              <div id="timerDisplay" style="font-family: monospace; font-size: 22px; font-weight: 900; color: #0284C7;">00:00</div>
+              <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Thời lượng nói</div>
             </div>
-            <canvas id="audioMeter" width="60" height="26" class="bg-slate-950 rounded border border-slate-700"></canvas>
+            <canvas id="audioMeter" width="60" height="28" style="background: #FFFFFF; border-radius: 8px; border: 2px solid var(--border-color);"></canvas>
           </div>
         </div>
 
-        <!-- Ô KÝ ÂM REALTIME SPEECH-TO-TEXT -->
-        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 space-y-2">
-          <div class="flex justify-between items-center">
-            <label for="speechTranscript" class="text-xs font-bold text-slate-300 flex items-center gap-2">
-              <span>📝 Bản ký âm câu trả lời (Speech-to-Text tức thì - có thể sửa tự do):</span>
+        <!-- Ô Ký âm Realtime Speech-to-Text -->
+        <div class="ps-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <label for="speechTranscript" style="font-size: 13.5px; font-weight: 900; color: var(--text-main);">
+              Bản ký âm câu trả lời (Speech-to-Text tức thì - có thể sửa tự do):
             </label>
-            <span id="sttStatusBadge" class="text-[11px] font-semibold text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+            <span id="sttStatusBadge" class="ps-pill-tag">
               🎙️ Chờ ghi âm...
             </span>
           </div>
           <textarea 
             id="speechTranscript" 
             rows="4" 
-            class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs sm:text-sm text-sky-200 focus:outline-none focus:border-violet-500 font-mono leading-relaxed resize-y" 
-            placeholder="Bấm nút đỏ 'Bắt đầu Shadow & Nói', bài nói tiếng Anh của bạn sẽ tự động ký âm trực tiếp thành chữ vào ô này theo thời gian thực..."></textarea>
+            class="ps-textarea" 
+            placeholder="Bấm nút đỏ 'Bắt đầu Shadow & Nói', bài nói tiếng Anh của bạn sẽ tự động ký âm trực tiếp thành chữ vào ô này theo thời gian thực..."
+          ></textarea>
         </div>
       </div>
 
-      <!-- CỘT PHẢI: KẾT QUẢ ĐÁNH GIÁ (5 CỘT) -->
-      <div class="lg:col-span-5 space-y-3">
+      <!-- CỘT PHẢI: KẾT QUẢ ĐÁNH GIÁ AI -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
         
         <!-- Bảng kiểm duyệt điều kiện -->
-        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 space-y-2.5">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Tiêu chuẩn hoàn thành</span>
-            <span id="validationBadge" class="text-xs font-bold px-2.5 py-1 rounded bg-slate-700 text-slate-400">Chờ nộp bài</span>
+        <div class="ps-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 13px; font-weight: 900; text-transform: uppercase; color: var(--text-muted);">Tiêu chuẩn hoàn thành</span>
+            <span id="validationBadge" class="ps-pill-tag" style="background: #FAF7F2; color: var(--text-muted); border-color: var(--border-color);">Chờ nộp bài</span>
           </div>
 
-          <div class="space-y-1.5 text-xs">
-            <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-700">
-              <span class="text-slate-300">⏱️ Thời lượng tối thiểu:</span>
-              <span id="valPacingText" class="font-bold text-slate-400">0s / 15s</span>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; font-weight: 800;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 12px; background: #FAF7F2; border: 1.5px solid var(--border-color);">
+              <span style="color: var(--text-main);">⏱️ Thời lượng tối thiểu:</span>
+              <span id="valPacingText" style="color: var(--text-muted);">0s / 15s</span>
             </div>
-            <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-700">
-              <span class="text-slate-300">🎯 Điểm khớp phát âm (≥60%):</span>
-              <span id="valScoreText" class="font-bold text-slate-400">--%</span>
+            <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-radius: 12px; background: #FAF7F2; border: 1.5px solid var(--border-color);">
+              <span style="color: var(--text-main);">🎯 Điểm khớp phát âm (≥60%):</span>
+              <span id="valScoreText" style="color: var(--text-muted);">--%</span>
             </div>
           </div>
         </div>
 
         <!-- Bảng điểm số từ AI -->
-        <div class="bg-slate-800 p-3.5 rounded-xl border border-slate-700 space-y-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Kết quả đánh giá AI</h3>
+        <div class="ps-card">
+          <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--text-muted);">Kết quả đánh giá AI</h3>
 
-          <div class="grid grid-cols-3 gap-2 text-center">
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-700">
-              <span class="text-[11px] text-slate-400">Overall</span>
-              <div id="resOverall" class="text-2xl font-black text-violet-400">--</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-bottom: 16px;">
+            <div style="background: #FAF5FF; border: 2px solid #E9D5FF; border-bottom: 4px solid #C084FC; padding: 10px; border-radius: 14px;">
+              <span style="font-size: 12px; font-weight: 800; color: #7E22CE;">Overall</span>
+              <div id="resOverall" style="font-size: 24px; font-weight: 900; color: var(--ps-purple);">--</div>
             </div>
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-700">
-              <span class="text-[11px] text-slate-400">Fluency</span>
-              <div id="resFluency" class="text-2xl font-black text-sky-400">--</div>
+            <div style="background: #F0F9FF; border: 2px solid #BAE6FD; border-bottom: 4px solid #38BDF8; padding: 10px; border-radius: 14px;">
+              <span style="font-size: 12px; font-weight: 800; color: #0369A1;">Fluency</span>
+              <div id="resFluency" style="font-size: 24px; font-weight: 900; color: #0284C7;">--</div>
             </div>
-            <div class="bg-slate-900 p-2 rounded-lg border border-slate-700">
-              <span class="text-[11px] text-slate-400">Phát âm</span>
-              <div id="resPronun" class="text-2xl font-black text-emerald-400">--</div>
+            <div style="background: #F0FDF4; border: 2px solid #86EFAC; border-bottom: 4px solid #4ADE80; padding: 10px; border-radius: 14px;">
+              <span style="font-size: 12px; font-weight: 800; color: #166534;">Phát âm</span>
+              <div id="resPronun" style="font-size: 24px; font-weight: 900; color: #15803D;">--</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px;">Từ nhận diện sai / Bị nuốt âm:</span>
+            <div id="resMissedWords" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; background: #FAF7F2; border-radius: 12px; border: 1.5px solid var(--border-color); min-height: 38px;">
+              <span style="color: var(--text-muted); font-style: italic; font-size: 13px;">Không có dữ liệu</span>
             </div>
           </div>
 
           <div>
-            <span class="text-xs font-semibold text-slate-400 block mb-1">Từ nhận diện sai / Bị nuốt âm:</span>
-            <div id="resMissedWords" class="flex flex-wrap gap-1 p-2 bg-slate-950 rounded-lg border border-slate-700 min-h-[30px]">
-              <span class="text-slate-500 italic text-xs">Không có dữ liệu</span>
-            </div>
-          </div>
-
-          <div>
-            <span class="text-xs font-semibold text-slate-400 block mb-1">Nhận xét chi tiết của AI:</span>
-            <div id="resFeedback" class="text-xs text-sky-200 bg-sky-950/40 p-2.5 rounded-lg border border-sky-900 leading-relaxed">
-              Bấm "Bắt đầu Shadow & Nói" để nhận nhận xét.
+            <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 6px;">Nhận xét chi tiết của AI:</span>
+            <div id="resFeedback" style="font-size: 13.5px; font-weight: 700; color: #0369A1; background: #F0F9FF; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #BAE6FD; line-height: 1.55;">
+              Bấm "Bắt đầu Shadow & Nói" để nhận đánh giá tức thì.
             </div>
           </div>
         </div>
 
         <!-- Nút xác nhận hoàn thành (khi đạt điểm) -->
-        <button id="btnComplete" disabled onclick="window.completeLessonSubmission()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-wide text-xs flex items-center justify-center gap-2">
-          <i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành bài
+        <button id="btnComplete" disabled onclick="window.completeLessonSubmission()" class="btn-3d btn-3d-green" style="width: 100%; padding: 14px; font-size: 15px;">
+          ✓ Xác nhận hoàn thành bài &rarr;
         </button>
 
       </div>
@@ -240,9 +239,9 @@
 </div>
 
 <!-- Loading Overlay -->
-<div id="loadingOverlay" style="display: none;" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
-  <div class="animate-spin rounded-full h-12 w-12 border-4 border-violet-500 border-t-transparent mb-3"></div>
-  <p id="loadingText" class="text-violet-300 font-bold text-sm tracking-wide text-center">Đang kết nối Gemini AI...</p>
+<div id="loadingOverlay" style="display: none;" class="ps-loading-overlay">
+  <div class="ps-spinner"></div>
+  <p id="loadingText" style="color: #FFFFFF; font-weight: 900; font-size: 15px; margin-top: 14px; text-align: center;">Đang kết nối Gemini AI...</p>
 </div>
 
 <script src="js/speaking-ps.js"></script>
