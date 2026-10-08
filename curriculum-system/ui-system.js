@@ -375,7 +375,7 @@ class CurriculumUISystem {
           </div>
           
           <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="roadmap.html" class="btn-3d" style="background: #FFFFFF; color: #8B1518 !important; border-bottom: 4px solid rgba(0,0,0,0.18); font-size: 14px; padding: 12px 22px;">
+            <a href="curriculum-system/roadmap.html" class="btn-3d" style="background: #FFFFFF; color: #8B1518 !important; border-bottom: 4px solid rgba(0,0,0,0.18); font-size: 14px; padding: 12px 22px;">
               🚀 XEM TOÀN BỘ LỘ TRÌNH &rarr;
             </a>
             <button type="button" onclick="window.curriculumUI.resetRoadmap()" class="btn-3d" style="background: rgba(255,255,255,0.2); color: #FFFFFF !important; border: 1.5px solid rgba(255,255,255,0.4); border-bottom: 4px solid rgba(0,0,0,0.2); padding: 12px 16px; font-size: 13px;" title="Thiết lập lại lộ trình">
