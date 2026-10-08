@@ -1,11 +1,435 @@
-/* Animation nhấp nháy đỏ khi đang thu âm */
-.recording {
-  background-color: #991b1b !important;
-  animation: pulse-red 1.5s infinite;
+/* ==========================================================================
+   pre-speaking/css/style-ps.css
+   DUOLINGO X TRẠM IELTS THEME SYSTEM (PRE-SPEAKING MODULE)
+   - Đồng bộ Banner 9: Tím Fuchsia / Violet (#9333EA -> #C084FC)
+   - Bảng màu CEFR Duolingo đa sắc rực rỡ
+   - Bỏ 100% biểu tượng icon bị lỗi ô vuông
+   ========================================================================== */
+
+:root {
+  --bg-cream: #FAF7F2;
+  --bg-card: #FFFFFF;
+  --bg-subcard: #F7F4EE;
+
+  /* Màu chủ đạo Banner 9 (Pre-Speaking) */
+  --ps-purple: #9333EA;
+  --ps-purple-hover: #A855F7;
+  --ps-purple-dark: #7E22CE;
+  --ps-purple-shadow: #6B21A8;
+
+  /* Màu Duolingo 3D */
+  --duo-green: #22C55E;
+  --duo-green-hover: #16A34A;
+  --duo-green-shadow: #15803D;
+
+  --duo-gold: #FFC800;
+  --duo-gold-shadow: #CC8800;
+
+  --border-color: #E8E2D8;
+  --border-shadow: #D3CBC0;
+
+  --text-main: #261F1D;
+  --text-muted: #756D68;
 }
 
-@keyframes pulse-red {
+/* ÉP 100% THẺ DÙNG CHUNG FONT PLUS JAKARTA SANS */
+*, select, option, input, button, textarea {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-cream) !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="none" stroke="%239333EA" stroke-width="8" opacity="0.045"/><rect x="15" y="44" width="70" height="12" rx="2" fill="%239333EA" opacity="0.045"/></svg>');
+  background-repeat: repeat;
+  background-size: 130px 130px;
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.ps-main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 18px 80px 18px;
+}
+
+/* TOPBAR ĐỒNG BỘ THEO BANNER 9 TRANG CHỦ */
+.ps-topbar {
+  background: linear-gradient(135deg, #9333EA 0%, #C084FC 100%);
+  border: 2.5px solid #7E22CE;
+  border-bottom: 5.5px solid #6B21A8;
+  border-radius: 22px;
+  padding: 18px 24px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  box-shadow: 0 6px 18px rgba(147, 51, 234, 0.2);
+  color: #FFFFFF;
+}
+
+.ps-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tram-roundel-ps {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 6px solid #FFFFFF;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+.tram-roundel-ps::after {
+  content: '';
+  position: absolute;
+  width: 52px;
+  height: 9px;
+  background: #FFFFFF;
+  border-radius: 2px;
+}
+
+.ps-brand-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+}
+.ps-brand-sub {
+  margin: 4px 0 0 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ps-header-badge {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #FFFFFF;
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+/* THẺ CARD DUOLINGO 3D */
+.ps-card {
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5px solid var(--border-shadow);
+  border-radius: 20px;
+  padding: 20px 22px;
+}
+
+/* CÁC NÚT BẤM 3D CHUNKY */
+.btn-3d {
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.08s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: none !important;
+}
+
+.btn-3d-purple {
+  background: var(--ps-purple);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--ps-purple-shadow);
+}
+.btn-3d-purple:hover { background: var(--ps-purple-hover); }
+
+.btn-3d-green {
+  background: var(--duo-green);
+  color: #FFFFFF !important;
+  border-bottom: 5px solid var(--duo-green-shadow);
+}
+.btn-3d-green:hover { background: var(--duo-green-hover); }
+
+.btn-3d-red {
+  background: #DC2626;
+  color: #FFFFFF !important;
+  border-bottom: 5px solid #991B1B;
+}
+.btn-3d-red:hover { background: #EF4444; }
+
+.btn-3d-white {
+  background: #FFFFFF;
+  color: var(--text-main) !important;
+  border: 2px solid var(--border-color);
+  border-bottom: 4.5px solid var(--border-shadow);
+}
+.btn-3d-white:hover { background: #FAF7F2; }
+
+.btn-3d:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* THANH CHỌN TRÌNH ĐỘ CEFR DUOLINGO */
+.ps-label-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+}
+
+.ps-level-btn {
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  background: #FFFFFF;
+  color: var(--text-main);
+}
+.ps-level-btn:hover { background: #FAF7F2; }
+.ps-level-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+.ps-level-btn.active {
+  background: var(--ps-purple) !important;
+  color: #FFFFFF !important;
+  border-color: var(--ps-purple-dark) !important;
+  border-bottom-color: var(--ps-purple-shadow) !important;
+}
+
+/* THANH TIẾN ĐỘ & TÌM KIẾM */
+.ps-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.ps-progress-wrap {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ps-pill-progress {
+  background: #DCFCE7;
+  color: #166534;
+  border: 1.5px solid #86EFAC;
+  padding: 5px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  font-weight: 900;
+}
+.ps-search-input {
+  padding: 12px 18px;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  border-radius: 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  width: 100%;
+  max-width: 340px;
+  outline: none;
+  background: #FFFFFF;
+}
+.ps-search-input:focus {
+  border-color: var(--ps-purple);
+  background: #FFFDF0;
+}
+
+/* LƯỚI CARD BÀI TẬP */
+.ps-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 18px;
+}
+
+.ps-lesson-card {
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5.5px solid var(--border-shadow);
+  border-radius: 22px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.1s ease;
+}
+.ps-lesson-card:hover { transform: translateY(-2px); }
+.ps-lesson-card.is-done {
+  background: #F0FDF4;
+  border-color: #86EFAC;
+  border-bottom-color: #22C55E;
+}
+
+.ps-card-tag {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.ps-pill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 12.5px;
+  border: 1.5px solid transparent;
+}
+
+/* HỘP NHẮC NHỞ TAI NGHE */
+.ps-notice-box {
+  background: #FFFDF0;
+  border: 2px solid #FDE047;
+  border-left: 6px solid #FFC800;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #854D0E;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+/* DROPDOWN CHỌN BÀI */
+.ps-dropdown-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ps-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-main);
+  background: #FAF7F2;
+  outline: none;
+  cursor: pointer;
+}
+.ps-select:focus {
+  background: #FFFFFF;
+  border-color: var(--ps-purple);
+}
+
+/* WORKSPACE GRID */
+.ps-workspace-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .ps-workspace-grid { grid-template-columns: 1fr; }
+}
+
+.ps-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2.5px solid var(--border-color);
+  border-bottom: 5px solid var(--border-shadow);
+}
+
+.ps-textarea {
+  width: 100%;
+  background: #FAF7F2;
+  border: 2px solid var(--border-color);
+  border-bottom: 4px solid var(--border-shadow);
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: inherit;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+}
+.ps-textarea:focus {
+  background: #FFFFFF;
+  border-color: var(--ps-purple);
+}
+
+/* ANIMATION THU ÂM */
+.recording {
+  animation: pulse-recording 1.2s infinite ease-in-out;
+}
+@keyframes pulse-recording {
   0% { transform: scale(1); }
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
 }
+
+/* OVERLAY SPINNER */
+.ps-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.ps-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hidden { display: none !important; }
