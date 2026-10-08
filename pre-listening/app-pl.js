@@ -1,6 +1,7 @@
 /**
  * pre-listening/app-pl.js
  * BỘ ĐIỀU KHIỂN DANH SÁCH BÀI NGHE THEO LEVEL CEFR DUOLINGO 3D
+ * ĐÃ BỎ 100% CÁC BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
  */
 
 import { initDB, getAllSubmissions } from './db-pl.js';
@@ -15,7 +16,6 @@ async function start() {
   await initDB();
   initModal(() => renderLessons());
 
-  // Đọc dữ liệu từ file data-pl.json
   try {
     const res = await fetch('./data-pl.json');
     listeningData = await res.json();
@@ -36,7 +36,8 @@ function buildLevelTabs() {
   LEVELS.forEach(lvl => {
     const btn = document.createElement('button');
     const isActive = lvl === currentLevel;
-    btn.className = `pl-level-btn ${isActive ? 'active' : ''}`;
+    // Gán class màu riêng cho từng level (lvl-A1, lvl-A2, ...)
+    btn.className = `pl-level-btn lvl-${lvl} ${isActive ? 'active' : ''}`;
     btn.innerText = lvl;
     btn.onclick = () => {
       currentLevel = lvl;
@@ -72,8 +73,8 @@ async function renderLessons() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 15px; background: #FFFFFF; border-radius: 20px; border: 2px dashed var(--border-color);">
-        🔍 Không tìm thấy bài tập nào phù hợp!
+      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 16px; background: #FFFFFF; border-radius: 22px; border: 2.5px dashed var(--border-color);">
+        Không tìm thấy bài tập nào phù hợp!
       </div>
     `;
     return;
@@ -91,11 +92,11 @@ async function renderLessons() {
               Bài ${item.index} • ${currentLevel}
             </span>
             ${isDone 
-              ? `<span style="font-size: 13px; font-weight: 900; color: #166534; display: flex; align-items: center; gap: 4px;">
-                   <i class="fa-solid fa-circle-check"></i> ${item.sub.correct}/${item.sub.total} (${scorePct}%)
+              ? `<span style="font-size: 13.5px; font-weight: 900; color: #166534;">
+                   ✓ ${item.sub.correct}/${item.sub.total} (${scorePct}%)
                  </span>` 
-              : `<span style="font-size: 12.5px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-                   <i class="fa-regular fa-clock"></i> Chưa làm
+              : `<span style="font-size: 13px; font-weight: 800; color: var(--text-muted);">
+                   ● Chưa làm
                  </span>`
             }
           </div>
@@ -105,12 +106,12 @@ async function renderLessons() {
           </h4>
         </div>
 
-        <div style="padding-top: 14px; border-top: 2px dashed var(--border-color); display: flex; gap: 8px; align-items: center;">
-          <a href="${item.url}" target="_blank" class="btn-3d btn-3d-white" style="flex: 1; padding: 10px 14px; font-size: 13px;">
-            Làm bài <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 11px;"></i>
+        <div style="padding-top: 16px; border-top: 2px dashed var(--border-color); display: flex; gap: 10px; align-items: center;">
+          <a href="${item.url}" target="_blank" class="btn-3d btn-3d-white" style="flex: 1; padding: 11px 14px; font-size: 13.5px;">
+            Làm bài →
           </a>
-          <button onclick="window.openSubmitModalPL('${item.id}', '${item.title.replace(/'/g, "\\'")}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-red'}" style="flex: 1; padding: 10px 14px; font-size: 13px;">
-            <i class="fa-solid ${isDone ? 'fa-pen-to-square' : 'fa-upload'}"></i> ${isDone ? 'Sửa điểm' : 'Nộp bài'}
+          <button onclick="window.openSubmitModalPL('${item.id}', '${item.title.replace(/'/g, "\\'")}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-cyan'}" style="flex: 1; padding: 11px 14px; font-size: 13.5px;">
+            ${isDone ? 'Sửa điểm' : 'Nộp bài'}
           </button>
         </div>
       </div>
