@@ -2,7 +2,7 @@
    listening/css-l/listening.css
    DUOLINGO X TRẠM IELTS THEME SYSTEM (IELTS LISTENING MODULE)
    - Đồng bộ Banner 4: Xanh Lam Hoàng Gia (#0284C7 -> #38BDF8)
-   - Bỏ 100% biểu tượng icon bị lỗi ô vuông
+   - Tối ưu trực quan Đúng/Sai cho MCQ, Choose TWO & Kéo thả Matching
    ========================================================================== */
 
 :root {
@@ -51,7 +51,7 @@ body {
   padding: 22px 18px 80px 18px;
 }
 
-/* CÁC NÚT BẤM 3D CHUNKY */
+/* NÚT BẤM 3D CHUNKY */
 .btn-3d {
   font-family: inherit;
   font-weight: 900;
@@ -248,29 +248,82 @@ body {
 .btn-submit-bar:hover { background: #16A34A; }
 .btn-submit-bar:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-/* MODAL BẢNG TỔNG KẾT */
-.modal-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  z-index: 2000;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  backdrop-filter: blur(4px);
-}
-.modal-backdrop.is-active { display: flex !important; }
+/* =========================================================================
+   STYLE HIỂN THỊ KẾT QUẢ TRỰC QUAN CHO CÂU HỎI SAU KHI NỘP BÀI
+   ========================================================================= */
 
-.modal-content-card, .modal-content {
-  background: #FFFFFF;
-  border: 2.5px solid var(--border-color);
-  border-bottom: 6px solid var(--border-shadow);
-  border-radius: 24px;
-  width: 100%;
-  max-width: 720px;
-  max-height: 88vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+/* 1. Lựa chọn MCQ học sinh chọn ĐÚNG */
+.mcq-option-item.is-user-correct {
+  background: #F0FDF4 !important;
+  border-color: #22C55E !important;
+  border-bottom: 4px solid #16A34A !important;
+}
+.mcq-option-item.is-user-correct .mcq-badge {
+  background: #22C55E !important;
+  color: #FFFFFF !important;
+}
+
+/* 2. Lựa chọn MCQ học sinh chọn SAI */
+.mcq-option-item.is-user-wrong {
+  background: #FFF5F5 !important;
+  border-color: #EF4444 !important;
+  border-bottom: 4px solid #DC2626 !important;
+}
+.mcq-option-item.is-user-wrong .mcq-badge {
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+}
+
+/* 3. Đánh dấu viền đáp án chính xác của đề */
+.mcq-option-item.is-official-key {
+  position: relative;
+  outline: 2.5px dashed #22C55E;
+  outline-offset: 1px;
+}
+.mcq-option-item.is-official-key::after {
+  content: '✓ ĐÁP ÁN CHUẨN';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #DCFCE7;
+  color: #166534;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #86EFAC;
+}
+
+/* 4. Ô Dropzone của Matching khi ĐÚNG / SAI */
+.dropzone-box.is-correct {
+  border-color: #22C55E !important;
+  border-style: solid !important;
+  background: #F0FDF4 !important;
+}
+.dropzone-box.is-wrong {
+  border-color: #EF4444 !important;
+  border-style: solid !important;
+  background: #FFF5F5 !important;
+}
+
+/* 5. Thẻ đáp án được Click chọn (Click-to-place) */
+.matching-drag-card.is-selected-card {
+  border-color: #FFC800 !important;
+  background: #FFFDF0 !important;
+  box-shadow: 0 0 0 3px rgba(255, 200, 0, 0.4) !important;
+  transform: scale(1.02);
+}
+
+/* 6. Hộp giải thích chi tiết (Explanation Box) */
+.q-explanation-box {
+  background: #FFFDF0;
+  border: 1.5px solid #FDE047;
+  border-left: 5px solid #FFC800;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #261F1D;
 }
