@@ -1,6 +1,6 @@
 /**
  * IELTS SPEAKING CONTROLLER & 2-TIER GRADING ENGINE
- * Tích hợp Màn hình Portal Lưới Card + Đổi màu theo Lịch sử hoàn thành
+ * DUOLINGO X TRẠM IELTS - ĐÃ BỎ 100% BIỂU TƯỢNG GÂY LỖI Ô VUÔNG
  */
 
 // 1. MÃ HÓA RUNTIME AUTH KEY
@@ -61,17 +61,12 @@ function getCompletedRecord(promptId, topicName) {
 // ==================== MÀN HÌNH 1: PORTAL CARD LOGIC ====================
 async function loadPartData(partNum) {
   currentPart = partNum;
-  document.getElementById('tabPart1Btn')?.classList.toggle('bg-violet-600', partNum === 1);
-  document.getElementById('tabPart1Btn')?.classList.toggle('text-white', partNum === 1);
-  document.getElementById('tabPart1Btn')?.classList.toggle('bg-slate-800', partNum !== 1);
-
-  document.getElementById('tabPart2Btn')?.classList.toggle('bg-violet-600', partNum === 2);
-  document.getElementById('tabPart2Btn')?.classList.toggle('text-white', partNum === 2);
-  document.getElementById('tabPart2Btn')?.classList.toggle('bg-slate-800', partNum !== 2);
-
-  document.getElementById('tabPart3Btn')?.classList.toggle('bg-violet-600', partNum === 3);
-  document.getElementById('tabPart3Btn')?.classList.toggle('text-white', partNum === 3);
-  document.getElementById('tabPart3Btn')?.classList.toggle('bg-slate-800', partNum !== 3);
+  
+  // Cập nhật tab active 3D
+  ['tabPart1Btn', 'tabPart2Btn', 'tabPart3Btn'].forEach((id, idx) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.toggle('active', idx + 1 === partNum);
+  });
 
   const urlsToTry = [
     `speaking-part${partNum}.json`,
@@ -120,7 +115,11 @@ function renderPortalCards() {
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 font-medium">Không tìm thấy chủ đề nào!</div>`;
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); font-weight: 800; font-size: 16px; background: #FFFFFF; border-radius: 22px; border: 2.5px dashed var(--border-color);">
+        Không tìm thấy chủ đề nào phù hợp!
+      </div>
+    `;
     return;
   }
 
@@ -128,42 +127,36 @@ function renderPortalCards() {
     const rec = getCompletedRecord(item.id, item.topic);
     const isDone = !!rec;
 
-    const cardClass = isDone 
-      ? 'border-emerald-500/60 bg-emerald-950/20 hover:border-emerald-400' 
-      : 'border-slate-800 bg-slate-850 hover:border-violet-500/60 bg-slate-800/80';
-
     const statusBadge = isDone
-      ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1">
-           <i class="fa-solid fa-circle-check"></i> ${rec.score || 'Đã luyện'}
+      ? `<span style="font-size: 13px; font-weight: 900; color: #166534;">
+           ✓ ${rec.score || 'Đã luyện'}
          </span>`
-      : `<span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
-           <i class="fa-regular fa-clock"></i> Chưa làm
+      : `<span style="font-size: 12.5px; font-weight: 800; color: var(--text-muted);">
+           ● Chưa làm
          </span>`;
 
     const qCount = item.questions ? `${item.questions.length} câu hỏi` : (item.questionCount ? `${item.questionCount} câu hỏi` : 'Full set');
 
     return `
-      <div class="rounded-xl border p-4 transition-all duration-200 shadow-sm hover:shadow-lg flex flex-col justify-between gap-3 ${cardClass}">
+      <div class="spk-lesson-card ${isDone ? 'is-done' : ''}">
         <div>
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800 uppercase">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span class="part-tag" style="background: ${isDone ? '#DCFCE7' : '#FEF3C7'}; color: ${isDone ? '#166534' : '#B45309'}; border-color: ${isDone ? '#86EFAC' : '#FDE68A'};">
               Part ${currentPart} • ${item.id}
             </span>
             ${statusBadge}
           </div>
-          <h3 class="text-sm font-bold text-slate-100 line-clamp-2 mt-1 leading-snug" title="${item.title || item.topic}">
+          <h3 style="font-size: 16.5px; font-weight: 900; color: var(--text-main); margin: 6px 0 12px 0; line-height: 1.4;" title="${item.title || item.topic}">
             ${item.title || item.topic}
           </h3>
-          <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
-            <span class="truncate max-w-[190px] text-slate-400">📁 ${item.topic}</span>
-            <span class="text-sky-300 font-semibold whitespace-nowrap">⏱️ ${qCount}</span>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px;" title="${item.topic}">📁 ${item.topic}</span>
+            <span style="color: #0284C7; font-weight: 800; white-space: nowrap;">⏱️ ${qCount}</span>
           </div>
         </div>
 
-        <button onclick="window.startLessonSpeaking('${item.id}')" class="w-full py-2.5 mt-1 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow ${
-          isDone ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-violet-600 hover:bg-violet-500 text-white'
-        }">
-          <i class="fa-solid fa-microphone text-[11px]"></i> ${isDone ? 'Luyện lại & Chấm lại' : 'Vào luyện nói &rarr;'}
+        <button onclick="window.startLessonSpeaking('${item.id}')" class="btn-3d ${isDone ? 'btn-3d-green' : 'btn-3d-gold'}" style="width: 100%; padding: 11px; font-size: 13.5px;">
+          ${isDone ? 'Luyện lại & Chấm lại →' : 'Vào luyện nói →'}
         </button>
       </div>
     `;
@@ -271,7 +264,7 @@ function startGuideTimer() {
       hasUsedAssistance = true;
       const badge = document.getElementById('selfRelianceBadge');
       if (badge) {
-        badge.className = "self-reliance-badge assisted text-xs font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700";
+        badge.className = "self-reliance-badge assisted";
         badge.innerHTML = `⚠️ Đã dùng trợ giúp (>20s: ${guideSecondsCount}s)`;
       }
     }
@@ -294,7 +287,7 @@ function resetGuideTimer() {
   document.getElementById('btnToggleGuide').innerText = "📖 MỞ HƯỚNG DẪN CHI TIẾT (GỢI Ý & TỪ VỰNG)";
   const badge = document.getElementById('selfRelianceBadge');
   if (badge) {
-    badge.className = "self-reliance-badge clean text-xs font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800";
+    badge.className = "self-reliance-badge clean";
     badge.innerHTML = `🟢 Tự lực (<span id="timerCount">0</span>s / tối đa 20s)`;
   }
 }
@@ -363,10 +356,9 @@ window.toggleRecording = async () => {
       }
 
       isRecording = true;
-      recBtn.classList.remove('bg-rose-600');
-      recBtn.classList.add('bg-emerald-600', 'animate-pulse');
+      recBtn.classList.add('recording');
       recText.innerText = "Dừng ghi âm & Hoàn thành bài nói";
-      recIcon.innerText = "⏹️";
+      recIcon.innerText = "■";
     } catch (err) {
       alert("Không thể mở Micro: " + err.message + ". Em hãy cấp quyền micro trên trình duyệt nhé!");
     }
@@ -375,8 +367,7 @@ window.toggleRecording = async () => {
     if (recognition) { try { recognition.stop(); } catch(e){} }
 
     isRecording = false;
-    recBtn.classList.remove('bg-emerald-600', 'animate-pulse');
-    recBtn.classList.add('bg-rose-600');
+    recBtn.classList.remove('recording');
     recText.innerText = "Nói lại lần nữa (Ghi âm mới)";
     recIcon.innerText = "🎙️";
   }
@@ -386,8 +377,7 @@ function resetRecordingUI() {
   isRecording = false;
   const recBtn = document.getElementById('recBtn');
   if (recBtn) {
-    recBtn.classList.remove('bg-emerald-600', 'animate-pulse');
-    recBtn.classList.add('bg-rose-600');
+    recBtn.classList.remove('recording');
     document.getElementById('recText').innerText = "Bắt đầu ghi âm & nói tiếng Anh";
     document.getElementById('recIcon').innerText = "🎙️";
   }
@@ -533,7 +523,7 @@ HÃY XUẤT BÀI CHẤM THEO ĐÚNG CẤU TRÚC 5 PHẦN SAU:
 
     statusBar.innerHTML = "✅ Thầy đã chấm xong bài nói cho em rồi nhé! Em xem kỹ từng câu bên dưới nha.";
     submitBtn.disabled = false;
-    printBtn.style.display = "inline-block";
+    printBtn.style.display = "inline-flex";
 
     // --- LƯU VÀO LOCAL VÀ BẮN LÊN GOOGLE DRIVE ---
     try {
