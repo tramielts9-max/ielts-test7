@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IELTS Listening Examination - Trạm IELTS</title>
   
-  <!-- Font Plus Jakarta Sans chuẩn Duolingo, hỗ trợ tiếng Việt 100% -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -31,7 +30,6 @@
       border-bottom: 5.5px solid var(--border-shadow);
     }
 
-    /* SPLIT-VIEW TRANSCRIPT SAU KHI NỘP BÀI */
     body.listening-test.submitted #mainContainer {
       display: flex !important;
       flex-direction: row !important;
@@ -82,7 +80,6 @@
       border: none;
     }
 
-    /* BỐ CỤC GOOGLE DOCS: BÀI THI TRÁI - GHI CHÚ PHẢI */
     .gdocs-exam-wrapper {
       display: flex;
       gap: 24px;
@@ -90,10 +87,7 @@
       position: relative;
       width: 100%;
     }
-    .gdocs-paper-col {
-      flex: 1;
-      min-width: 0;
-    }
+    .gdocs-paper-col { flex: 1; min-width: 0; }
     .gdocs-comments-col {
       width: 330px;
       flex-shrink: 0;
@@ -107,9 +101,7 @@
     }
     @media (max-width: 950px) {
       .gdocs-exam-wrapper { flex-direction: column; }
-      .gdocs-comments-col {
-        width: 100%; position: static; max-height: none; border-left: none; padding-left: 0; margin-top: 24px;
-      }
+      .gdocs-comments-col { width: 100%; position: static; max-height: none; border-left: none; padding-left: 0; margin-top: 24px; }
     }
 
     .gdocs-comments-header {
@@ -120,11 +112,7 @@
       padding-bottom: 10px;
       border-bottom: 2px solid var(--border-color);
     }
-    .gdocs-header-title {
-      font-size: 14.5px;
-      font-weight: 900;
-      color: var(--text-main);
-    }
+    .gdocs-header-title { font-size: 14.5px; font-weight: 900; color: var(--text-main); }
     .btn-gdocs-toggle-all {
       background: #FFFFFF;
       color: var(--text-main);
@@ -137,7 +125,6 @@
       cursor: pointer;
     }
 
-    /* BUBBLE GHI CHÚ & AI */
     .gdocs-comment-bubble {
       background: #FFFFFF;
       border: 2px solid var(--border-color);
@@ -147,228 +134,57 @@
       margin-bottom: 10px;
       transition: all 0.15s ease;
     }
-    .gdocs-comment-bubble.is-active {
-      border-color: #0284C7;
-      background: #F0F9FF;
-    }
-    .gdocs-bubble-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }
-    .gdocs-bubble-badge {
-      font-size: 12px;
-      font-weight: 900;
-      background: #E0F2FE;
-      color: #0284C7;
-      padding: 2px 8px;
-      border-radius: 6px;
-    }
-    .gdocs-bubble-preview {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-left: 6px;
-      font-weight: 700;
-    }
+    .gdocs-comment-bubble.is-active { border-color: #0284C7; background: #F0F9FF; }
+    .gdocs-bubble-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+    .gdocs-bubble-badge { font-size: 12px; font-weight: 900; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 6px; }
+    .gdocs-bubble-preview { font-size: 12px; color: var(--text-muted); margin-left: 6px; font-weight: 700; }
     .gdocs-comment-bubble.is-collapsed .gdocs-bubble-body { display: none; }
 
-    .gdocs-bubble-body {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1.5px dashed var(--border-color);
-    }
-    .inline-thought-box {
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      background: #F0FDF4;
-      border: 1.5px solid #86EFAC;
-      border-radius: 10px;
-    }
-    .inline-thought-box label {
-      font-size: 12px;
-      font-weight: 800;
-      color: #166534;
-      display: block;
-      margin-bottom: 4px;
-    }
-    .inline-thought-box textarea {
-      width: 100%;
-      height: 40px;
-      padding: 6px 10px;
-      font-size: 13px;
-      border: 1.5px solid #CBD5E1;
-      border-radius: 8px;
-      outline: none;
-      resize: vertical;
-    }
+    .gdocs-bubble-body { margin-top: 10px; padding-top: 10px; border-top: 1.5px dashed var(--border-color); }
+    .inline-thought-box { margin-bottom: 10px; padding: 8px 12px; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 10px; }
+    .inline-thought-box label { font-size: 12px; font-weight: 800; color: #166534; display: block; margin-bottom: 4px; }
+    .inline-thought-box textarea { width: 100%; height: 40px; padding: 6px 10px; font-size: 13px; border: 1.5px solid #CBD5E1; border-radius: 8px; outline: none; resize: vertical; }
 
-    .ai-assistant-box {
-      padding: 8px 12px;
-      background: #FFFFFF;
-      border: 1.5px solid #BAE6FD;
-      border-radius: 10px;
-    }
-    .ai-assistant-box label {
-      font-size: 12px;
-      font-weight: 800;
-      color: #0369A1;
-      display: block;
-      margin-bottom: 4px;
-    }
+    .ai-assistant-box { padding: 8px 12px; background: #FFFFFF; border: 1.5px solid #BAE6FD; border-radius: 10px; }
+    .ai-assistant-box label { font-size: 12px; font-weight: 800; color: #0369A1; display: block; margin-bottom: 4px; }
     .ai-input-group { display: flex; gap: 6px; }
-    .ai-input-group input {
-      flex: 1;
-      padding: 6px 10px;
-      font-size: 13px;
-      border: 1.5px solid #CBD5E1;
-      border-radius: 8px;
-      outline: none;
-    }
-    .ai-btn {
-      background: #0284C7;
-      color: white;
-      border: none;
-      border-bottom: 3px solid #075985;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: 900;
-      font-size: 12px;
-      cursor: pointer;
-    }
+    .ai-input-group input { flex: 1; padding: 6px 10px; font-size: 13px; border: 1.5px solid #CBD5E1; border-radius: 8px; outline: none; }
+    .ai-btn { background: #0284C7; color: white; border: none; border-bottom: 3px solid #075985; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; }
+    .btn-comment-anchor { background: #FFFFFF; color: #0369A1; border: 1.5px solid var(--border-color); border-bottom: 3px solid var(--border-shadow); padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; margin-left: 6px; }
 
-    .btn-comment-anchor {
-      background: #FFFFFF;
-      color: #0369A1;
-      border: 1.5px solid var(--border-color);
-      border-bottom: 3px solid var(--border-shadow);
-      padding: 3px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-left: 6px;
-    }
+    .section-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin: 22px 0 10px 0; border-left: 5px solid #0284C7; padding-left: 12px; }
+    .instructions-box { background: #FAF7F2; border: 2px solid var(--border-color); border-radius: 14px; padding: 12px 18px; font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 18px; }
+    .btn-audio-pill { background: #FFFFFF; color: #0369A1; border: 1.5px solid #BAE6FD; border-bottom: 3px solid #7DD3FC; padding: 4px 10px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; margin-left: 6px; }
 
-    /* TIÊU ĐỀ & HƯỚNG DẪN ĐỀ THI */
-    .section-title {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text-main);
-      margin: 22px 0 10px 0;
-      border-left: 5px solid #0284C7;
-      padding-left: 12px;
-    }
-    .instructions-box {
-      background: #FAF7F2;
-      border: 2px solid var(--border-color);
-      border-radius: 14px;
-      padding: 12px 18px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 18px;
-    }
-    .btn-audio-pill {
-      background: #FFFFFF;
-      color: #0369A1;
-      border: 1.5px solid #BAE6FD;
-      border-bottom: 3px solid #7DD3FC;
-      padding: 4px 10px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 12px;
-      cursor: pointer;
-      margin-left: 6px;
-    }
-
-    /* CÂU HỎI TRẮC NGHIỆM DUOLINGO */
     .mcq-options-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
     .mcq-option-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 16px;
-      border: 2px solid var(--border-color);
-      border-bottom: 4px solid var(--border-shadow);
-      border-radius: 14px;
-      background: #FFFFFF;
-      cursor: pointer;
-      transition: all 0.08s ease;
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px;
+      border: 2px solid var(--border-color); border-bottom: 4px solid var(--border-shadow);
+      border-radius: 14px; background: #FFFFFF; cursor: pointer; transition: all 0.08s ease;
     }
     .mcq-option-item:hover { background: #FAF7F2; }
-    .mcq-option-item.selected {
-      border-color: #0284C7;
-      border-bottom-color: #075985;
-      background: #F0F9FF;
-    }
-    .mcq-badge {
-      font-weight: 900;
-      color: #0284C7;
-      background: #E0F2FE;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 13px;
-    }
-    .mcq-option-item.selected .mcq-badge {
-      background: #0284C7;
-      color: #FFFFFF;
-    }
+    .mcq-option-item.selected { border-color: #0284C7; border-bottom-color: #075985; background: #F0F9FF; }
+    .mcq-badge { font-weight: 900; color: #0284C7; background: #E0F2FE; padding: 3px 8px; border-radius: 6px; font-size: 13px; }
+    .mcq-option-item.selected .mcq-badge { background: #0284C7; color: #FFFFFF; }
 
-    /* ĐIỀN TỪ */
     .fill-input {
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      color: #0284C7;
-      background: #FFFFFF;
-      border: 2px solid #CBD5E1;
-      border-bottom: 3.5px solid #94A3B8;
-      border-radius: 10px;
-      padding: 6px 12px;
-      text-align: center;
-      outline: none;
-      margin: 0 4px;
+      font-family: inherit; font-size: 15px; font-weight: 800; color: #0284C7; background: #FFFFFF;
+      border: 2px solid #CBD5E1; border-bottom: 3.5px solid #94A3B8; border-radius: 10px;
+      padding: 6px 12px; text-align: center; outline: none; margin: 0 4px;
     }
-    .fill-input:focus {
-      border-color: #0284C7;
-      background: #F0F9FF;
-    }
+    .fill-input:focus { border-color: #0284C7; background: #F0F9FF; }
 
-    /* NÚT CHẤM BÀI 3D TO BẢN */
     .btn-submit {
-      background: var(--duo-green);
-      color: #FFFFFF !important;
-      border: none;
-      border-bottom: 5px solid var(--duo-green-shadow);
-      padding: 14px 24px;
-      font-size: 16px;
-      font-weight: 900;
-      border-radius: 16px;
-      width: 100%;
-      cursor: pointer;
-      margin-top: 24px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.08s ease;
+      background: var(--duo-green); color: #FFFFFF !important; border: none; border-bottom: 5px solid var(--duo-green-shadow);
+      padding: 14px 24px; font-size: 16px; font-weight: 900; border-radius: 16px; width: 100%; cursor: pointer;
+      margin-top: 24px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.08s ease;
     }
     .btn-submit:active { transform: translateY(3px); border-bottom-width: 2px; }
 
     .btn-full-submit {
-      margin-top: 14px;
-      background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
-      color: #FFFFFF !important;
-      border: none;
-      border-bottom: 5px solid #1E1B4B;
-      padding: 15px 24px;
-      border-radius: 16px;
-      width: 100%;
-      font-size: 16px;
-      font-weight: 900;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.08s ease;
+      margin-top: 14px; background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%); color: #FFFFFF !important;
+      border: none; border-bottom: 5px solid #1E1B4B; padding: 15px 24px; border-radius: 16px; width: 100%;
+      font-size: 16px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: all 0.08s ease;
     }
     .btn-full-submit:active { transform: translateY(3px); border-bottom-width: 2px; }
   </style>
@@ -598,7 +414,7 @@
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   }
 
-  /* KÉO - THẢ CHO FLOWCHART */
+  /* KÉO - THẢ & NHẤP CHUỘT (CLICK-TO-PLACE) CHO FLOWCHART & MATCHING */
   window.draggedData = null;
   window.selectedOptionForPlacement = null;
 
@@ -630,6 +446,25 @@
     }
   };
 
+  /* TÍNH NĂNG NHẤP CHUỘT CHỌN ĐÁP ÁN (CLICK-TO-PLACE) */
+  window.selectOptionCard = function(key, text, el) {
+    document.querySelectorAll('.matching-drag-card').forEach(c => c.classList.remove('is-selected-card'));
+    if (window.selectedOptionForPlacement && window.selectedOptionForPlacement.key === key) {
+      window.selectedOptionForPlacement = null;
+    } else {
+      window.selectedOptionForPlacement = { key, text };
+      if (el) el.classList.add('is-selected-card');
+    }
+  };
+
+  window.handleDropzoneClick = function(qId) {
+    if (window.selectedOptionForPlacement) {
+      window.placeAnswerIntoDropzone(qId, window.selectedOptionForPlacement.key, window.selectedOptionForPlacement.text);
+      document.querySelectorAll('.matching-drag-card').forEach(c => c.classList.remove('is-selected-card'));
+      window.selectedOptionForPlacement = null;
+    }
+  };
+
   window.placeAnswerIntoDropzone = function(qId, key, text) {
     window.syncUserAnswer(qId, key);
     const dz = document.getElementById(`dropzone_${qId}`);
@@ -639,7 +474,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-weight:900; background:#E0F2FE; color:#0284C7; padding:2px 8px; border-radius:6px;">${key}</span>
-            <span style="font-weight:700; color:#0369A1;">${text}</span>
+            <span style="font-weight:800; color:#0369A1;">${text}</span>
           </div>
           <button type="button" onclick="window.clearDropAnswer('${qId}', event)" style="background:#FEE2E2; color:#DC2626; border:none; border-radius:50%; width:22px; height:22px; font-weight:900; cursor:pointer;">&times;</button>
         </div>
@@ -653,7 +488,7 @@
     const dz = document.getElementById(`dropzone_${qId}`);
     if (dz) {
       dz.classList.remove('filled');
-      dz.innerHTML = `<span style="color:#94A3B8; font-style:italic;">Kéo thả đáp án vào đây</span>`;
+      dz.innerHTML = `<span style="color:#94A3B8; font-style:italic;">Kéo thả hoặc nhấp chọn đáp án vào đây</span>`;
     }
   };
 
@@ -694,7 +529,7 @@
                   allQIds.push(qId);
                   const q = data.questions[qId];
                   return `
-                    <tr style="border-top:1px solid var(--border-color);">
+                    <tr style="border-top:1px solid var(--border-color);" id="${qId}_row">
                       <td style="padding:10px 14px; font-weight:800;">
                         Câu ${q?.num || qId.replace('q','')}. ${q?.text || ''}
                         ${q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ Nghe</button>` : ''}
@@ -719,7 +554,7 @@
           allQIds.push(qId);
           const q = data.questions[qId];
           paperHtml += `
-            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:14px; padding:14px; margin-bottom:12px;">
+            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:14px; padding:14px; margin-bottom:12px;" id="${qId}_card">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <span style="font-weight:900; font-size:15px;">
                   Câu ${q?.num || qId.replace('q','')}. ${q?.stepTitle || q?.text || ''}
@@ -727,19 +562,20 @@
                 </span>
                 ${q?.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ ${formatTime(q.time)}</button>` : ''}
               </div>
-              <div id="dropzone_${qId}" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${qId}')" style="min-height:44px; border:2px dashed #94A3B8; border-radius:10px; background:#FFFFFF; display:flex; align-items:center; padding:6px 14px;">
-                <span style="color:#94A3B8; font-style:italic;">Kéo thả đáp án vào đây</span>
+              <div id="dropzone_${qId}" class="dropzone-box" onclick="window.handleDropzoneClick('${qId}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${qId}')" style="min-height:44px; border:2px dashed #94A3B8; border-radius:10px; background:#FFFFFF; display:flex; align-items:center; padding:6px 14px; cursor:pointer;">
+                <span style="color:#94A3B8; font-style:italic;">Kéo thả hoặc nhấp chọn đáp án vào đây</span>
               </div>
+              <div id="${qId}_feedback" style="display:none; margin-top:8px;"></div>
             </div>
           `;
         });
 
         paperHtml += `
           <div style="background:#FFFFFF; border:2px solid var(--border-color); border-radius:16px; padding:16px; margin-top:16px;">
-            <b style="display:block; margin-bottom:10px; font-size:14px;">Ngân hàng đáp án:</b>
+            <b style="display:block; margin-bottom:10px; font-size:14px; color:var(--text-main);">Ngân hàng đáp án (Kéo thả hoặc Nhấp để chọn):</b>
             <div style="display:flex; flex-direction:column; gap:8px;">
               ${group.options.map(opt => `
-                <div draggable="true" ondragstart="window.handleDragStart(event, '${opt.key}', '${opt.text.replace(/'/g, "\\'")}')" style="background:#FAF7F2; border:1.5px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:grab; display:flex; align-items:center; gap:10px;">
+                <div class="matching-drag-card" draggable="true" ondragstart="window.handleDragStart(event, '${opt.key}', '${opt.text.replace(/'/g, "\\'")}')" onclick="window.selectOptionCard('${opt.key}', '${opt.text.replace(/'/g, "\\'")}', this)" style="background:#FAF7F2; border:1.5px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px; transition:all 0.1s ease;">
                   <span style="background:#0284C7; color:white; font-weight:900; padding:2px 8px; border-radius:6px;">${opt.key}</span>
                   <span style="font-weight:700;">${opt.text}</span>
                 </div>
@@ -785,17 +621,17 @@
               const text = letterMatch ? opt.substring(letterMatch[0].length).trim() : opt;
 
               return `
-                <label class="mcq-option-item" onclick="window.syncUserAnswer('${qId}', '${letter}'); window.activateCommentBubble('${qId}');">
+                <label class="mcq-option-item" data-letter="${letter}" onclick="window.syncUserAnswer('${qId}', '${letter}'); window.activateCommentBubble('${qId}');">
                   <input type="radio" name="${qId}" value="${letter}" style="display:none;">
                   <span class="mcq-badge">${letter}</span>
-                  <span style="font-size:14.5px; font-weight:700; color:var(--text-main);">${text}</span>
+                  <span style="font-size:14.5px; font-weight:700; color:var(--text-main); flex:1;">${text}</span>
                 </label>
               `;
             }).join('');
           }
 
           paperHtml += `
-            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:18px; padding:18px 20px; margin-top:14px;" id="${qId}" onclick="window.activateCommentBubble('${qId}')">
+            <div style="background:#FAF7F2; border:2px solid var(--border-color); border-radius:18px; padding:18px 20px; margin-top:14px;" id="${qId}_card" onclick="window.activateCommentBubble('${qId}')">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:16px; font-weight:900;">
                   Câu ${q.num || qId.replace('q','')}. ${q.text || ''}
@@ -804,7 +640,7 @@
                 ${q.time ? `<button type="button" class="btn-audio-pill" onclick="window.seekAudioTo(${q.time}, '${q.highlightId || ''}')">▶ ${formatTime(q.time)}</button>` : ''}
               </div>
               <div class="mcq-options-list">${optionsList}</div>
-              <div class="result" style="margin-top:6px;"></div>
+              <div id="${qId}_feedback" style="display:none; margin-top:8px;"></div>
             </div>
           `;
         });
@@ -871,7 +707,10 @@
     `;
   };
 
-  /* XỬ LÝ CHẤM BÀI */
+  /* =========================================================================
+     BỘ MÁY CHẤM BÀI THÔNG MINH & HIỂN THỊ KẾT QUẢ TRỰC QUAN DUOLINGO 3D
+     (XỬ LÝ TOÀN DIỆN CẢ MULTI-SELECT CHOOSE TWO, SINGLE MCQ, MATCHING, GAPFILL)
+     ========================================================================= */
   window.enableSplitViewAfterSubmit = function() {
     document.body.classList.add('submitted');
     const passageBox = document.getElementById('passageBox');
@@ -889,31 +728,215 @@
       mainContainer.style.setProperty('height', 'calc(100vh - 130px)', 'important');
     }
 
-    if (window.TEST_DATA && window.TEST_DATA.answers) {
-      Object.entries(window.TEST_DATA.answers).forEach(([qId, official]) => {
-        const inp = document.getElementById(`${qId}_input`);
-        const feedback = document.getElementById(`${qId}_feedback`);
-        if (inp && feedback) {
-          const userVal = inp.value.trim().toLowerCase();
-          let isCorrect = Array.isArray(official) ? official.some(a => a.toLowerCase() === userVal) : (String(official).trim().toLowerCase() === userVal);
-          if (isCorrect) {
-            inp.style.borderColor = '#22C55E'; inp.style.backgroundColor = '#F0FDF4';
-            feedback.style.display = 'block'; feedback.style.color = '#166534'; feedback.innerHTML = `✓ Đúng!`;
-          } else {
-            inp.style.borderColor = '#EF4444'; inp.style.backgroundColor = '#FFF5F5';
-            feedback.style.display = 'block'; feedback.style.color = '#991B1B'; feedback.innerHTML = `✗ Sai! Đáp án: <b>${Array.isArray(official) ? official.join(' / ') : official}</b>`;
-          }
+    if (!window.TEST_DATA || !window.TEST_DATA.answers) return;
+
+    let totalScore = 0;
+    const questionsMap = window.TEST_DATA.questions || {};
+    const answersMap = window.TEST_DATA.answers;
+    const allQKeys = Object.keys(answersMap);
+
+    // 1. Phân nhóm các câu hỏi "Choose TWO" (có official dạng mảng chung)
+    const pairedGroups = {};
+    allQKeys.forEach(k => {
+      const val = answersMap[k];
+      if (Array.isArray(val) && val.length > 1) {
+        const sortedKey = [...val].sort().join(',');
+        if (!pairedGroups[sortedKey]) pairedGroups[sortedKey] = [];
+        pairedGroups[sortedKey].push(k);
+      }
+    });
+
+    const evaluatedPairs = new Set();
+    const qResults = {}; // { qId: { isCorrect, userAns, expectedAns, feedbackText } }
+
+    // Đọc câu trả lời của học sinh từ localStorage
+    let storedAnswers = {};
+    if (window.CURRENT_BASE_TEST) {
+      try {
+        storedAnswers = JSON.parse(localStorage.getItem(`ielts_ans_${window.CURRENT_BASE_TEST}`) || '{}');
+      } catch(e) {}
+    }
+
+    // 2. Chấm các cặp câu "Choose TWO letters" (ví dụ Q21-22, Q23-24 Cam 20)
+    Object.entries(pairedGroups).forEach(([groupKey, qIdList]) => {
+      const officialSet = groupKey.split(','); // ['C', 'E']
+      const usedCorrectAnswers = new Set();
+
+      qIdList.forEach(qId => {
+        evaluatedPairs.add(qId);
+        const radioChecked = document.querySelector(`input[name="${qId}"]:checked`);
+        const userChoice = (radioChecked ? radioChecked.value : (storedAnswers[qId] || '')).trim().toUpperCase();
+
+        if (userChoice && officialSet.includes(userChoice) && !usedCorrectAnswers.has(userChoice)) {
+          usedCorrectAnswers.add(userChoice);
+          qResults[qId] = {
+            isCorrect: true,
+            userAns: userChoice,
+            expectedAns: officialSet.join(' / '),
+            feedbackText: `✓ Đúng! (Đáp án trong nhóm: ${officialSet.join(', ')})`
+          };
+          totalScore++;
+        } else if (usedCorrectAnswers.has(userChoice)) {
+          qResults[qId] = {
+            isCorrect: false,
+            userAns: userChoice,
+            expectedAns: officialSet.join(' / '),
+            feedbackText: `✗ Sai do chọn trùng đáp án ${userChoice} với câu khác trong nhóm!`
+          };
+        } else {
+          qResults[qId] = {
+            isCorrect: false,
+            userAns: userChoice || 'Chưa làm',
+            expectedAns: officialSet.join(' / '),
+            feedbackText: `✗ Sai! Đáp án thuộc nhóm: <b>${officialSet.join(' / ')}</b>`
+          };
         }
       });
-    }
+    });
+
+    // 3. Chấm các câu hỏi độc lập (Single MCQ, Matching, Gap-fill, Map)
+    allQKeys.forEach(qId => {
+      if (evaluatedPairs.has(qId)) return; // Đã chấm ở phần paired
+
+      const official = answersMap[qId];
+      const qMeta = questionsMap[qId] || {};
+
+      // A. Điền từ (Gap-fill)
+      const inp = document.getElementById(`${qId}_input`);
+      if (inp) {
+        const userVal = inp.value.trim().toLowerCase();
+        let isCorrect = Array.isArray(official) ? official.some(a => a.toLowerCase() === userVal) : (String(official).trim().toLowerCase() === userVal);
+        const expStr = Array.isArray(official) ? official.join(' / ') : official;
+        if (isCorrect) {
+          totalScore++;
+          qResults[qId] = { isCorrect: true, userAns: userVal, expectedAns: expStr, feedbackText: `✓ Đúng!` };
+        } else {
+          qResults[qId] = { isCorrect: false, userAns: userVal || 'Chưa làm', expectedAns: expStr, feedbackText: `✗ Sai! Đáp án: <b>${expStr}</b>` };
+        }
+        return;
+      }
+
+      // B. Kéo thả (Matching / Flowchart)
+      const dropzone = document.getElementById(`dropzone_${qId}`);
+      if (dropzone) {
+        const userChoice = (storedAnswers[qId] || '').trim().toUpperCase();
+        const expStr = String(official).trim().toUpperCase();
+        let isCorrect = userChoice === expStr;
+        if (isCorrect) {
+          totalScore++;
+          qResults[qId] = { isCorrect: true, userAns: userChoice, expectedAns: expStr, feedbackText: `✓ Đúng!` };
+        } else {
+          qResults[qId] = { isCorrect: false, userAns: userChoice || 'Chưa làm', expectedAns: expStr, feedbackText: `✗ Sai! Đáp án đúng: <b>${expStr}</b>` };
+        }
+        return;
+      }
+
+      // C. Trắc nghiệm (Single MCQ) & Map Radio
+      const radioChecked = document.querySelector(`input[name="${qId}"]:checked`);
+      const userChoice = (radioChecked ? radioChecked.value : (storedAnswers[qId] || '')).trim().toUpperCase();
+      const expStr = String(official).trim().toUpperCase();
+      let isCorrect = userChoice === expStr;
+
+      if (isCorrect) {
+        totalScore++;
+        qResults[qId] = { isCorrect: true, userAns: userChoice, expectedAns: expStr, feedbackText: `✓ Đúng!` };
+      } else {
+        qResults[qId] = { isCorrect: false, userAns: userChoice || 'Chưa làm', expectedAns: expStr, feedbackText: `✗ Sai! Đáp án: <b>${expStr}</b>` };
+      }
+    });
+
+    // 4. HIỂN THỊ TRỰC QUAN KẾT QUẢ ĐÚNG / SAI LÊN TỪNG THẺ CÂU HỎI
+    allQKeys.forEach(qId => {
+      const res = qResults[qId];
+      if (!res) return;
+
+      const qMeta = questionsMap[qId] || {};
+      const expStr = res.expectedAns;
+      const feedbackEl = document.getElementById(`${qId}_feedback`);
+
+      // Cập nhật ô Điền từ
+      const inp = document.getElementById(`${qId}_input`);
+      if (inp) {
+        inp.style.borderColor = res.isCorrect ? '#22C55E' : '#EF4444';
+        inp.style.backgroundColor = res.isCorrect ? '#F0FDF4' : '#FFF5F5';
+      }
+
+      // Cập nhật ô Matching Dropzone
+      const dropzone = document.getElementById(`dropzone_${qId}`);
+      if (dropzone) {
+        dropzone.classList.remove('is-correct', 'is-wrong');
+        dropzone.classList.add(res.isCorrect ? 'is-correct' : 'is-wrong');
+      }
+
+      // Cập nhật các lựa chọn MCQ
+      const cardEl = document.getElementById(`${qId}_card`);
+      if (cardEl) {
+        const optionLabels = cardEl.querySelectorAll('.mcq-option-item');
+        optionLabels.forEach(lbl => {
+          const letter = (lbl.dataset.letter || lbl.querySelector('.mcq-badge')?.innerText || '').trim().toUpperCase();
+          lbl.classList.remove('is-user-correct', 'is-user-wrong', 'is-official-key');
+
+          if (letter === res.userAns && res.isCorrect) {
+            lbl.classList.add('is-user-correct');
+          } else if (letter === res.userAns && !res.isCorrect) {
+            lbl.classList.add('is-user-wrong');
+          }
+          
+          // Đánh dấu viền đáp án chính xác
+          if (expStr.split(/[\/,]/).map(s => s.trim().toUpperCase()).includes(letter)) {
+            lbl.classList.add('is-official-key');
+          }
+        });
+      }
+
+      // Cập nhật ô Map Table Row
+      const mapRow = document.getElementById(`${qId}_row`);
+      if (mapRow) {
+        mapRow.style.backgroundColor = res.isCorrect ? '#F0FDF4' : '#FFF5F5';
+      }
+
+      // Hiển thị phản hồi & Giải thích (Explanation)
+      if (feedbackEl) {
+        feedbackEl.style.display = 'block';
+        let explainHtml = '';
+        if (qMeta.explanation && qMeta.explanation.steps) {
+          explainHtml = `
+            <div class="q-explanation-box">
+              <b style="color:#0369A1; font-size:13px; display:block; margin-bottom:4px;">💡 Giải thích chi tiết:</b>
+              ${qMeta.explanation.steps.map(s => `<div style="margin-bottom:3px;">${s}</div>`).join('')}
+            </div>
+          `;
+        }
+        feedbackEl.innerHTML = `
+          <div style="font-weight:900; font-size:13.5px; color:${res.isCorrect ? '#166534' : '#DC2626'}; margin-bottom:4px;">
+            ${res.feedbackText}
+          </div>
+          ${explainHtml}
+        `;
+      }
+
+      // Cập nhật số câu ở thanh điều hướng đáy [21] [22]...
+      const badgeBtn = document.getElementById(`badge_${qId}`);
+      if (badgeBtn) {
+        badgeBtn.classList.remove('status-correct', 'status-incorrect');
+        badgeBtn.classList.add(res.isCorrect ? 'status-correct' : 'status-incorrect');
+      }
+    });
+
+    // 5. Cập nhật bảng điểm và huy hiệu thành tích
+    const scoreText = document.getElementById('scoreText');
+    const scoreBadge = document.getElementById('scoreBadge');
+    if (scoreText) scoreText.innerText = `${totalScore}/${allQKeys.length}`;
+    if (scoreBadge) scoreBadge.style.display = 'block';
 
     const questionBox = document.getElementById('questionBox');
     if (questionBox && !document.getElementById('submitSuccessBanner')) {
       const banner = document.createElement('div');
       banner.id = 'submitSuccessBanner';
-      banner.style.cssText = 'background:#F0FDF4; border:2px solid #86EFAC; border-radius:14px; padding:14px 18px; margin-bottom:18px; color:#166534; font-size:14px; font-weight:800;';
+      banner.style.cssText = 'background:#F0FDF4; border:2px solid #86EFAC; border-bottom:4px solid #22C55E; border-radius:16px; padding:16px 20px; margin-bottom:20px; color:#166534; font-size:14.5px; font-weight:800;';
       banner.innerHTML = `
-        <span>✓ ĐÃ CHẤM BÀI XONG! Transcript đối chiếu đã mở ở cột bên trái. Em có thể giữ chuột vào thanh giữa ◄► để kéo co giãn.</span>
+        <div style="font-size:17px; margin-bottom:4px;">🎉 ĐÃ CHẤM XONG! KẾT QUẢ ĐẠT ĐƯỢC: ${totalScore}/${allQKeys.length} CÂU ĐÚNG</div>
+        <span>Transcript đối chiếu đã mở ở cột bên trái. Em có thể giữ chuột vào thanh ◄► để kéo rộng màn hình xem lại nhé!</span>
       `;
       questionBox.insertBefore(banner, questionBox.firstChild);
       questionBox.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1013,6 +1036,7 @@
 
       window.TEST_DATA = { 
         title: data.title, 
+        questions: data.questions || {},
         answers: data.answers || (data.questions ? Object.fromEntries(Object.entries(data.questions).map(([k, v]) => [k, v.finalAnswer])) : {})
       };
 
